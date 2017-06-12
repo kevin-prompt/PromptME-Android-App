@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.Signup">
+
+    <TextView android:id="@+id/lblDisplayTitle" android:text="@string/sup_title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/promptblueex"
+        android:textSize="@dimen/lbl_big_size"
+        android:textAlignment="center">
+    </TextView>
+
+    <TextView android:id="@+id/lblDisplayDesc" android:text="@string/sup_detail_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblDisplayTitle"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:maxWidth="@dimen/signup_btn_width"
+        android:textColor="@color/promptwhite"
+        android:textAlignment="center"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+
+    <EditText android:id="@+id/txtDisplayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblDisplayDesc"
+        android:layout_marginTop="35dp"
+        android:layout_centerHorizontal="true"
+        android:width="@dimen/signup_btn_width"
+        android:textColor="@color/promptwhite"
+        android:textSize="@dimen/txt_edit_size"
+        android:inputType="text"
+        android:maxLines="1"
+        android:hint="@string/sup_edit_hint">
+        <requestFocus />
+    </EditText>
+
+    <TextView android:id="@+id/lblPathTitle" android:text="@string/sup_title_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDisplayName"
+        android:layout_marginTop="35dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/promptblueex"
+        android:textAlignment="center"
+        android:textSize="@dimen/lbl_big_size">
+    </TextView>
+
+    <TextView android:id="@+id/lblPathDesc" android:text="@string/sup_detail_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblPathTitle"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:maxWidth="@dimen/signup_btn_width"
+        android:textColor="@color/promptwhite"
+        android:textAlignment="center"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+
+    <com.digits.sdk.android.DigitsAuthButton android:id="@+id/auth_button"
+        style="@style/SignupButton"
+        android:layout_below="@+id/lblPathDesc"
+        android:layout_marginTop="24dp"
+        />
+
+    <TextView android:id="@+id/lblOr" android:text="@string/sup_detail_or"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/auth_button"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:maxWidth="@dimen/signup_btn_width"
+        android:textColor="@color/promptwhite"
+        android:textAlignment="center">
+    </TextView>
+
+    <Button android:id="@+id/btnEmailAuth" android:text="@string/btnEmailAddr"
+        style="@style/SignupButton"
+        android:layout_below="@+id/lblOr"
+        android:layout_marginTop="15dp"
+        android:onClick="EmailVerification">
+    </Button>
+</RelativeLayout>

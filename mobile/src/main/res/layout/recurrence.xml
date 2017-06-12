@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.Recurrence">
+
+    <TextView android:id="@+id/reptDelivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+
+    <TextView android:id="@+id/reptRepeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/reptDelivery"
+        android:textSize="@dimen/lbl_med_size"
+        android:text="@string/repeat">
+    </TextView>
+
+    <Button android:id="@+id/reptBtnDaily"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/daily"
+        android:onClick="ShowDailyMenu"
+        android:layout_below="@+id/reptRepeat"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true">
+    </Button>
+    <Button android:id="@+id/reptBtnWeekly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly"
+        android:onClick="ShowWeeklyMenu"
+        android:layout_below="@+id/reptRepeat"
+        android:layout_toRightOf="@+id/reptBtnDaily"
+        android:layout_toEndOf="@+id/reptBtnDaily">
+    </Button>
+    <Button android:id="@+id/reptBtnMonthly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/monthly"
+        android:onClick="ShowMonthlyMenu"
+        android:layout_below="@+id/reptRepeat"
+        android:layout_toRightOf="@+id/reptBtnWeekly"
+        android:layout_toEndOf="@+id/reptBtnWeekly">
+    </Button>
+
+    <TextView android:id="@+id/reptEvery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/every"
+        android:visibility="gone"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </TextView>
+
+    <EditText android:id="@+id/reptPeriod"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:visibility="gone"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_toRightOf="@+id/reptRepeat"
+        android:layout_toEndOf="@+id/reptRepeat"
+        android:textAlignment="textEnd"
+        android:layout_gravity="end">
+    </EditText>
+
+    <TextView android:id="@+id/reptEveryTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/day_after"
+        android:visibility="gone"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_toRightOf="@+id/reptPeriod"
+        android:layout_toEndOf="@+id/reptPeriod"
+        android:layout_marginTop="15dp">
+    </TextView>
+
+    <CheckBox android:id="@+id/reptSun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sunday_abbr"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptMon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/monday_abbr"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_toRightOf="@+id/reptSun"
+        android:layout_toEndOf="@+id/reptSun"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptTue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tuesday_abbr"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_toRightOf="@+id/reptMon"
+        android:layout_toEndOf="@+id/reptMon"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptWed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wednsday_abbr"
+        android:layout_below="@+id/reptBtnDaily"
+        android:layout_toRightOf="@+id/reptTue"
+        android:layout_toEndOf="@+id/reptTue"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptThr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/thursday_abbr"
+        android:layout_below="@+id/reptSun"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptFri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/friday_abbr"
+        android:layout_below="@+id/reptSun"
+        android:layout_toRightOf="@+id/reptThr"
+        android:layout_toEndOf="@+id/reptThr"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+    <CheckBox android:id="@+id/reptSat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/saturday_abbr"
+        android:layout_below="@+id/reptSun"
+        android:layout_toRightOf="@+id/reptFri"
+        android:layout_toEndOf="@+id/reptFri"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp">
+    </CheckBox>
+
+    <TextView android:id="@+id/reptUntil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/reptBtnDaily"
+        android:textSize="@dimen/lbl_med_size"
+        android:text="@string/stopafter">
+    </TextView>
+
+    <RadioButton android:id="@+id/reptOccur"
+        android:onClick="RdoOccurOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reptUntil"
+        android:layout_alignLeft="@+id/reptThr"
+        android:layout_alignStart="@+id/reptThr"
+        android:layout_marginTop="20dp">
+    </RadioButton>
+    <EditText android:id="@+id/reptOccurNbr"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:layout_alignBottom="@+id/reptOccur"
+        android:layout_toRightOf="@+id/reptOccur"
+        android:layout_toEndOf="@+id/reptOccur"
+        android:textAlignment="textEnd"
+        android:layout_gravity="end">
+    </EditText>
+    <TextView android:id="@+id/reptOccurLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/occurrences"
+        android:layout_alignBaseline="@+id/reptOccur"
+        android:layout_toRightOf="@+id/reptOccurNbr"
+        android:layout_toEndOf="@+id/reptOccurNbr"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp">
+    </TextView>
+
+    <RadioButton android:id="@+id/reptPickDay"
+        android:onClick="PickEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reptOccur"
+        android:layout_alignLeft="@+id/reptThr"
+        android:layout_alignStart="@+id/reptThr"
+        android:text="@string/dateof"
+        android:layout_marginTop="15dp">
+    </RadioButton>
+    <TextView android:id="@+id/reptEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/taptochoose"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignBaseline="@+id/reptPickDay"
+        android:layout_toRightOf="@+id/reptPickDay"
+        android:layout_toEndOf="@+id/reptPickDay">
+    </TextView>
+
+    <RadioButton android:id="@+id/reptForever"
+        android:onClick="RdoForeverOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reptPickDay"
+        android:layout_alignLeft="@+id/reptThr"
+        android:layout_alignStart="@+id/reptThr"
+        android:layout_marginTop="15dp"
+        android:text="@string/forever" >
+    </RadioButton>
+
+    <Button android:id="@+id/reptCan"
+        android:onClick="PickCancelRecur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:layout_toLeftOf="@+id/reptFinish"
+        android:layout_toStartOf="@+id/reptFinish"
+        android:layout_alignParentBottom="true"/>
+
+    <Button android:id="@+id/reptFinish"
+        android:onClick="PickFinishRecur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/finish"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+
+</RelativeLayout>

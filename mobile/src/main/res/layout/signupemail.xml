@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.SignupEmail">
+
+    <TextView android:id="@+id/lblEmailAddr_SE" android:text="@string/eml_detail_addr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/promptwhite"
+        android:textSize="@dimen/lbl_big_size">
+    </TextView>
+
+    <EditText android:id="@+id/txtEmailAddr_SE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblEmailAddr_SE"
+        android:layout_marginTop="35dp"
+        android:textColor="@color/promptwhite"
+        android:textSize="@dimen/txt_edit_size"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:hint="@string/eml_edit_hint">
+        <requestFocus />
+    </EditText>
+
+    <Button android:id="@+id/btnEmailSend_SE" android:text="@string/btnEmailSend"
+        style="@style/SignupButton"
+        android:layout_below="@+id/txtEmailAddr_SE"
+        android:layout_marginTop="15dp"
+        android:onClick="EmailCreateAcct">
+    </Button>
+
+    <TextView android:id="@+id/lblInform_SE" android:text="@string/eml_detail_print"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnEmailSend_SE"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/promptwhite">
+    </TextView>
+
+    <TextView android:id="@+id/lblError_SE" android:text="@string/eml_detail_err"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblInform_SE"
+        android:layout_margin="15dp"
+        android:textColor="@color/promptblue">
+    </TextView>
+
+</RelativeLayout>

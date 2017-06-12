@@ -1,0 +1,61 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SignupTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/promptblue</item>
+        <item name="colorPrimaryDark">@color/promptbluedk</item>
+        <item name="colorAccent">@color/promptblueac</item>
+        <item name="android:windowBackground">@color/promptblue</item>
+    </style>
+
+    <style name="CustomDigitsTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:textColorPrimary">@color/promptwhite</item>
+        <item name="android:textColorSecondary">@color/promptwhite</item>
+        <item name="android:windowBackground">@color/promptblue</item>
+        <item name="android:textColorLink">@color/promptblueex</item>
+        <item name="colorAccent">@color/promptbluedk</item>
+    </style>
+
+    <style name="SignupButton" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/promptwhite</item>
+        <item name="android:background">@color/promptbluedk</item>
+        <item name="android:textSize">@dimen/signup_btn_text</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:width">@dimen/signup_btn_width</item>
+    </style>
+
+    <style name="normalText">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/promptwhite</item>
+    </style>
+
+    <style name="HorzBar">
+        <item name="android:text">@string/blank</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textSize">4sp</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

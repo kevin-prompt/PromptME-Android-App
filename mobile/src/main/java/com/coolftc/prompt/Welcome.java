@@ -1,0 +1,160 @@
+package com.coolftc.prompt;
+
+import static com.coolftc.prompt.Constants.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import com.digits.sdk.android.Digits;
+import com.digits.sdk.android.InviteFactoryMessageCallback;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import io.fabric.sdk.android.Fabric;
+
+/**
+ *  The Welcome screen is the entry point into the application.  Upon first
+    use it will notice the user needs to proceed to the signup process.  If
+    the user is returning, this screen provides a path to direct entry of a
+    prompt (for themselves), or navigation to a list of contacts that could
+    be sent a prompt.  It also does a quick check to validate connectivity.
+
+ */
+public class Welcome extends AppCompatActivity {
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Set up main view and menu.
+        setContentView(R.layout.welcome);
+
+        // In order to skip signup, use this method (otherwise comment out)
+        Account acct = new Account(this, true); //LoadUser();
+
+        // Google Play?
+        isGooglePlayServicesAvailable(this);
+
+        // Kick off service to get GCM setup
+        Intent sIntent = new Intent(this, Refresh.class);
+        startService(sIntent);
+
+        // Check if user needs to sign up.
+        if (acct.ticket.length() == 0) {
+            Intent intent = new Intent(this, Signup.class);
+            startActivity(intent);
+        }
+        else {
+            // Check that system is up.
+            new CheckRegistryTask(this).execute(acct.ticket);
+        }
+
+        DisplayAccount();
+    }
+
+    private void DisplayAccount(){
+        TextView holdView;
+
+        Account acct = new Account(this, true);
+
+        holdView = (TextView) this.findViewById(R.id.entryTicket);
+        if(holdView != null) { holdView.setText(acct.ticket); }
+        holdView = (TextView) this.findViewById(R.id.entryAcctId);
+        if(holdView != null) { holdView.setText(acct.acctIdStr()); }
+        holdView = (TextView) this.findViewById(R.id.entryName);
+        if(holdView != null) { holdView.setText(acct.display); }
+        holdView = (TextView) this.findViewById(R.id.entryUnique);
+        if(holdView != null) { holdView.setText(acct.unique); }
+        holdView = (TextView) this.findViewById(R.id.entryPhoto);
+        if(holdView != null) { holdView.setText(acct.contactPicUri()); }
+    }
+
+    private Account LoadUser(){
+        Account acct = new Account();
+
+        acct.acctId = 1;
+        acct.ticket = "13393021-fb05-4383-b8aa-7f5208129ab7";
+        acct.display = "KevinOne";
+        acct.unique = "kevinone@kafekevin.com";
+        acct.localId = Owner_DBID;
+        acct.confirmed = true;
+        acct.sleepcycle = 2;
+
+        acct.SyncPrime(false, this);
+        return acct;
+    }
+
+    public void JumpConnections(View view) {
+        Intent intent = new Intent(this, ContactPicker.class);
+        startActivity(intent);
+    }
+
+    public void JumpEntry(View view) {
+        Intent intent = new Intent(this, Entry.class);
+        startActivity(intent);
+    }
+
+    private void SystemCheck(boolean isOk) {
+        TextView holdView;
+        String holdLabel;
+
+        holdView = (TextView) this.findViewById(R.id.isRegistered);
+        holdLabel = getResources().getText(R.string.isRegistered) + (isOk ? "YES" : "NO");
+        if (holdView != null) { holdView.setText(holdLabel); }
+    }
+
+    /*
+        This is a quick check to see that there is a network, our server is
+        reachable and the ticket they are using is viable.
+     */
+    private class CheckRegistryTask extends AsyncTask<String, Void, Boolean> {
+        private Context context;
+
+        public CheckRegistryTask(AppCompatActivity activity) {
+            context = activity;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... criteria) {
+            try {
+                WebServices stat = new WebServices();
+                String ticket = criteria[0];
+
+                return !stat.IsNetwork(context) || stat.CheckRegistration(ticket);
+
+            } catch (Exception ex) {
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            SystemCheck(result);
+        }
+    }
+
+    /*
+        The notification functionality relies upon the Google Play Services, which
+        on some implementations of Android might might not be present, just letting
+        the person know.
+     */
+    public boolean isGooglePlayServicesAvailable(AppCompatActivity main) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(main);
+        if(status != ConnectionResult.SUCCESS) {
+            if(googleApiAvailability.isUserResolvableError(status)) {
+                googleApiAvailability.getErrorDialog(main, status, KY_PLAYSTORE).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.SignupConfirm">
+
+    <TextView android:id="@+id/lblConfirmCode_SC" android:text="@string/vrf_detail_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/promptwhite"
+        android:textSize="@dimen/lbl_big_size">
+    </TextView>
+
+    <TextView android:id="@+id/lblTargetAddr_SC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblConfirmCode_SC"
+        android:textColor="@color/promptblueex"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+
+    <EditText android:id="@+id/txtConfirmCode_SC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblTargetAddr_SC"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/promptwhite"
+        android:textSize="@dimen/txt_edit_size"
+        android:inputType="number"
+        android:maxLines="1"
+        android:hint="@string/vrf_edit_hint">
+        <requestFocus />
+    </EditText>
+
+    <Button android:id="@+id/btnConfirmSend_SC" android:text="@string/btnConfirmCode"
+        style="@style/SignupButton"
+        android:layout_below="@+id/txtConfirmCode_SC"
+        android:layout_marginTop="15dp"
+        android:onClick="Verification">
+    </Button>
+
+    <TextView android:id="@+id/lblInform_SC" android:text="@string/vrf_detail_print"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnConfirmSend_SC"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/promptwhite">
+    </TextView>
+
+    <Button android:id="@+id/btnConfirmResend_SC" android:text="@string/btnResendCode"
+        style="@style/SignupButton"
+        android:layout_below="@+id/lblInform_SC"
+        android:layout_marginTop="25dp"
+        android:onClick="ResendCode">
+    </Button>
+
+    <TextView android:id="@+id/lblError_SC" android:text="@string/vrf_detail_err"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblInform_SC"
+        android:layout_margin="15dp"
+        android:textColor="@color/promptblue">
+    </TextView>
+
+</RelativeLayout>

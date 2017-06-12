@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "800396557293",
+    "firebase_url": "https://future-note.firebaseio.com",
+    "project_id": "future-note",
+    "storage_bucket": "future-note.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800396557293:android:a74642eb150265d9",
+        "android_client_info": {
+          "package_name": "com.coolftc.prompt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800396557293-b9hjih75ojgcsvif8k14mdkmbbuhasni.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coolftc.prompt",
+            "certificate_hash": "2dc4e649626f083f8c1cb670361bd04f880362ca"
+          }
+        },
+        {
+          "client_id": "800396557293-1vjsm20kfod7qu46rq6dbf6oabneumka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1tyIldV1wkJvnZSa7AjkB8iuEpXCCXDs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800396557293-1vjsm20kfod7qu46rq6dbf6oabneumka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

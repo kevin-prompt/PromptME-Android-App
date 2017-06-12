@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="promptwhite">#FFFFFF</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="promptbluedk">#0A3C6E</color>
+    <color name="promptblue">#3C648C</color>
+    <color name="promptbluelt">#82A0BE</color>
+    <color name="promptblueex">#C8D2F0</color>
+    <color name="promptblueac">#14283C</color>
+    <color name="promptproblem">#B44040</color>
+</resources>

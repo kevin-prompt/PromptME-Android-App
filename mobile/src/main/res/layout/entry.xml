@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.Entry">
+
+    <ImageView android:id="@+id/sendFacePic"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:contentDescription="@string/img_contactpic"
+        android:src="@drawable/contactdoe_26"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </ImageView>
+    <TextView android:id="@+id/sendContactName"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_toRightOf="@+id/sendFacePic"
+        android:layout_toEndOf="@+id/sendFacePic"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:paddingRight="5dp">
+    </TextView>
+    <TextView android:id="@+id/sendContactExtra"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@+id/sendContactName"
+        android:layout_toRightOf="@+id/sendFacePic"
+        android:layout_toEndOf="@+id/sendFacePic"
+        android:textSize="@dimen/lbl_sml_size"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingStart="5dp">
+    </TextView>
+    <TextView android:id="@+id/sendTargeTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/sendContactExtra"
+        android:layout_centerHorizontal="true"
+        android:onClick="NewExactTime"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+    <TextView android:id="@+id/sendRecurTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/sendTargeTime"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/lbl_med_size">
+    </TextView>
+
+    <TextView android:id="@+id/lblDisplayBar" style="@style/HorzBar"
+        android:layout_below="@+id/sendRecurTime">
+    </TextView>
+
+    <Spinner android:id="@+id/sendTimeName"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblDisplayBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingStart="5dp"
+        android:layout_marginTop="15dp"
+        android:entries="@array/time_name">
+    </Spinner>
+    <Spinner android:id="@+id/sendTimeAdj"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblDisplayBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingStart="5dp"
+        android:layout_marginTop="15dp"
+        android:entries="@array/time_adj">
+    </Spinner>
+
+    <CheckBox android:id="@+id/sendRecure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repeat_propmpt"
+        android:onClick="ShowRecurring"
+        android:layout_below="@+id/sendTimeName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingTop="10dp">
+    </CheckBox>
+
+
+    <EditText android:id="@+id/sendMessage"
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+        android:hint="@string/message"
+        android:ems="10"
+        android:layout_marginRight="75dp"
+        android:layout_marginEnd="75dp"
+        android:layout_below="@+id/sendRecure"
+        android:layout_marginTop="15dp">
+    </EditText>
+
+    <Button android:id="@+id/sendSendBtn" android:text="@string/send"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:onClick="SendMessage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/sendRecure"
+        android:layout_marginTop="25dp">
+    </Button>
+
+</RelativeLayout>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\721c5de0910cf906b36a14af76bcb1a7730349aa\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e6c78908be592e9778b503f1328f4e40a9e37615\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.gradle\caches\modules-2\files-2.1\com.googlecode.libphonenumber\libphonenumber\7.4.4\83c625ae43095ffcdc82c79674bbf1a4da48d714\libphonenumber-7.4.4.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="83c625ae43095ffcdc82c79674bbf1a4da48d714">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\libphonenumber-7.4.4_2df13f7d33207eda728d73e19ad7a93f38a63f6b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\36bb5fc39e3629e36566833ae46533a7e3d860f5\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d4cf6227dd6a2ceff0f7dcf0c324380b7abf2c28">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c6537659f322479d952a737d633d2d082957958c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\62764ed64f068bb845a2a420f5cc7c9c0449fba4\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="4803488041c259d0b6d81ca4255379ab8a7e8dfe">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_996477956568551aa33feb3f38e07f6a6c11b0c5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\c13f06959cd7569c1848ea1a185a283bdd0cf205\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="88848548ab56d4fbf3d2d1b0c85bf1ff9b4c1f4b">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_f8a148d53f84f114adb1380f7afa561635ea4a6f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\d3fe91587fddf68a63a5e9b8291e083046dfe543\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="95519720620b553f63afc789beba9ad582807f7c">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_a4c2cae90260e05280708eebdf6d2dfa25984a5a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.2.0\f7873a2ebde246a45c2a8d6f3247108b4c88a879\okhttp-3.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="f7873a2ebde246a45c2a8d6f3247108b4c88a879">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\okhttp-3.2.0_ee105478bd52ebe62310d1aad09679692d5b55dc\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit-mock\2.0.2\befed42cb4fb8e85ef205b3facfd5b4e43fc1c8f\retrofit-mock-2.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="befed42cb4fb8e85ef205b3facfd5b4e43fc1c8f">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\retrofit-mock-2.0.2_b9b03cb9ead3fde8ea488f7d9bca6f4d083daa32\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\9abb82458be9581c8884bfbe2780644c4cc30fd7\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="8a36d229011e75f0caef408e1adf0d3fd4d94e02">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_9484970d366a7d1bd66326e2adb69272657389de\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\8643d2e58c86a9aed540ac03d75920531984affa\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_407b1335d7923feee7c043e43315638d1b1f3d21\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.7\751f548c85fa49f330cecbb1875893f971b33c4e\gson-2.7.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="751f548c85fa49f330cecbb1875893f971b33c4e">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\gson-2.7_40ea23a75d2fbf467351160e880c3a406aea7b9a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\a404baef946aeeba5b1e38b56045d6ce132b044f\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="343ad59d9fb3bbf6ab99baafad859eb4b0fecc02">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_1fdbc17636179aee8088c768788f473fd8493808\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\25.3.1\support-annotations-25.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.3.1_b7a83161faa949bd4c69c1711bcbcfb9642286d1\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\5d968a3fe944a9ea803d5115f4a14e0460ad9217\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="3dee4ce5844d39d843d503fb8fe04e51e5bfffac">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_9c1d45743b8bb6e68e06550ffe3a019e8af30c35\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_eb5b387c3a9a23a073c93e92cd67836c79ba4e1b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\29f83c5e0d6053f641c87fe7f698e75c64fd755f\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_7177f87dd62a7ddd616651fc5e33e08f72c5e8ee\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\50d4ec60d55ea2b47a6205e50a4d623712a5cc8e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="3b7173b3df4c7029699919414400041f64519e34">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_fb88019a45aca0dab6e5fec4fbeb2731dd55efcc\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\ddfe2627ab7ffcfdc4d082f368d7909c866c60e2\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e57cf7832f1338f802123d9f793e5510219f1838\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\5160918d76345b360eebe32e555665cebb8fdc0f\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d463d8eec1e6c1feef2cec6675ccb47e37c12ee1">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6a6e998574041e2f0ea85b953c1ed9ed186695e9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\2fd473d77629350f08de44e5e3211f327a4f5695\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="a440fb3fec30ff925e9f601cc458fb6671834cb2">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_73dd76123869dbfd336bd37e430e521bd147ce86\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit\2.0.2\43eeae0b9fb087bb3194ba59ab63a38a32fbf3e\retrofit-2.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="043eeae0b9fb087bb3194ba59ab63a38a32fbf3e">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\retrofit-2.0.2_6dd0e80166ae1e0313e7343fcc3c6f4ef39e4d6a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\c0c585f1e7bdc5d7178933422d64bf85320a9cd5\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="618485fef3ebe12127f7622abbc9b5b39057b5c2">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c68ddb77118da4881f57bf50a065e33ab709fe1c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\6a413103c10d45ee57a992fb6cdbd031df0900d5\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="18b5697c65c4fe5b7381613b8b8ae9ac52e26fa7">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_168394a1371c0c28682c75cff1cc128475a79825\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\4da46a054e8c991963c4d05312759f70f562993e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="29864b68d990da5b14dbff9fbecf10600bcf7603">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ed65146046542a4a0cecbe2afdde242e7d422569\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\a4c04237472b46ed8e1d2cba052042606aece44e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="89e2979b4c66a71d0aa13b9bc98786e27073c475">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_f776814f7cdd1d19a061ad3e741551c6befbe387\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\9024ef90ae151d6533bca4def3e123bd9ca2daad\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="147edbec6bcea71fd675ecc63cae3319637ec2b4">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c9d0a2582e82e9c3301b8aafa0be199f13b7f748\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\5d655fb91b341de876173127b4f197053126d888\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="4b6d9b70f93bbeb872d0948bc064ae3f3f2bcbac">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6e9110903d09395ad22223a50c12a61894ed62f8\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="71dcd05a27818ab31a06e263b3b3a38eee49b1c4">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_a5661c518ed835f37ca03ff9d8d5e1925c4c98c8\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\3686a7206a08f940c87a4fded5ea5bfe3df3cd04\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_d9fd92f10167ef9c4e9040ab452897b94d72b9d9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\kevin\.android\build-cache\22babf3401ed711e61f619b09056127d0a1764e4\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="dd763e0269f2854f5828ae62dd968b80bff6a0db">
+        <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e4e7bf7065e75f9b0b1acacfce41f96a2e755c96\classes.dex" />
+    </item>
+
+</items>
