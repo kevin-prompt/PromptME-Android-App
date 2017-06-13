@@ -25,8 +25,8 @@
     <string name="eml_edit_hint">Your Email</string>
     <string name="vrf_detail_code">Enter the code we sent to</string>
     <string name="vrf_edit_hint">Confirmation Code</string>
-    <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Propt can discover you by email address.</string>
-    <string name="vrf_detail_err">There is a problem your verification code.  Reenter the code or request a new code.  Make sure you are connected to the internet, too.</string>
+    <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Prompt can discover you by email address.</string>
+    <string name="vrf_detail_err">There is a problem with your verification code.  Reenter the code or request a new code.  Make sure you are connected to the internet, too.</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>

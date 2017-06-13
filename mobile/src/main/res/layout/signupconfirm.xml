@@ -54,19 +54,20 @@
         android:textColor="@color/promptwhite">
     </TextView>
 
-    <Button android:id="@+id/btnConfirmResend_SC" android:text="@string/btnResendCode"
-        style="@style/SignupButton"
-        android:layout_below="@+id/lblInform_SC"
-        android:layout_marginTop="25dp"
-        android:onClick="ResendCode">
-    </Button>
-
     <TextView android:id="@+id/lblError_SC" android:text="@string/vrf_detail_err"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblInform_SC"
         android:layout_margin="15dp"
-        android:textColor="@color/promptblue">
+        android:textColor="@color/promptproblem"
+        android:visibility="gone">
     </TextView>
+
+    <Button android:id="@+id/btnConfirmResend_SC" android:text="@string/btnResendCode"
+        style="@style/SignupButton"
+        android:layout_below="@+id/lblError_SC"
+        android:layout_marginTop="25dp"
+        android:onClick="ResendCode">
+    </Button>
 
 </RelativeLayout>
