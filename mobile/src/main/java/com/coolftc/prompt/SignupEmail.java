@@ -75,13 +75,15 @@ public class SignupEmail extends AppCompatActivity {
     private void  AccountCreated(Account acct){
         if(acct.ticket.length() > 0) {
             if (!acct.confirmed) {
-                // Verify Screen
+                // Verify Screen - this is the normal path.
                 Intent confirmScreen = new Intent(this, SignupConfirm.class);
                 confirmScreen.putExtra(IN_DSPL_TGT, acct.unique);
                 startActivity(confirmScreen);
             }
             else {
                 // Already Verified? OK...send to welcome.
+                Intent intent = new Intent(this, Welcome.class);
+                startActivity(intent);
             }
         }
         else {

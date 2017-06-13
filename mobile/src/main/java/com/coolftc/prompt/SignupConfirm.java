@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,14 +77,20 @@ public class SignupConfirm extends AppCompatActivity {
      */
     private void SignupComplete(Account acct){
 
-        if(!acct.confirmed){
-            TextView holdView = (TextView)findViewById(R.id.lblError_SC);
-            if (holdView != null) holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));
-        }
-        else{
+        if(acct.confirmed) {
             // All set... onward to welcome.
             Intent intent = new Intent(this, Welcome.class);
             startActivity(intent);
+        }else{
+            // The error copy pushes the Resend button down when it is made visible.
+            // To make sure the button stays visible, hide the input device.
+            TextView holdView = (TextView) findViewById(R.id.lblError_SC);
+            if (holdView != null) holdView.setVisibility(View.VISIBLE);
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
