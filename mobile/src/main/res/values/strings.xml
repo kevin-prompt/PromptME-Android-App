@@ -52,6 +52,7 @@
         <item>Thursday</item>
         <item>Friday</item>
         <item>Saturday</item>
+        <item>Fortnight</item>
         <item>January</item>
         <item>February</item>
         <item>March</item>
@@ -69,6 +70,7 @@
         <item></item>
         <item>Morning</item>
         <item>Afternoon</item>
+        <item>Evening</item>
         <item>Night</item>
         <item>Early</item>
         <item>Late</item>
@@ -123,6 +125,7 @@
     <string name="recur_wek_day">Repeat every %4$s until %3$s.</string>
     <string name="recur_wek_end">Repeat every %4$s forever.</string>
     <string name="repeat_propmpt">Repeat this Prompt message</string>
+    <string name="entry_help">Select time and enter a message.</string>
     <string name="www_domain">www.coolftc.com</string>
     <string name="message">Message</string>
     <string name="send">Send</string>
