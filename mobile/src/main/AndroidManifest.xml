@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--A complete log of the merged Manifest is in dir build/outputs/logs/manifest-merger-<debug/release>-report.txt. -->
+<?xml version="1.0" encoding="utf-8"?><!-- A complete log of the merged Manifest is in dir build/outputs/logs/manifest-merger-<debug/release>-report.txt. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.coolftc.prompt">
+
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="false"
@@ -18,29 +19,36 @@
         <activity android:name=".Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter android:label="@string/lblDeepLinkWelcome">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="@string/www_domain" android:pathPrefix="/promptme" />
-                <data android:scheme="coolftc" android:host="promptme" />
+                <data
+                    android:host="@string/www_domain"
+                    android:pathPrefix="/promptme"
+                    android:scheme="http" />
+                <data
+                    android:host="promptme"
+                    android:scheme="coolftc" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ContactPicker"
-            android:windowSoftInputMode="stateHidden"
-            android:parentActivityName=".Welcome"/>
-        <activity android:name=".Entry"
-            android:parentActivityName=".Welcome"/>
+            android:parentActivityName=".Welcome"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".Settings" />
+        <activity
+            android:name=".Entry"
+            android:parentActivityName=".Welcome" />
         <activity android:name=".ExactTime" />
         <activity android:name=".Recurrence" />
         <activity
             android:name=".History"
-            android:windowSoftInputMode="stateHidden"
-            android:parentActivityName=".Welcome">
-        </activity>
+            android:parentActivityName=".Welcome"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Signup"
             android:screenOrientation="portrait"
@@ -57,20 +65,20 @@
         <service
             android:name=".Refresh"
             android:exported="false"
-            android:label="@string/srv_name" >
-        </service>
+            android:label="@string/srv_name" />
         <service
             android:name=".RefreshInstance"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter> />
+            </intent-filter>
+            />
         </service>
         <service
             android:name=".Notification"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
@@ -83,7 +91,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
     </application>
 
 </manifest>

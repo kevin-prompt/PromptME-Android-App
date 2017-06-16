@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/set_name">
+        <EditTextPreference android:key="prompt.display"
+            android:title="@string/prf_DisplayName"
+            android:summary="@string/prf_DisplayNameSum"
+            android:defaultValue="@string/blank">
+        </EditTextPreference>
+        <ListPreference android:key="prompt.sleepcycle"
+            android:title="@string/prf_SleepCycle"
+            android:dialogTitle="@string/prf_SleepCycle"
+            android:summary="@string/prf_SleepCycleSum"
+            android:entries="@array/sleepcycle"
+            android:entryValues="@array/sleepcycle_values"
+            android:defaultValue="@string/prf_SleepCycleDefault">
+        </ListPreference>
+        <CheckBoxPreference android:key="1001"
+            android:title="@string/prf_VibrateOn"
+            android:defaultValue="false">
+        </CheckBoxPreference>
+        <CheckBoxPreference android:key="1002"
+            android:title="@string/prf_Use24Clock"
+            android:summary="@string/prf_Use24ClockSum"
+            android:defaultValue="false">
+        </CheckBoxPreference>
+        <ListPreference android:key="1003"
+            android:title="@string/prf_PickDateFormat"
+            android:dialogTitle="@string/prf_PickDateFormat"
+            android:summary="@string/prf_PickDateFormatSum"
+            android:entries="@array/dateorder"
+            android:entryValues="@array/dateorder_values"
+            android:defaultValue="@string/prf_PickDateFormatDefault">
+        </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

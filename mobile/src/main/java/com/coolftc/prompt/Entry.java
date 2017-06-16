@@ -408,9 +408,13 @@ public class Entry extends AppCompatActivity {
                     recurEnd = data.getExtras().getString(IN_ENDTIME);
                     recurNbr = data.getExtras().getInt(IN_ENDNBR);
                     ShowDetails();
-                } else {        // Not OK, just set check box to false.
+                } else {        // Not OK, set check box to false and reset local data
                     CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
                     if(holdChkBox!=null) { holdChkBox.setChecked(false); }
+                    recurUnit = RECUR_INVALID;
+                    recurPeriod = RECUR_INVALID;
+                    recurNbr = RECUR_INVALID;
+                    recurEnd = "";
                 }
         }
     }

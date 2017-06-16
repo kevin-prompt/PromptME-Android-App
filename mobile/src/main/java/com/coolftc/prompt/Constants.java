@@ -4,8 +4,9 @@ import android.provider.BaseColumns;
 
 public class Constants {
 
-    /* No one is suppose to actually use this class.  To access the values
-     * use a import static com.coolftc.prompt.Constants.*;
+    /*
+     *  No one is suppose to actually use this class.  To access the values
+     *  use a import static com.coolftc.prompt.Constants.*;
      */
     private Constants(){}
 
@@ -25,8 +26,32 @@ public class Constants {
     public static final String SP_REG_FRIEND_AGE = "prompt.friendage";
     public static final String SP_REG_DBID = "prompt.localdb";
     public static final String SP_REG_CONFIRM = "prompt.confirmed";
+    public static final String SP_REG_FORCE = "prompt.force";
     public static final long Owner_ID = -1;
 
+    /*
+     *  The various display date format templates.  The time has two variations, 24 hour clock and AM/PM.
+     *  The dates have three major variations based on cultural ordering of elements, and some additional
+     *  play based on separators and how Months are represented.
+     */
+    public static final String DB_fmtDateShrtMiddle = "MM/dd/yyyy";         // On wikipedia these 3 formats, most commonly
+    public static final String DB_fmtDateShrtLittle = "dd/MM/yyyy";         // used across countries, are called
+    public static final String DB_fmtDateShrtBig = "yyyy/MM/dd";            // big/little/middle Endian.
+    public static final String DB_fmtDateMonthMiddle = "MMM dd, yyyy";      // Middle = m/d/y used in USA
+    public static final String DB_fmtDateMonthLittle = "dd MMM, yyyy";      // Little = d/m/y used in India, Russia, South America
+    public static final String DB_fmtDateMonthBig = "yyyy, MMM dd";         // Big = y/m/d used in China
+    public static final String DB_fmtLongMonthMiddle = "MMMM dd, yyyy";     // Full Month Name = MMMM
+    public static final String DB_fmtLongMonthLittle = "dd MMMM, yyyy";     //
+    public static final String DB_fmtLongMonthBig = "yyyy, MMMM dd";        //
+    public static final String DB_fmtDateNoYearBigMid = "MMM dd";           // Without the year, big & middle the same
+    public static final String DB_fmtDateNoYearLittle = "dd MMM";
+    public static final String DB_fmtDateTime = "h:mmaa";
+    public static final String DB_fmtDateTime24 = "kk:mm  ";
+    public static final String DB_fmtDateTimeZone = "h:mmaa z";
+    public static final String DB_fmtDayOfWeek = "EEEE";
+    public static final String BAD_TIME = "99:99";
+    // Date Formatting Constants
+    public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
 
     /* Constants used as codes for cross Activity communications. */
     public static final String KEVIN_SPEAKS = "Kevin Speaks";

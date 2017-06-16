@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import com.digits.sdk.android.Digits;
@@ -42,7 +45,11 @@ public class Welcome extends AppCompatActivity {
         // Google Play?
         isGooglePlayServicesAvailable(this);
 
-        // Kick off service to get GCM setup
+        /* The Refresh service is important as it is the primary way
+         * most of the data (SQL and Web Service) is refreshed. For
+         * now this only exists in Welcome, but is run upon each creation.
+         * It may end up needing to be called more often.
+         */
         Intent sIntent = new Intent(this, Refresh.class);
         startService(sIntent);
 
@@ -57,6 +64,27 @@ public class Welcome extends AppCompatActivity {
         }
 
         DisplayAccount();
+    }
+
+    /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar
+     * while hiding less used ones on the traditional menu.  The xml configuration determines how they
+     * are shown. The system will call the onCreate when the user presses the menu button.
+     * Note: Android refuses to show icon+text on the ActionBar in portrait, so deal with it. */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.welcome_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mnuWelcomeSettings:
+                startActivity(new Intent(this, Settings.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void DisplayAccount(){

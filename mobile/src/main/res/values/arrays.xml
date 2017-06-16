@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="time_name">
+        <item>Exact Time</item>
+        <item>Today</item>
+        <item>Tonight</item>
+        <item>Tomorrow</item>
+        <item>Weekend</item>
+        <item>Week</item>
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Fortnight</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="time_adj">
+        <item></item>
+        <item>Morning</item>
+        <item>Afternoon</item>
+        <item>Evening</item>
+        <item>Night</item>
+        <item>Early</item>
+        <item>Late</item>
+        <item>Next</item>
+    </string-array>
+    <string-array name="dateorder">
+        <item>02/21/2017 \n(MM/DD/YYYY)</item>
+        <item>21/02/2017 \n(DD/MM/YYYY)</item>
+        <item>2017/21/02 \n(YYYY/MM/DD)</item>
+    </string-array>
+    <string-array name="dateorder_values">
+        <item>mid</item>
+        <item>sml</item>
+        <item>big</item>
+    </string-array>
+    <string-array name="sleepcycle">
+        <item>Unpredictable</item>
+        <item>Early Bird</item>
+        <item>9 to 5</item>
+        <item>Night Owl</item>
+    </string-array>
+    <string-array name="sleepcycle_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>

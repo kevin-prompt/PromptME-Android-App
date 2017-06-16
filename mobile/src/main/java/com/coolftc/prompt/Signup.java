@@ -54,9 +54,6 @@ public class Signup extends AppCompatActivity {
 
         // Set up main view and menu.
         setContentView(R.layout.signup);
-        // Kick off service to make sure GCM setup
-        Intent sIntent = new Intent(this, Refresh.class);
-        startService(sIntent);
 
         // The Digits button can only be manipulated in code, xml does not work.
         // For the most part, I am trying to get the button to match the one I
