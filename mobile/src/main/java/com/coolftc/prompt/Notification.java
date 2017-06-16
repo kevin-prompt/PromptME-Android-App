@@ -40,6 +40,7 @@ public class Notification extends FirebaseMessagingService {
                         .bigText(msg))
                 .setContentText(msg);
 
+        mBuilder.setVibrate(new long[] { 0, 1000});
         mBuilder.setContentIntent(contentIntent);
         notificationMgr.notify(NOTIFICATION_ID, mBuilder.build());
     }

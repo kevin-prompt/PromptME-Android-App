@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Prompt</string>
     <string name="srv_name">Refresh</string>
+    <string name="set_name">Settings</string>
     <string name="isRegistered">Registered? </string>
     <string name="msgNoNet">Network Connection not found.</string>
     <string name="blank"></string>
@@ -27,6 +28,18 @@
     <string name="vrf_edit_hint">Confirmation Code</string>
     <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Prompt can discover you by email address.</string>
     <string name="vrf_detail_err">There is a problem with your verification code.  Reenter the code or request a new code.  Make sure you are connected to the internet, too.</string>
+    <string name="prf_Use24Clock">Use 24 Hour Clock</string>
+    <string name="prf_Use24ClockSum">Display time values using a 24 Hour clock format (not AM-PM).</string>
+    <string name="prf_PickDateFormat">Change Date Format</string>
+    <string name="prf_PickDateFormatSum">Choose the order of days, months and years in short displayed dates.</string>
+    <string name="prf_PickDateFormatDefault">MM/dd/yyyy</string>
+    <string name="prf_DisplayName">Name</string>
+    <string name="prf_DisplayNameSum">Change your name if you like.</string>
+    <string name="prf_SleepCycle">Sleep Cycle</string>
+    <string name="prf_SleepCycleSum">Choose a profile help Prompt know when you are awake.</string>
+    <string name="prf_SleepCycleDefault">2</string>
+    <string name="prf_VibrateOn">Vibrate</string>
+    <string name="prf_VibrateOnSum">Vibrate on incoming Prompts.</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
@@ -38,44 +51,6 @@
     <string name="contact_inv">Pending Invitations</string>
     <string name="contact_all">Full Contacts</string>
     <string name="deliver">Deliver</string>
-    <string-array name="time_name">
-        <item>Exact Time</item>
-        <item>Today</item>
-        <item>Tonight</item>
-        <item>Tomorrow</item>
-        <item>Weekend</item>
-        <item>Week</item>
-        <item>Sunday</item>
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
-        <item>Fortnight</item>
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
-    </string-array>
-    <string-array name="time_adj">
-        <item></item>
-        <item>Morning</item>
-        <item>Afternoon</item>
-        <item>Evening</item>
-        <item>Night</item>
-        <item>Early</item>
-        <item>Late</item>
-        <item>Next</item>
-    </string-array>
     <string name="title_activity_exact_time">Pick a Time</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
@@ -126,11 +101,15 @@
     <string name="recur_wek_end">Repeat every %4$s forever.</string>
     <string name="repeat_propmpt">Repeat this Prompt message</string>
     <string name="entry_help">Select time and enter a message.</string>
+    <string name="settings">Settings</string>
     <string name="www_domain">www.coolftc.com</string>
     <string name="message">Message</string>
     <string name="send">Send</string>
     <string name="pickdate">Pick Date</string>
     <string name="picktime">Pick Time</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
 

@@ -53,14 +53,17 @@ public class Refresh extends IntentService {
                 ghost.device = FirebaseInstanceId.getInstance().getId();
             }
 
-            // This is more to make sure we stay registered on the server, token is rarely suppose to change.
-            if (ghost.token.length() == 0 || KTime.CalcDateDifference(ghost.tokenAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_DAYS) > 13) {
+            // This is to make sure we stay in sync with the server.  At one point Azure had a 90 life for
+            // token storage, so the date based cycle was to be a keep-alive, but now that is not the case.
+            // Leaving in a once a month upload for now.
+            if (ghost.token.length() == 0 || ghost.force ||
+                    KTime.CalcDateDifference(ghost.tokenAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_DAYS) > 30) {
                 // Get the latest token and save it locally (probably has not changed).
                 ghost.token = FirebaseInstanceId.getInstance().getToken();
-                //ghost.token = InstanceID.getInstance(this).getToken(SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                 ghost.tokenAge = timeNow;
 
                 // Commit the changes and try to tell the server.
+                ghost.force = false;
                 ghost.SyncPrime(true, this);
             }
         } catch (ExpParseToCalendar ex) {

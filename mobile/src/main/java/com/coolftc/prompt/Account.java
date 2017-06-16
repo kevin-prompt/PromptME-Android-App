@@ -29,6 +29,7 @@ public class Account implements Serializable {
     public String tokenAge = "";    // The timestamp of the last token check
     public String device = "";      // The unique device identifier.
     public String friendAge = "";   // The timestamp of the last friend check.
+    public boolean force = false;   // When true the data duplicated on server has changed
     // This subset can also be stored in the Friend DB.
     public String localId = "";     // The local db id of the record.
     public long acctId = 0;         // The id of the user in the Registry (on server).
@@ -96,6 +97,7 @@ public class Account implements Serializable {
         friendAge = registered.getString(SP_REG_FRIEND_AGE, KTime.ParseNow(KTime.KT_fmtDate3339k).toString());
         localId = registered.getString(SP_REG_DBID, "");
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
+        force = registered.getBoolean(SP_REG_FORCE, false);
 
         if(full) {
             // LoadPrime the server data, too.
@@ -139,6 +141,7 @@ public class Account implements Serializable {
         editor.putString(SP_REG_FRIEND_AGE, friendAge);
         editor.putString(SP_REG_DBID, localId);
         editor.putBoolean(SP_REG_CONFIRM, confirmed);
+        editor.putBoolean(SP_REG_FORCE, force);
         editor.apply();
 
         if (full && ticket.length()>0) {
