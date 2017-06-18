@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/set_name">
+    <PreferenceCategory android:key="prompt.settings"
+        android:title="@string/set_name">
         <EditTextPreference android:key="prompt.display"
             android:title="@string/prf_DisplayName"
             android:summary="@string/prf_DisplayNameSum"
@@ -14,8 +15,17 @@
             android:entryValues="@array/sleepcycle_values"
             android:defaultValue="@string/prf_SleepCycleDefault">
         </ListPreference>
+        <RingtonePreference android:key="1000"
+            android:title="@string/prf_Sounds"
+            android:summary="@string/prf_SoundsSum"
+            android:ringtoneType="all"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:defaultValue="@string/blank">
+        </RingtonePreference>
         <CheckBoxPreference android:key="1001"
             android:title="@string/prf_VibrateOn"
+            android:summary="@string/prf_VibrateOnSum"
             android:defaultValue="false">
         </CheckBoxPreference>
         <CheckBoxPreference android:key="1002"

@@ -65,6 +65,7 @@ public class SignupEmail extends AppCompatActivity {
         new AcctCreateTask(SignupEmail.this, getResources().getString(R.string.app_name)).execute(
                 txtEmailAddr,
                 dsplName,
+                getResources().getString(R.string.prf_SleepCycleDefault),
                 "");
     }
 
@@ -87,10 +88,12 @@ public class SignupEmail extends AppCompatActivity {
             }
         }
         else {
-            // Problem creating account
+            // Problem creating account.  Running the Refresh just in case.
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));
+            String holdName = Settings.getDisplayName(this);
+            int holdSleep = Settings.getSleepCycle(this);
         }
     }
 
@@ -102,7 +105,8 @@ public class SignupEmail extends AppCompatActivity {
      ** Creation **
      * 0 - Unique Name (SMS/email)
      * 1 - Display Name
-     * 2 - Custom Data (e.g. external id)
+     * 2 - Sleep Cycle
+     * 3 - Custom Data (e.g. external id)
      */
     private class AcctCreateTask extends AsyncTask<String, Boolean, Account> {
         private ProgressDialog progressDialog;
@@ -147,7 +151,9 @@ public class SignupEmail extends AppCompatActivity {
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
                 acct.display = regData.dname;
-                regData.cname = criteria[2];
+                regData.scycle = Integer.parseInt(criteria[2]);
+                acct.sleepcycle = regData.scycle;
+                regData.cname = criteria[3];
                 acct.custom = regData.cname;
                 regData.timezone = TimeZone.getDefault().getID();
                 acct.timezone = regData.timezone;

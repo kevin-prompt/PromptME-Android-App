@@ -1,6 +1,8 @@
 package com.coolftc.prompt;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,12 +27,15 @@ import static com.coolftc.prompt.Constants.*;
  */
 public class Settings extends AppCompatActivity {
 
+    public static final String PREF_SETTINGS = "prompt.settings";
     public static final String PREF_VIBRATEON = "1001";
     public static final boolean DEFAULT_VIBRATEON = false;
     public static final String PREF_USE24CLOCK = "1002";
     private static final boolean DEFAULT_USE24CLOCK = false;
     public static final String PREF_PICKSHORTDATEFMT = "1003";
     private static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
+    private static final String PREF_DISPNAME = "prompt.display";
+    private static final String PREF_SCYCLE = "prompt.sleepcycle";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,25 @@ public class Settings extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsBasic())
                 .commit();
+    }
+
+    // What name is stored in preferences.
+    public static String getDisplayName(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_DISPNAME, "");
+    }
+
+    // Allow name update to be adjusted programmatically (to initialized it).
+    // Note: This edit does not trigger the onSharedPreferenceChanged().
+    public static void setDisplayName(Context context, String name) {
+        SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        ali.putString(PREF_DISPNAME, name);
+        ali.apply();
+    }
+
+    // What sleep cycle is stored in preferences.
+    public static int getSleepCycle(Context context) {
+        String holdSleep = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SCYCLE, "2");
+        return Integer.parseInt(holdSleep);
     }
 
     // When true, have the device vibrate on incoming prompts.

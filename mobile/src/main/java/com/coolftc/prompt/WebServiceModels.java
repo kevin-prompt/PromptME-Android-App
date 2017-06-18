@@ -38,7 +38,6 @@ public interface  WebServiceModels {
         public String timezone;
         public String dname;
         public int scycle;
-        public String cname;
         public String target;
         public int type;
     }

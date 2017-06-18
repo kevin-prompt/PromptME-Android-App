@@ -78,6 +78,7 @@ public class Signup extends AppCompatActivity {
                 new AcctCreateVerifyTask(Signup.this, getResources().getString(R.string.app_name)).execute(
                         session.getPhoneNumber(),
                         txtDspl,
+                        getResources().getString(R.string.prf_SleepCycleDefault),
                         Long.toString(session.getId()),
                         FTI_DIGIT_VERIFY,
                         holdCredentials.get("X-Auth-Service-Provider"),
@@ -105,11 +106,12 @@ public class Signup extends AppCompatActivity {
     }
 
     /*
-        Called at the end of the account creation/verification task.
+        Called at the end of the account creation/verification task. If the
+        account setup fails, we will actually end up back on this screen.
+        Also, initialize the Settings with the name.
      */
     private void  SignupComplete(Account acct){
-        String holdTicket = acct.ticket;
-        long holdID = acct.acctId;
+        Settings.setDisplayName(this, acct.display);
         Intent intent = new Intent(this, Welcome.class);
         startActivity(intent);
     }
@@ -155,11 +157,12 @@ public class Signup extends AppCompatActivity {
          ** Creation **
          * 0 - Unique Name (SMS/email)
          * 1 - Display Name
-         * 2 - Custom Data (e.g. external id)
+         * 2 - Sleep Cycle
+         * 3 - Custom Data (e.g. external id)
          ** Verification **
-         * 3 - Verify Code (digits, internal)
-         * 4 - Provider Key (for external verification)
-         * 5 - Credential (for external verification)
+         * 4 - Verify Code (digits, internal)
+         * 5 - Provider Key (for external verification)
+         * 6 - Credential (for external verification)
          */
         protected Account doInBackground(String... criteria) {
 
@@ -171,7 +174,9 @@ public class Signup extends AppCompatActivity {
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
                 acct.display = regData.dname;
-                regData.cname = criteria[2];
+                regData.scycle = Integer.parseInt(criteria[2]);
+                acct.sleepcycle = regData.scycle;
+                regData.cname = criteria[3];
                 acct.custom = regData.cname;
                 regData.timezone = TimeZone.getDefault().getID();
                 acct.timezone = regData.timezone;
@@ -186,9 +191,9 @@ public class Signup extends AppCompatActivity {
                     acct.acctId = user.id;
                     if(!regData.verify) {
                         WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
-                        confirm.code = Long.parseLong(criteria[3]);   // code 2 = digits
-                        confirm.provider = criteria[4];
-                        confirm.credential = criteria[5];
+                        confirm.code = Long.parseLong(criteria[4]);   // code 2 = digits
+                        confirm.provider = criteria[5];
+                        confirm.credential = criteria[6];
                         int rtn = ws.Verify(acct.ticket, acct.acctIdStr(), confirm);
                         if (rtn >= 200 && rtn < 300) {
                             acct.confirmed = true;

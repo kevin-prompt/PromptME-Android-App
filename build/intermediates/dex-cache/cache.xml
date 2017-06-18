@@ -250,7 +250,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.3"
-        sha1="2da90e9013679f2288b2fdd9d7a0dd11d684437f">
+        sha1="e559b18d1fae9dd8ec219a8d9560a697ada299d2">
         <dex dex="K:\Applications\Projects\Prompt\Source\PromptAndroid\mobile\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_a5661c518ed835f37ca03ff9d8d5e1925c4c98c8\classes.dex" />
     </item>
     <item
