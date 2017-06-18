@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.digits.sdk.android.Digits;
 import com.digits.sdk.android.InviteFactoryMessageCallback;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.server.converter.StringToIntConverter;
@@ -39,7 +40,7 @@ public class Welcome extends AppCompatActivity {
         // Set up main view and menu.
         setContentView(R.layout.welcome);
 
-        // In order to skip signup, use this method (otherwise comment out)
+        // In order to skip signup, use LoadUser(), otherwise comment out.
         Account acct = new Account(this, true); //LoadUser();
 
         // Google Play?
@@ -64,6 +65,17 @@ public class Welcome extends AppCompatActivity {
         }
 
         DisplayAccount();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /*
+         *  It is a good idea to trigger this service each time Welcome comes up.
+         */
+        Intent sIntent = new Intent(this, Refresh.class);
+        startService(sIntent);
     }
 
     /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar

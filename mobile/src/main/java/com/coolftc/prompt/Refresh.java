@@ -27,6 +27,8 @@ import java.util.List;
 public class Refresh extends IntentService {
     private static final String SRV_NAME = "RefreshService";  // Name can be used for debugging.
     private FriendDB social;
+    // The friendAge is a debounce value for the friend query.
+    private static String friendAge = THE_PAST;
 
     public Refresh() {
         super(SRV_NAME);
@@ -55,21 +57,18 @@ public class Refresh extends IntentService {
 
             // This is to make sure we stay in sync with the server.  At one point Azure had a 90 life for
             // token storage, so the date based cycle was to be a keep-alive, but now that is not the case.
-            // Leaving in a once a month upload for now.
-            if (ghost.token.length() == 0 || ghost.force ||
-                    KTime.CalcDateDifference(ghost.tokenAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_DAYS) > 30) {
+            // Now just do this if the server data needs updating.
+            if (ghost.token.length() == 0 || ghost.force) {
                 // Get the latest token and save it locally (probably has not changed).
-                ghost.token = FirebaseInstanceId.getInstance().getToken();
-                ghost.tokenAge = timeNow;
-
-                // Commit the changes and try to tell the server.
-                ghost.force = false;
-                ghost.SyncPrime(true, this);
+                String holdToken = FirebaseInstanceId.getInstance().getToken();
+                if(holdToken != null) {
+                    ghost.token = holdToken;
+                    ghost.tokenAge = timeNow;
+                    // Commit the changes and try to tell the server.
+                    ghost.force = false;
+                    ghost.SyncPrime(true, this);
+                }
             }
-        } catch (ExpParseToCalendar ex) {
-            // If there is a date problem, clear out the old value.
-            ghost.tokenAge = timeNow;
-            ghost.SyncPrime(false, this);
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntent");
         }
@@ -84,7 +83,7 @@ public class Refresh extends IntentService {
         try {
             social = new FriendDB(this);  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
-            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(ghost.friendAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_MINUTES) > 13) {
+            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_MINUTES) > 10) {
                 WebServices ws = new WebServices();
                 if (ws.IsNetwork(this)) {
                     Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
@@ -94,15 +93,13 @@ public class Refresh extends IntentService {
                     CheckForUpdates(invites, inviteStore);
                     CheckForAdditions(invites,  inviteStore);
                     UpdateContactInfo(inviteStore);
-                    ghost.friendAge = timeNow;
-                    ghost.SyncPrime(false, this);
+                    friendAge = timeNow;
                 }
             }
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntent");
-            // If there is a date problem, clear out the old value.
-            ghost.tokenAge = timeNow;
-            ghost.SyncPrime(false, this);
+            // If there is a date problem, update and see if it works next time.
+            friendAge = timeNow;
         } finally {
             social.close();
         }

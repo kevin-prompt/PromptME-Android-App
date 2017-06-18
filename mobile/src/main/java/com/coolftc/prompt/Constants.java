@@ -23,7 +23,6 @@ public class Constants {
     public static final String SP_REG_CTID = "prompt.contactid";
     public static final String SP_REG_CTNAME = "prompt.contactname";
     public static final String SP_REG_CTFACE = "prompt.contactface";
-    public static final String SP_REG_FRIEND_AGE = "prompt.friendage";
     public static final String SP_REG_DBID = "prompt.localdb";
     public static final String SP_REG_CONFIRM = "prompt.confirmed";
     public static final String SP_REG_FORCE = "prompt.force";
@@ -50,6 +49,7 @@ public class Constants {
     public static final String DB_fmtDateTimeZone = "h:mmaa z";
     public static final String DB_fmtDayOfWeek = "EEEE";
     public static final String BAD_TIME = "99:99";
+    public static final String THE_PAST = "1964-02-06T11:50:25+00:00";      // Handy initialization
     // Date Formatting Constants
     public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
 
@@ -93,8 +93,8 @@ public class Constants {
     /* Third Party connection information (Obfuscation recommended). */
     /* Twitter - Fabric - Digits user secrets */
     /* If the TWITTER_KEY is replaced here, it must also be replaced on the server (since it is used for verification). */
-    public static final String TWITTER_KEY = "7e750d27a9de825cdf1cbf2e9f6e0b16329551a9";
-    public static final String TWITTER_SECRET = "620135c99c64e3feed2b3ce84c190e4d9f73bf3b329a8c03b940a682902dbd07";
+    public static final String TWITTER_KEY = "IbUE8sGOxs3nDsWAVh537VyH2";
+    public static final String TWITTER_SECRET = "CPktuMWtbgLAIH0GNHUpTz6dgVOs8VT4l8XCdcwaHWNjytFSab";
     /* The Google GCM account (called Project number in console) */
     public static final String SENDER_ID = "800396557293";
 

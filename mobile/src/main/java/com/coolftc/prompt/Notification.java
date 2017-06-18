@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -30,18 +32,19 @@ public class Notification extends FirebaseMessagingService {
 
         NotificationManager notificationMgr = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        Uri toneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, History.class), 0);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(msg))
-                .setContentText(msg);
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                .setVibrate(new long[] { 0, 1000})
+                .setSound(toneUri)
+                .setContentText(msg)
+                .setContentIntent(contentIntent);
 
-        mBuilder.setVibrate(new long[] { 0, 1000});
-        mBuilder.setContentIntent(contentIntent);
         notificationMgr.notify(NOTIFICATION_ID, mBuilder.build());
     }
 

@@ -6,9 +6,9 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 public class RefreshInstance extends FirebaseInstanceIdService {
     /**
      * Called if InstanceID token is updated. This may occur if the security of
-     * the previous token had been compromised. Note that this is also called
-     * when the InstanceID token is initially generated, so this is where
-     * you retrieve the token.
+     * the previous token had been compromised.
+     * Note: This is called when the InstanceID token is initially generated,
+     * until then the token will just return null.  Just need to be patient.
      */
     @Override
     public void onTokenRefresh() {

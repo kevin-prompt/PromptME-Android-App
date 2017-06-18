@@ -28,7 +28,6 @@ public class Account implements Serializable {
     public String token = "";       // The push token (GCM).
     public String tokenAge = "";    // The timestamp of the last token check
     public String device = "";      // The unique device identifier.
-    public String friendAge = "";   // The timestamp of the last friend check.
     public boolean force = false;   // When true the data duplicated on server has changed
     // This subset can also be stored in the Friend DB.
     public String localId = "";     // The local db id of the record.
@@ -46,7 +45,7 @@ public class Account implements Serializable {
     // This group is stored on the server.
     public String custom = "";      // The custom, third party identifier.
     public String timezoneExt = ""; // The time zone saved on the server.
-    public int sleepcycle = 0;      // The chosen sleep cycle of the user.
+    public int sleepcycle = 2;      // The chosen sleep cycle of the user.
     public boolean ads = true;      // Should ads be displayed on the app.
 
     // Constructors
@@ -55,6 +54,7 @@ public class Account implements Serializable {
 
     // Helper methods
     public String acctIdStr(){ return Long.toString(acctId); }
+    public String sleepcycleStr(){ return Integer.toString(sleepcycle);}
     public String contactPicUri(){ return contactPic!=null ? contactPic : ""; }
     public String bestName(){ return contactName.length()>0 ? contactName : display; }
     public String bestId(){ return localId.length()>0 ? localId : contactId; }
@@ -94,7 +94,6 @@ public class Account implements Serializable {
         contactId = registered.getString(SP_REG_CTID, "");
         contactName = registered.getString(SP_REG_CTNAME, "");
         contactPic = registered.getString(SP_REG_CTFACE, "");
-        friendAge = registered.getString(SP_REG_FRIEND_AGE, KTime.ParseNow(KTime.KT_fmtDate3339k).toString());
         localId = registered.getString(SP_REG_DBID, "");
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
         force = registered.getBoolean(SP_REG_FORCE, false);
@@ -120,11 +119,12 @@ public class Account implements Serializable {
      * local store (shared preferences).  Additionally, we put it to the
      * server as well if full=true.
      * NOTE: Any use of the network would require the calling party to
-     * not be on the main thread when called.
+     * NOT be on the main thread when called.  This method is synchronized
+     * in case it gets called in multiple places in the code.
      */
-    public void SyncPrime(boolean full, Context context) {
+    public synchronized void SyncPrime(boolean full, Context context) {
 
-        // Save the local data.
+        // Save the local data.  It is possible for this method to be called
         SharedPreferences registered = context.getSharedPreferences(SP_REG_STORE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = registered.edit();
         editor.putLong(SP_REG_ID, acctId);
@@ -138,26 +138,26 @@ public class Account implements Serializable {
         editor.putString(SP_REG_CTID, contactId);
         editor.putString(SP_REG_CTNAME, contactName);
         editor.putString(SP_REG_CTFACE, contactPicUri());
-        editor.putString(SP_REG_FRIEND_AGE, friendAge);
         editor.putString(SP_REG_DBID, localId);
         editor.putBoolean(SP_REG_CONFIRM, confirmed);
         editor.putBoolean(SP_REG_FORCE, force);
         editor.apply();
 
-        if (full && ticket.length()>0) {
+
+        if (full && ticket.length() > 0) {
             // Save data to the server, too.
             WebServices ws = new WebServices();
-            if(ws.IsNetwork(context)) {
+            if (ws.IsNetwork(context)) {
                 UserRequest user = new UserRequest();
                 user.dname = display;
                 user.timezone = TimeZone.getDefault().getID();
                 user.target = token;
                 user.scycle = sleepcycle;
+                user.type = FTI_TYPE_ANDROID;
                 UserResponse data = ws.ChgUser(ticket, Long.toString(acctId), user);
                 if (data.response < 200 || data.response >= 300)
                     ExpClass.LogIN(KEVIN_SPEAKS, "Account.SyncPrime server fail response = " + Integer.toString(data.response));
-            }
-            else
+            } else
                 ExpClass.LogIN(KEVIN_SPEAKS, "Account.SyncPrime Network Unavailable");
         }
     }

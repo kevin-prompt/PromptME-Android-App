@@ -1,9 +1,21 @@
 package com.coolftc.prompt;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.Settings.PREF_SETTINGS;
+import static com.coolftc.prompt.Settings.PREF_VIBRATEON;
 
 /**
  *  The very basic fragment to display settings.  See the Settings
@@ -18,6 +30,14 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
+
+        // Do not bother showing the showing the selection if the device does not support it.
+        final Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        if (!v.hasVibrator()) {
+            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SETTINGS);
+            Preference pref = findPreference(PREF_VIBRATEON);
+            cat.removePreference(pref);
+        }
     }
 
     @Override
@@ -40,7 +60,8 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         if (key.equals(SP_REG_DISPLAY) || key.equals(SP_REG_SCYCLE)) {
             Account ali = new Account(getActivity(),true);
             ali.display = shared.getString(SP_REG_DISPLAY, ali.display);
-            ali.sleepcycle = shared.getInt(SP_REG_SCYCLE, ali.sleepcycle);
+            try { ali.sleepcycle = Integer.parseInt(shared.getString(SP_REG_SCYCLE, ali.sleepcycleStr())); }
+            catch (NumberFormatException ex){ /*skip it*/}
             ali.force = true;
             ali.SyncPrime(false, getActivity());
         }

@@ -74,11 +74,13 @@ public class SignupConfirm extends AppCompatActivity {
 
     /*
         If everything works out, send along to Welcome screen.
+        Also, initialize the Settings with the name.
      */
     private void SignupComplete(Account acct){
 
         if(acct.confirmed) {
             // All set... onward to welcome.
+            Settings.setDisplayName(this, acct.display);
             Intent intent = new Intent(this, Welcome.class);
             startActivity(intent);
         }else{
