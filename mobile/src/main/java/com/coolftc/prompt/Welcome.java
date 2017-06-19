@@ -3,7 +3,7 @@ package com.coolftc.prompt;
 import static com.coolftc.prompt.Constants.*;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,15 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import com.digits.sdk.android.Digits;
-import com.digits.sdk.android.InviteFactoryMessageCallback;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import io.fabric.sdk.android.Fabric;
 
 /**
  *  The Welcome screen is the entry point into the application.  Upon first
@@ -41,7 +34,7 @@ public class Welcome extends AppCompatActivity {
         setContentView(R.layout.welcome);
 
         // In order to skip signup, use LoadUser(), otherwise comment out.
-        Account acct = new Account(this, true); //LoadUser();
+        Actor acct = new Actor(this); //LoadUser();
 
         // Google Play?
         isGooglePlayServicesAvailable(this);
@@ -102,7 +95,7 @@ public class Welcome extends AppCompatActivity {
     private void DisplayAccount(){
         TextView holdView;
 
-        Account acct = new Account(this, true);
+        Actor acct = new Actor(this);
 
         holdView = (TextView) this.findViewById(R.id.entryTicket);
         if(holdView != null) { holdView.setText(acct.ticket); }
@@ -117,7 +110,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private Account LoadUser(){
-        Account acct = new Account();
+        Actor acct = new Actor();
 
         acct.acctId = 1;
         acct.ticket = "13393021-fb05-4383-b8aa-7f5208129ab7";

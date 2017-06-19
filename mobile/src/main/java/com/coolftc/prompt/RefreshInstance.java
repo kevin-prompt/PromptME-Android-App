@@ -14,7 +14,7 @@ public class RefreshInstance extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
 
         // Clear out the locally stored token and kick off the service to update it.
-        Account acct = new Account(this, true);
+        Actor acct = new Actor(this);
         acct.device = "";
         acct.SyncPrime(false, this);
         Intent intent = new Intent(this, Refresh.class);

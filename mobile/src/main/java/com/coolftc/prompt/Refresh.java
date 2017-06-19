@@ -36,7 +36,7 @@ public class Refresh extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent hint) {
-        Account ghost = new Account(this, true);
+        Actor ghost = new Actor(this);
         String timeNow = KTime.ParseNow(KTime.KT_fmtDate3339k).toString();
 
         /*
@@ -63,7 +63,6 @@ public class Refresh extends IntentService {
                 String holdToken = FirebaseInstanceId.getInstance().getToken();
                 if(holdToken != null) {
                     ghost.token = holdToken;
-                    ghost.tokenAge = timeNow;
                     // Commit the changes and try to tell the server.
                     ghost.force = false;
                     ghost.SyncPrime(true, this);
@@ -364,7 +363,7 @@ public class Refresh extends IntentService {
     // Retrieve a specific friend/invite from the local DB.
     private Account queryFriend(String id){
         // Check if the local user
-        if(id.equalsIgnoreCase(Owner_DBID)) return new Account(this, true);
+        if(id.equalsIgnoreCase(Owner_DBID)) return new Actor(this);
 
         // Look up the friend
         FriendDB social = new FriendDB(this);  // Be sure to close this before leaving the thread.
@@ -448,7 +447,6 @@ public class Refresh extends IntentService {
             db.delete(FriendDB.FRIEND_TABLE, where, filler);
         }
     }
-
 }
 
 

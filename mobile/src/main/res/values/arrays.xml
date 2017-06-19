@@ -39,9 +39,9 @@
         <item>Next</item>
     </string-array>
     <string-array name="dateorder">
-        <item>02/21/2017 \n(MM/DD/YYYY)</item>
-        <item>21/02/2017 \n(DD/MM/YYYY)</item>
-        <item>2017/21/02 \n(YYYY/MM/DD)</item>
+        <item>(MM/DD/YYYY) \n02/21/2017</item>
+        <item>(DD/MM/YYYY) \n21/02/2017</item>
+        <item>(YYYY/MM/DD) \n2017/21/02</item>
     </string-array>
     <string-array name="dateorder_values">
         <item>mid</item>

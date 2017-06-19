@@ -110,7 +110,7 @@ public class Signup extends AppCompatActivity {
         account setup fails, we will actually end up back on this screen.
         Also, initialize the Settings with the name.
      */
-    private void  SignupComplete(Account acct){
+    private void  SignupComplete(Actor acct){
         Settings.setDisplayName(this, acct.display);
         Intent intent = new Intent(this, Welcome.class);
         startActivity(intent);
@@ -121,7 +121,7 @@ public class Signup extends AppCompatActivity {
      * Considerations:  If the parent activity is destroyed, the code can cause trouble, so
      * try to avoid unnecessary re-creations of the activity, e.g. context switches.
      */
-    private class AcctCreateVerifyTask extends AsyncTask<String, Boolean, Account> {
+    private class AcctCreateVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
         private Context context;
         private String title;
@@ -136,13 +136,13 @@ public class Signup extends AppCompatActivity {
             progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
         }
 
-        protected void onPostExecute(Account result) {
+        protected void onPostExecute(Actor result) {
             SignupComplete(result);
             progressDialog.dismiss();
         }
 
         protected void onCancelled() {
-            SignupComplete(new Account(context, true));
+            SignupComplete(new Actor(context));
         }
 
         protected void onProgressUpdate(Boolean... values) {
@@ -164,9 +164,9 @@ public class Signup extends AppCompatActivity {
          * 5 - Provider Key (for external verification)
          * 6 - Credential (for external verification)
          */
-        protected Account doInBackground(String... criteria) {
+        protected Actor doInBackground(String... criteria) {
 
-            Account acct = new Account(context, true);
+            Actor acct = new Actor(context);
             WebServices ws = new WebServices();
             if(ws.IsNetwork(context)) {
                 WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();

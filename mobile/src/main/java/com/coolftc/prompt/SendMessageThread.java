@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.text.format.DateFormat;
 import java.util.Calendar;
 import static com.coolftc.prompt.Constants.*;
@@ -33,7 +32,7 @@ public class SendMessageThread extends Thread {
             // Create the record in the local db, but set to not processed.
             long localId = addMessage(data, false);
             // Create the record on the server using the web service. Get the real time back.
-            Account sender = new Account(context, true);
+            Actor sender = new Actor(context);
             SendMessageOut actual = sendMessage(sender, data);
             // Update the local record with future time or status, and mark as processed.
             if(actual.status == 0) updSuccess(localId, actual.finalTime, true);
@@ -46,7 +45,7 @@ public class SendMessageThread extends Thread {
     }
 
     // Send a new prompt to the server.
-    private SendMessageOut sendMessage(Account from, Reminder msg){
+    private SendMessageOut sendMessage(Actor from, Reminder msg){
         SendMessageOut rtn = new SendMessageOut();
         WebServices ws = new WebServices();
         if(ws.IsNetwork(context)) {

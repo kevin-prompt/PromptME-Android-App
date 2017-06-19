@@ -37,7 +37,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     wearApp project(':wear')
-    testCompile 'junit:junit:4.12'
     compile('com.digits.sdk.android:digits:2.0.5@aar') {
         transitive = true;
     }
@@ -48,5 +47,7 @@ dependencies {
     compile 'com.googlecode.libphonenumber:libphonenumber:7.4.4'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:+'
+    testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

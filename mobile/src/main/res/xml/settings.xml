@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:key="prompt.settings"
-        android:title="@string/set_name">
+        android:title="@string/prf_Personal">
         <EditTextPreference android:key="prompt.display"
             android:title="@string/prf_DisplayName"
             android:summary="@string/prf_DisplayNameSum"
@@ -15,6 +15,9 @@
             android:entryValues="@array/sleepcycle_values"
             android:defaultValue="@string/prf_SleepCycleDefault">
         </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:key="prompt.system"
+        android:title="@string/prf_System">
         <RingtonePreference android:key="1000"
             android:title="@string/prf_Sounds"
             android:summary="@string/prf_SoundsSum"
@@ -41,5 +44,12 @@
             android:entryValues="@array/dateorder_values"
             android:defaultValue="@string/prf_PickDateFormatDefault">
         </ListPreference>
+        <PreferenceScreen android:title="@string/prf_About"
+            android:summary="@string/blank">
+            <intent android:action="android.intent.action.MAIN"
+                android:targetPackage="com.coolftc.prompt"
+                android:targetClass="com.coolftc.prompt.About">
+            </intent>
+        </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>
