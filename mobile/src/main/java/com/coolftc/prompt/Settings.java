@@ -1,8 +1,8 @@
 package com.coolftc.prompt;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,14 +28,16 @@ import static com.coolftc.prompt.Constants.*;
 public class Settings extends AppCompatActivity {
 
     public static final String PREF_SETTINGS = "prompt.settings";
+    public static final String PREF_SYSTEM = "prompt.system";
+    public static final String PREF_DISPNAME = SP_REG_DISPLAY;
+    public static final String PREF_SCYCLE = "prompt.sleepcycle";
+    public static final String PREF_SOUND = "1000";
     public static final String PREF_VIBRATEON = "1001";
     public static final boolean DEFAULT_VIBRATEON = false;
     public static final String PREF_USE24CLOCK = "1002";
-    private static final boolean DEFAULT_USE24CLOCK = false;
+    public static final boolean DEFAULT_USE24CLOCK = false;
     public static final String PREF_PICKSHORTDATEFMT = "1003";
-    private static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
-    private static final String PREF_DISPNAME = "prompt.display";
-    private static final String PREF_SCYCLE = "prompt.sleepcycle";
+    public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,9 @@ public class Settings extends AppCompatActivity {
 
     // What name is stored in preferences.
     public static String getDisplayName(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_DISPNAME, "");
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_DISPNAME, "");
+        context = null; // we do not want these context objects to have to hang around forever in these static methods.
+        return holdAnswer;
     }
 
     // Allow name update to be adjusted programmatically (to initialized it).
@@ -59,27 +63,42 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putString(PREF_DISPNAME, name);
         ali.apply();
+        context = null;
     }
 
     // What sleep cycle is stored in preferences.
     public static int getSleepCycle(Context context) {
-        String holdSleep = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SCYCLE, "2");
-        return Integer.parseInt(holdSleep);
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SCYCLE, "2");
+        context = null;
+        return Integer.parseInt(holdAnswer);
+    }
+
+    // The ringtone to be used upon notifications.
+    public static Uri getRingtone(Context context){
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SOUND, "");
+        context = null;
+        return Uri.parse(holdAnswer);
     }
 
     // When true, have the device vibrate on incoming prompts.
     public static boolean getVibrateOn(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_VIBRATEON, DEFAULT_VIBRATEON);
+        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_VIBRATEON, DEFAULT_VIBRATEON);
+        context = null;
+        return holdAnswer;
     }
 
     // When true, display time in a 24 hour format.
     public static boolean getUse24Clock(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_USE24CLOCK, DEFAULT_USE24CLOCK);
+        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_USE24CLOCK, DEFAULT_USE24CLOCK);
+        context = null;
+        return holdAnswer;
     }
 
     // Select how the day/month/year is ordered in displaying dates.
     public static String getPickShortDateFmt(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PICKSHORTDATEFMT, DEFAULT_PICKSHORTDATEFMT);
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PICKSHORTDATEFMT, DEFAULT_PICKSHORTDATEFMT);
+        context = null;
+        return holdAnswer;
     }
 
     /*
@@ -91,6 +110,7 @@ public class Settings extends AppCompatActivity {
 
         String holdFmt;
         String fmt = getPickShortDateFmt(context);
+        context = null;
         //Resources res = context.getResources();
 
         switch (datetype){
@@ -137,7 +157,4 @@ public class Settings extends AppCompatActivity {
 
         }
     }
-
-
-
 }

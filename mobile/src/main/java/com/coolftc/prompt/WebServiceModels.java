@@ -8,104 +8,100 @@ import java.util.List;
  */
 public interface  WebServiceModels {
 
-    public class PingResponse
+    class PingResponse
     {
-        public String version;
+        String version;
     }
 
-    public class RegisterRequest
+    class RegisterRequest
     {
-        public String uname;
-        public boolean verify;
-        public String timezone;
-        public String dname;
-        public int scycle;
-        public String cname;
-        public String device;
-        public String target;
-        public int type;
+        String uname;
+        boolean verify;
+        String timezone;
+        String dname;
+        int scycle;
+        String cname;
+        String device;
+        String target;
+        int type;
     }
 
-    public class RegisterResponse
+    class RegisterResponse
     {
-        public long id;
-        public String ticket;
-        public int response;   // This is added locally to aid in processing
+        long id;
+        String ticket;
+        int response;   // This is added locally to aid in processing
     }
 
-    public class UserRequest
+    class UserRequest
     {
-        public String timezone;
-        public String dname;
-        public int scycle;
-        public String target;
-        public int type;
+        String timezone;
+        String dname;
+        int scycle;
+        String target;
+        int type;
     }
 
-    public class UserResponse
+    class UserResponse
     {
-        public String dname;
-        public int scycle;
-        public String timezone;
-        public String cname;
-        public String uname;
-        public boolean verified;
-        public boolean ads;
-        public boolean broadcast;
-        public String created;
-        public int response;   // This is added locally to aid in processing
+        String dname;
+        int scycle;
+        String timezone;
+        String cname;
+        String uname;
+        boolean verified;
+        boolean ads;
+        boolean broadcast;
+        String created;
+        int response;   // This is added locally to aid in processing
     }
 
-    public class VerifyRequest
+    class VerifyRequest
     {
-        public long code;
-        public String provider;
-        public String credential;
+        long code;
+        String provider;
+        String credential;
     }
 
-    public class InviteResponse
+    class InviteResponse
     {
-        public String fname;
-        public long friendId;
-        public String fdisplay;
-        public int scycle;
-        public String timezone;
-        public boolean mirror;
-        public boolean complete;
-        public int response;   // This is added locally to aid in processing
+        String fname;
+        long friendId;
+        String fdisplay;
+        int scycle;
+        String timezone;
+        boolean mirror;
+        boolean complete;
+        int response;   // This is added locally to aid in processing
     }
 
-    public class Invitations
+    class Invitations
     {
-        public List<InviteResponse> friends;
-        public List<InviteResponse> rsvps;
-        public List<InviteResponse> invites;
-        public int response;   // This is added locally to aid in processing
+        List<InviteResponse> friends;
+        List<InviteResponse> rsvps;
+        List<InviteResponse> invites;
+        int response;   // This is added locally to aid in processing
     }
 
-    public class PromptRequest
+    class PromptRequest
     {
-        public String when;
-        public String timezone;
-        public int timename;
-        public int timeadj;
-        public int scycle;
-        public long receiveId;
-        public int units;
-        public int period;
-        public String end;
-        public int recurs;
-        public String message;
+        String when;
+        String timezone;
+        int timename;
+        int timeadj;
+        int scycle;
+        long receiveId;
+        int units;
+        int period;
+        String end;
+        int recurs;
+        String message;
     }
 
-    public class PromptResponse
+    class PromptResponse
     {
-        public long noteId;
-        public String noteTime;
-        public int response;   // This is added locally to aid in processing
+        long noteId;
+        String noteTime;
+        int response;   // This is added locally to aid in processing
     }
-
 }
-
-
-

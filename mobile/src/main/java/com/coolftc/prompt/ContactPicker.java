@@ -95,7 +95,7 @@ public class ContactPicker extends AppCompatActivity {
 
         // First Step is to grab the primary user, which is stored in the preferences.
         AddDelimitRow(R.string.contact_pri);
-        accounts.add(new Account(this, true));
+        accounts.add(new Actor(this));
 
         // Second Step is to get all friends and invites, stored locally (with periodic updates).
         LoadFriends(FriendDB.SQLITE_TRUE);
@@ -168,7 +168,7 @@ public class ContactPicker extends AppCompatActivity {
             Map<String, String> hold = new TreeMap<>();
 
             // Specify which display format to use and save off the unique.
-            if (acct.custom.equalsIgnoreCase(TITLE_ROW)) {
+            if (acct.tag.equalsIgnoreCase(TITLE_ROW)) {
                 hold.put(CP_PER_ID, "0");
             } else {
                 hold.put(CP_PER_ID, acct.bestId());
@@ -192,7 +192,7 @@ public class ContactPicker extends AppCompatActivity {
     private void AddDelimitRow(int resourceId){
         Account delimtFriend = new Account();
         delimtFriend.display = getResources().getString(resourceId);
-        delimtFriend.custom = TITLE_ROW;
+        delimtFriend.tag = TITLE_ROW;
         accounts.add(delimtFriend);
     }
 

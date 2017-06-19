@@ -25,8 +25,10 @@
             </intent-filter>
             <intent-filter android:label="@string/lblDeepLinkWelcome">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="@string/www_domain"
                     android:pathPrefix="/promptme"
@@ -40,7 +42,14 @@
             android:name=".ContactPicker"
             android:parentActivityName=".Welcome"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".Settings" />
+        <activity
+            android:name=".Settings"
+            android:parentActivityName=".Welcome"
+            android:label="@string/set_name" />
+        <activity
+            android:name=".About"
+            android:parentActivityName=".Settings"
+            android:label="@string/abt_name" />
         <activity
             android:name=".Entry"
             android:parentActivityName=".Welcome" />
@@ -76,7 +85,7 @@
             />
         </service>
         <service
-            android:name=".Notification"
+            android:name=".NotificationX"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

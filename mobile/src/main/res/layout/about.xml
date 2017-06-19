@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.coolftc.prompt.About">
+
+
+    <TextView android:id="@+id/lblPromptTitle"
+        android:text="@string/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="45dp" />
+
+    <TextView android:id="@+id/lblPromptAuthor"
+        android:text="@string/abt_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblPromptTitle"
+        app:layout_constraintHorizontal_bias="0.50" />
+
+    <android.support.constraint.Guideline android:id="@+id/abtCenterline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50"/>
+
+    <TextView android:id="@+id/lblVersion"
+        android:text="@string/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="30dp"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblPromptAuthor" />
+
+    <TextView android:id="@+id/abtVersion"
+        tools:text="1.2.3.4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblVersion"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/lblBuildDate"
+        android:text="@string/build_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblVersion"/>
+
+    <TextView android:id="@+id/abtBuildDate"
+        tools:text="Jun 18, 2017"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblBuildDate"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/lblBroadcast"
+        android:text="@string/broadcast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblBuildDate"/>
+
+    <TextView android:id="@+id/abtBroadcast"
+        tools:text="No"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblBroadcast"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/lblAds"
+        android:text="@string/ads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblBroadcast"/>
+
+    <TextView android:id="@+id/abtAds"
+        tools:text="Yes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblAds"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/lblWhoAmI"
+        android:text="@string/who_am_i"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblAds"/>
+
+    <TextView android:id="@+id/abtWhoAmI"
+        tools:text="15039086341"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblWhoAmI"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/abtAccount"
+        tools:text="(12345678)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toBottomOf="@+id/abtWhoAmI"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
+    <TextView android:id="@+id/lblCopyright"
+        android:text="@string/ver_copyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

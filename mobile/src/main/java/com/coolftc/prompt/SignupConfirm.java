@@ -5,10 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -76,7 +73,7 @@ public class SignupConfirm extends AppCompatActivity {
         If everything works out, send along to Welcome screen.
         Also, initialize the Settings with the name.
      */
-    private void SignupComplete(Account acct){
+    private void SignupComplete(Actor acct){
 
         if(acct.confirmed) {
             // All set... onward to welcome.
@@ -116,7 +113,7 @@ public class SignupConfirm extends AppCompatActivity {
      * 1 - Provider Key (for external verification)
      * 2 - Credential (for external verification)
      */
-    private class AcctVerifyTask extends AsyncTask<String, Boolean, Account> {
+    private class AcctVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
         private Context context;
         private String title;
@@ -131,13 +128,13 @@ public class SignupConfirm extends AppCompatActivity {
             progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
         }
 
-        protected void onPostExecute(Account result) {
+        protected void onPostExecute(Actor result) {
             SignupComplete(result);
             progressDialog.dismiss();
         }
 
         protected void onCancelled() {
-            SignupComplete(new Account(context, true));
+            SignupComplete(new Actor(context));
         }
 
         protected void onProgressUpdate(Boolean... values) {
@@ -147,9 +144,9 @@ public class SignupConfirm extends AppCompatActivity {
         /*
            This tries to verify the account based on the supplied code.
          */
-        protected Account doInBackground(String... criteria) {
+        protected Actor doInBackground(String... criteria) {
 
-            Account acct = new Account(context, true);
+            Actor acct = new Actor(context);
             WebServices ws = new WebServices();
             if(ws.IsNetwork(context)) {
                 WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
@@ -177,7 +174,7 @@ public class SignupConfirm extends AppCompatActivity {
      *
      * Input criteria: This gets all input data from existing Account data.
      */
-    private class AcctResendTask extends AsyncTask<Void, Boolean, Account> {
+    private class AcctResendTask extends AsyncTask<Void, Boolean, Actor> {
         private ProgressDialog progressDialog;
         private Context context;
         private String title;
@@ -192,13 +189,13 @@ public class SignupConfirm extends AppCompatActivity {
             progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
         }
 
-        protected void onPostExecute(Account result) {
+        protected void onPostExecute(Actor result) {
             SignupComplete(result);
             progressDialog.dismiss();
         }
 
         protected void onCancelled() {
-            SignupComplete(new Account(context, true));
+            SignupComplete(new Actor(context));
         }
 
         protected void onProgressUpdate(Boolean... values) {
@@ -209,9 +206,9 @@ public class SignupConfirm extends AppCompatActivity {
          * This assumes verification will come later and just creates the account
          * here. If the account is created, we also sync the local account data.
          */
-        protected Account doInBackground(Void... criteria) {
+        protected Actor doInBackground(Void... criteria) {
 
-            Account acct = new Account(context, true);
+            Actor acct = new Actor(context);
             WebServices ws = new WebServices();
             if(ws.IsNetwork(context)) {
                 WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();

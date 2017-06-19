@@ -1,13 +1,10 @@
 package com.coolftc.prompt;
 
 import static com.coolftc.prompt.Constants.*;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -73,7 +70,7 @@ public class SignupEmail extends AppCompatActivity {
         Once created, the email with the verification code should be on
         its way, so go to the next step.
      */
-    private void  AccountCreated(Account acct){
+    private void  AccountCreated(Actor acct){
         if(acct.ticket.length() > 0) {
             if (!acct.confirmed) {
                 // Verify Screen - this is the normal path.
@@ -92,8 +89,6 @@ public class SignupEmail extends AppCompatActivity {
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));
-            String holdName = Settings.getDisplayName(this);
-            int holdSleep = Settings.getSleepCycle(this);
         }
     }
 
@@ -108,7 +103,7 @@ public class SignupEmail extends AppCompatActivity {
      * 2 - Sleep Cycle
      * 3 - Custom Data (e.g. external id)
      */
-    private class AcctCreateTask extends AsyncTask<String, Boolean, Account> {
+    private class AcctCreateTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
         private Context context;
         private String title;
@@ -123,14 +118,14 @@ public class SignupEmail extends AppCompatActivity {
             progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
         }
 
-        protected void onPostExecute(Account result) {
+        protected void onPostExecute(Actor result) {
             AccountCreated(result);
             progressDialog.dismiss();
         }
 
         protected void onCancelled() {
             //Toast.makeText(context, R.string.msgUserCancel, Toast.LENGTH_LONG).show();
-            AccountCreated(new Account(context, true));
+            AccountCreated(new Actor(context));
         }
 
         protected void onProgressUpdate(Boolean... values) {
@@ -141,9 +136,9 @@ public class SignupEmail extends AppCompatActivity {
          * This assumes verification will come later and just creates the account
          * here. If the account is created, we also sync the local account data.
          */
-        protected Account doInBackground(String... criteria) {
+        protected Actor doInBackground(String... criteria) {
 
-            Account acct = new Account(context, true);
+            Actor acct = new Actor(context);
             WebServices ws = new WebServices();
             if(ws.IsNetwork(context)) {
                 WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();

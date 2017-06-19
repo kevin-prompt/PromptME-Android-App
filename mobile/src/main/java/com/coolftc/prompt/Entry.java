@@ -66,7 +66,7 @@ public class Entry extends AppCompatActivity {
             target = (Account) extras.getSerializable(IN_USER_ACCT);
         } else {
             // if nothing passed in, just default self-message.
-            target = new Account(this, true);
+            target = new Actor(this);
         }
 
         // Set up main view and menu.
