@@ -92,16 +92,15 @@ public class SignupEmail extends AppCompatActivity {
         }
     }
 
-    /*
-     * The nested AsyncTask class is used to off-load the network call to a separate thread.
-     * Considerations:  If the parent activity is destroyed, the code can cause trouble, so
-     * try to avoid unnecessary re-creations of the activity, e.g. context switches.
-     * Input criteria:
-     ** Creation **
-     * 0 - Unique Name (SMS/email)
-     * 1 - Display Name
-     * 2 - Sleep Cycle
-     * 3 - Custom Data (e.g. external id)
+    /**
+     * The nested AsyncTask class is used to off-load the network call to a separate
+     * thread but allow quick feedback to the user.
+     * Considerations:  Memory can leak as an inner class holds a reference to outer.
+     * 1) Create as an explicit inner class, not an antonymous one.
+     * 2) Pass in the Application context, not an Activity context.
+     * 3) Make the work in the background single pass and likely to complete (quickly).
+     * 4) If possible prevent the most common Activity killer by locking into portrait.
+     * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
     private class AcctCreateTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
@@ -135,6 +134,12 @@ public class SignupEmail extends AppCompatActivity {
         /*
          * This assumes verification will come later and just creates the account
          * here. If the account is created, we also sync the local account data.
+         * Input criteria:
+         ** Creation **
+         * 0 - Unique Name (SMS/email)
+         * 1 - Display Name
+         * 2 - Sleep Cycle
+         * 3 - Custom Data (e.g. external id)
          */
         protected Actor doInBackground(String... criteria) {
 

@@ -49,6 +49,7 @@
     <string name="prf_SoundsSum">Sound of incoming Prompts.</string>
     <string name="prf_About">About</string>
     <string name="abt_author">by coolftc</string>
+    <string name="abt_sysup">Up (v%s)</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
@@ -65,6 +66,7 @@
     <string name="broadcast">Broadcast</string>
     <string name="ads">Ads</string>
     <string name="who_am_i">Who Am I</string>
+    <string name="system">System</string>
     <string name="title_activity_exact_time">Pick a Time</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
@@ -101,6 +103,7 @@
     <string name="silent">Silent</string>
     <string name="dateof">Date of </string>
     <string name="stopafter">Stop After</string>
+    <string name="checking">Checking&#8230;</string>
     <string name="recur_daily_nbr">Repeat daily %2$d times.</string>
     <string name="recur_daily_day">Repeat daily until %3$s.</string>
     <string name="recur_daily_end">Repeat daily forever.</string>
@@ -125,6 +128,10 @@
     <string name="ver_copyright">© 2017 zalicon enterprises, inc.</string>
     <string name="pickdate">Pick Date</string>
     <string name="picktime">Pick Time</string>
+    <string name="err_cannot_connect">Unable to connect to servers.</string>
+    <string name="err_bad_request">Problem making request (%d)</string>
+    <string name="err_bad_auth">Not a valid account (%d)</string>
+    <string name="err_bad_server">Server issue, try later (%d)</string>
 </resources>
 
 

@@ -11,6 +11,7 @@ public interface  WebServiceModels {
     class PingResponse
     {
         String version;
+        int response;   // This is added locally to aid in processing
     }
 
     class RegisterRequest

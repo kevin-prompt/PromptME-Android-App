@@ -103,15 +103,15 @@ public class SignupConfirm extends AppCompatActivity {
         if (target != null && holdView != null) holdView.setText(target);
     }
 
-    /*
-     * This assumes verification has been completed elsewhere, and will create and then
-     * verify (or really confirm verification) of the account.  If the account is
-     * created, we also sync the local account data.
-     * Input criteria:
-     ** Verification **
-     * 0 - Verify Code (digits, internal)
-     * 1 - Provider Key (for external verification)
-     * 2 - Credential (for external verification)
+    /**
+     * The nested AsyncTask class is used to off-load the network call to a separate
+     * thread but allow quick feedback to the user.
+     * Considerations:  Memory can leak as an inner class holds a reference to outer.
+     * 1) Create as an explicit inner class, not an antonymous one.
+     * 2) Pass in the Application context, not an Activity context.
+     * 3) Make the work in the background single pass and likely to complete (quickly).
+     * 4) If possible prevent the most common Activity killer by locking into portrait.
+     * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
     private class AcctVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
@@ -142,7 +142,15 @@ public class SignupConfirm extends AppCompatActivity {
         }
 
         /*
-           This tries to verify the account based on the supplied code.
+         * This tries to verify the account based on the supplied code.
+         * This assumes verification has been completed elsewhere, and will create and then
+         * verify (or really confirm verification) of the account.  If the account is
+         * created, we also sync the local account data.
+         * Input criteria:
+         ** Verification **
+         * 0 - Verify Code (digits, internal)
+         * 1 - Provider Key (for external verification)
+         * 2 - Credential (for external verification)
          */
         protected Actor doInBackground(String... criteria) {
 
@@ -165,14 +173,15 @@ public class SignupConfirm extends AppCompatActivity {
         }
     }
 
-    /*
-     * NOTE: This uses the saved Account data to re-register, which will generate
-     * a new email code.
-     * The nested AsyncTask class is used to off-load the network call to a separate thread.
-     * Considerations:  If the parent activity is destroyed, the code can cause trouble, so
-     * try to avoid unnecessary re-creations of the activity, e.g. context switches.
-     *
-     * Input criteria: This gets all input data from existing Account data.
+    /**
+     * The nested AsyncTask class is used to off-load the network call to a separate
+     * thread but allow quick feedback to the user.
+     * Considerations:  Memory can leak as an inner class holds a reference to outer.
+     * 1) Create as an explicit inner class, not an antonymous one.
+     * 2) Pass in the Application context, not an Activity context.
+     * 3) Make the work in the background single pass and likely to complete (quickly).
+     * 4) If possible prevent the most common Activity killer by locking into portrait.
+     * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
     private class AcctResendTask extends AsyncTask<Void, Boolean, Actor> {
         private ProgressDialog progressDialog;
@@ -205,6 +214,7 @@ public class SignupConfirm extends AppCompatActivity {
         /*
          * This assumes verification will come later and just creates the account
          * here. If the account is created, we also sync the local account data.
+         * Input criteria: This gets all input data from existing Account data.
          */
         protected Actor doInBackground(Void... criteria) {
 

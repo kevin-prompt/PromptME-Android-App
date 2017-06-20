@@ -35,8 +35,10 @@ public class WebServices {
         ticket is passed in, it will also check the authentication.
         Note: The Web Service version is a different concept than the build version.
      */
-    public String GetVersion(String ticket){
+    public PingResponse GetVersion(String ticket){
         HttpURLConnection webC = null;
+        PingResponse rtn = new PingResponse();
+
         try {
             ticket = ticket.length() > 0 ? FTI_Ticket + ticket : ticket;
             URL web = new URL(FTI_BaseURL + FTI_Ping + ticket);
@@ -50,7 +52,7 @@ public class WebServices {
             webC.connect();
             int status = webC.getResponseCode();
 
-            if(status >= 200 && status < 300 ) {
+            if (status >= 200 && status < 300) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(webC.getInputStream(), "UTF8"));
                 StringBuilder sb = new StringBuilder();
                 String line;
@@ -58,15 +60,12 @@ public class WebServices {
                     sb.append(line).append("\n");
                 }
                 br.close();
-                PingResponse ping = new Gson().fromJson(sb.toString(), PingResponse.class);
-                return ping.version;
+                rtn = new Gson().fromJson(sb.toString(), PingResponse.class);
             }
-            else
-            {
-                return "";
-            }
+            rtn.response = status;
+            return rtn;
         }
-        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".GetVersion"); return "";}
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".GetVersion"); return rtn;}
         finally {
             if (webC != null) {
                 try {
@@ -76,37 +75,6 @@ public class WebServices {
             }
         }
 
-    }
-
-    /*
-        This method uses the the "ping" path of the status resource to verify the user is
-        authenticated.  Although this will return false for other reasons, too.  E.g. if
-        the server is down.
-     */
-    public boolean CheckRegistration(String ticket) {
-        HttpURLConnection webC = null;
-        try {
-            URL web = new URL(FTI_BaseURL + FTI_Ping + FTI_Ticket + ticket);
-            webC = (HttpURLConnection) web.openConnection();
-            webC.setRequestMethod("GET"); // Available: POST, PUT, DELETE, OPTIONS, HEAD and TRACE
-            webC.setRequestProperty("Accept", "application/json");
-            webC.setUseCaches(false);
-            webC.setAllowUserInteraction(false);
-            webC.setConnectTimeout(FTI_TIMEOUT);
-            webC.setReadTimeout(FTI_TIMEOUT);
-            webC.connect();
-            int status = webC.getResponseCode();
-            return (status != HttpURLConnection.HTTP_UNAUTHORIZED);
-        }
-        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".CheckRegistration"); return true;}
-        finally {
-            if (webC != null) {
-                try {
-                    webC.disconnect();
-                }
-                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".CheckRegistration"); }
-            }
-        }
     }
 
     /*

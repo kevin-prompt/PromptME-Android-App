@@ -9,69 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.coolftc.prompt.Welcome">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You Made It"
-        android:id="@+id/textView2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registered?"
-        android:id="@+id/isRegistered"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="v?.?.?.?"
-        android:id="@+id/version"
-        android:layout_below="@+id/isRegistered"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/entryTicket"
-        android:layout_below="@+id/version"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/entryAcctId"
-        android:layout_below="@+id/entryTicket"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/entryName"
-        android:layout_below="@+id/entryAcctId"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/entryUnique"
-        android:layout_below="@+id/entryName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/entryPhoto"
-        android:layout_below="@+id/entryUnique"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-
     <Button android:id="@+id/btnContact"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
