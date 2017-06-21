@@ -97,7 +97,7 @@ public class History extends AppCompatActivity {
             // Copy the data to display.
             hold.put(HS_REM_ID, msg.idStr());
             if(msg.processed) {
-                hold.put(HS_TIME, msg.targetTime);
+                hold.put(HS_TIME, msg.GetPromptTime(getApplicationContext()));
             }else{
                 hold.put(HS_TIME, waiting);
             }

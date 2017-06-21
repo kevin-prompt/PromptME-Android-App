@@ -466,7 +466,7 @@ public class Entry extends AppCompatActivity {
         ali.recureNumber = recurNbr;
         ali.recureEnd = recurEnd;
 
-        SendMessageThread smt = new SendMessageThread(this, ali);
+        SendMessageThread smt = new SendMessageThread(getApplicationContext(), ali);
         smt.start();
 
         Intent intent = new Intent(this, History.class);

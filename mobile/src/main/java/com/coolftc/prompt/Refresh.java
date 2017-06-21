@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.KTime.KT_fmtDate3339k;
+import static com.coolftc.prompt.KTime.UTC_TIMEZONE;
+
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.coolftc.prompt.WebServiceModels.*;
 import java.util.ArrayList;
@@ -15,8 +18,8 @@ import java.util.List;
 
 /**
  *  This service is used to update various local data with any changed server data.
-    For now this primarily means checking on the connections and occasionally doing
-    a token refresh.
+    For now this primarily means checking on the connections, occasionally doing
+    a token refresh and updating how many pending prompts the user has.
 
    NOTE: Android works to keep itself operating smoothly by aggressively cleaning
     up tasks that do not seem to be getting used.  This means Services/Threads
@@ -26,7 +29,8 @@ import java.util.List;
 */
 public class Refresh extends IntentService {
     private static final String SRV_NAME = "RefreshService";  // Name can be used for debugging.
-    private FriendDB social;
+    private FriendDB mSocial;
+    private MessageDB mNotes;
     // The friendAge is a debounce value for the friend query.
     private static String friendAge = THE_PAST;
 
@@ -37,7 +41,7 @@ public class Refresh extends IntentService {
     @Override
     protected void onHandleIntent(Intent hint) {
         Actor ghost = new Actor(this);
-        String timeNow = KTime.ParseNow(KTime.KT_fmtDate3339k).toString();
+        String timeNow = KTime.ParseNow(KT_fmtDate3339k).toString();
 
         /*
          *  Check the notification token. The signup process needs the push notification
@@ -61,7 +65,7 @@ public class Refresh extends IntentService {
             if (ghost.token.length() == 0 || ghost.force) {
                 // Get the latest token and save it locally (probably has not changed).
                 String holdToken = FirebaseInstanceId.getInstance().getToken();
-                if(holdToken != null) {
+                if (holdToken != null) {
                     ghost.token = holdToken;
                     // Commit the changes and try to tell the server.
                     ghost.force = false;
@@ -69,38 +73,57 @@ public class Refresh extends IntentService {
                 }
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntent");
+            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentA");
         }
 
         // Check if the user is signed up yet.
         if (ghost.ticket.length() == 0 || ghost.acctId == 0) return;
 
-        /*  Sync the social graph.  This will grab data off the server and then clean up
-            the local database with any Deletes, Changes, Adds.  In that order.  For Adds,
-            check if there is local contact information that can supplement the data.
+        /*
+         *  Sync the mSocial graph.  This will grab data off the server and then clean up
+         *  the local database with any Deletes, Changes, Adds.  In that order.  For Adds,
+         *  check if there is local contact information that can supplement the data.
+         *  NOTE: We initialize the
          */
         try {
-            social = new FriendDB(this);  // Be sure to close this before leaving the thread.
+            mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
-            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KTime.KT_fmtDate3339k, KTime.KT_MINUTES) > 10) {
+            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KT_fmtDate3339k, KTime.KT_MINUTES) > 10) {
                 WebServices ws = new WebServices();
                 if (ws.IsNetwork(this)) {
                     Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
-                    if(invites.friends.size() == 0) return; // There is always 1 friend (yourself), if not something is wrong.
+                    if (invites.friends.size() == 0)
+                        return; // There is always 1 friend (yourself), if not something is wrong.
                     Account[] inviteStore = queryFriends();
                     CheckForDeletes(invites, inviteStore);
                     CheckForUpdates(invites, inviteStore);
-                    CheckForAdditions(invites,  inviteStore);
+                    CheckForAdditions(invites, inviteStore);
                     UpdateContactInfo(inviteStore);
                     friendAge = timeNow;
                 }
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntent");
+            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentB");
             // If there is a date problem, update and see if it works next time.
             friendAge = timeNow;
         } finally {
-            social.close();
+            mSocial.close();
+        }
+
+        /*
+         *  Check for pending prompts (these are just ones sent by this user).
+         */
+        try {
+            mNotes = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
+            if (ghost.ticket.length() > 0) {
+                int hold = getPendPromptCnt();
+            }
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentC");
+            // If there is a date problem, update and see if it works next time.
+            friendAge = timeNow;
+        } finally {
+            mSocial.close();
         }
     }
 
@@ -333,7 +356,7 @@ public class Refresh extends IntentService {
 
     // Retrieve any known friends and invites from the local DB.
     private Account[] queryFriends(){
-        SQLiteDatabase db = social.getReadableDatabase();
+        SQLiteDatabase db = mSocial.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_FriendsAll, filler);
         try{
@@ -360,42 +383,9 @@ public class Refresh extends IntentService {
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".queryFriends"); return new Account[0]; }
     }
 
-    // Retrieve a specific friend/invite from the local DB.
-    private Account queryFriend(String id){
-        // Check if the local user
-        if(id.equalsIgnoreCase(Owner_DBID)) return new Actor(this);
-
-        // Look up the friend
-        FriendDB social = new FriendDB(this);  // Be sure to close this before leaving the thread.
-        SQLiteDatabase db = social.getReadableDatabase();
-        String[] filler = {};
-        Cursor cursor = db.rawQuery(DB_FriendExact.replace(SUB_ZZZ, id), filler);
-        try{
-            Account local = new Account();
-            if(cursor.getCount() > 0) {
-                cursor.moveToNext();
-                local.localId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_ID));
-                local.acctId = cursor.getLong(cursor.getColumnIndex(FriendDB.FRIEND_ACCT_ID));
-                local.unique = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_UNIQUE));
-                local.display = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_DISPLAY));
-                local.timezone = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_TIMEZONE));
-                local.sleepcycle = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_SCYCLE));
-                local.contactId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_ID));
-                local.contactName = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_NAME));
-                local.contactPic = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_PIC));
-                local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
-                local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
-                local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
-            }
-            cursor.close();
-            return local;
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".queryFriends"); return new Account(); }
-        finally { social.close(); }
-    }
-
     // Add any new friends and invitations.
     private void addFriends(List<Account> items) {
-        SQLiteDatabase db = social.getWritableDatabase();
+        SQLiteDatabase db = mSocial.getWritableDatabase();
 
         for(Account acct : items) {
             ContentValues values = new ContentValues();
@@ -416,7 +406,7 @@ public class Refresh extends IntentService {
 
     // Change any changes to the list of friends and invitations.
     private void chgFriends(List<Account> items) {
-        SQLiteDatabase db = social.getWritableDatabase();
+        SQLiteDatabase db = mSocial.getWritableDatabase();
 
         for(Account acct : items){
             ContentValues values = new ContentValues();
@@ -439,13 +429,37 @@ public class Refresh extends IntentService {
 
     // Delete any old friends or invitations that are no longer
     private void delFriends(List<String> keys) {
-        SQLiteDatabase db = social.getWritableDatabase();
+        SQLiteDatabase db = mSocial.getWritableDatabase();
 
         for(String key : keys) {
             String where = "_id = " + key;
             String[] filler = {};
             db.delete(FriendDB.FRIEND_TABLE, where, filler);
         }
+    }
+
+    /*
+     *  Get the count of messages of a certain age.
+     */
+    private int getPendPromptCnt() {
+        SQLiteDatabase db = mNotes.getReadableDatabase();
+        String[] filler = {};
+        String holdNowUTC = KTime.ParseNow(KT_fmtDate3339k, UTC_TIMEZONE).toString();
+        String holdNow = KTime.ParseNow(KT_fmtDate3339k).toString();
+        //Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNow), filler);
+        String holdAll = "select * from message order by " + MessageDB.MESSAGE_ID + " desc";
+        Cursor cursor1 = db.rawQuery(holdAll, filler);
+        while(cursor1.moveToNext()) {
+            String holdDate = cursor1.getString(cursor1.getColumnIndex(MessageDB.MESSAGE_TIME));
+            String x = holdDate;
+            //String now = KTime.ParseToFormat(holdDate, KTime.KT_fmtDate3339k,)
+        }
+        int count = 0;
+        //cursor.moveToFirst();
+        //count = cursor.getInt(0);
+        //cursor.close();
+        cursor1.close();
+        return count;
     }
 }
 

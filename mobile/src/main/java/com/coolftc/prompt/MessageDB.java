@@ -37,6 +37,7 @@ public class MessageDB  extends SQLiteOpenHelper {
     public static final String MESSAGE_R_NUMBER = "recurnbr";
     public static final String MESSAGE_R_END = "recurend";
     public static final String MESSAGE_MSG = "promptmsg";
+    public static final String MESSAGE_SRVR_ID = "serverid";
     public static final String MESSAGE_STATUS = "status";
     public static final String MESSAGE_CREATE = "created";
     public static final String MESSAGE_PROCESSED = "processed";
@@ -76,6 +77,7 @@ public class MessageDB  extends SQLiteOpenHelper {
                 MESSAGE_R_NUMBER    + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_R_END       + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_MSG         + TABLE_TYPE_TEXT + TABLE_DELIMIT +
+                MESSAGE_SRVR_ID     + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_STATUS      + TABLE_TYPE_INT  + TABLE_DELIMIT +
                 MESSAGE_CREATE      + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_PROCESSED   + TABLE_TYPE_BOOL + ");");

@@ -108,6 +108,12 @@ public class Welcome extends AppCompatActivity {
             case R.id.mnuWelcomeSettings:
                 startActivity(new Intent(this, Settings.class));
                 return true;
+            case R.id.mnuHistory:
+                startActivity(new Intent(this, History.class));
+                return true;
+            case R.id.mnuConnections:
+                startActivity(new Intent(this, ContactPicker.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

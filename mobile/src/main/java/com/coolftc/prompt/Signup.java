@@ -74,7 +74,7 @@ public class Signup extends AppCompatActivity {
                 TextView holdView = (TextView)findViewById(R.id.txtDisplayName);
                 String txtDspl = getResources().getString(R.string.mysteryme);
                 if(holdView!=null) txtDspl = holdView.getText().toString();
-                new AcctCreateVerifyTask(Signup.this.getApplicationContext(), getResources().getString(R.string.app_name)).execute(
+                new AcctCreateVerifyTask(Signup.this, getResources().getString(R.string.app_name)).execute(
                         session.getPhoneNumber(),
                         txtDspl,
                         getResources().getString(R.string.prf_SleepCycleDefault),
@@ -120,7 +120,8 @@ public class Signup extends AppCompatActivity {
      * thread but allow quick feedback to the user.
      * Considerations:  Memory can leak as an inner class holds a reference to outer.
      * 1) Create as an explicit inner class, not an antonymous one.
-     * 2) Pass in the Application context, not an Activity context.
+     * 2) Pass in the Application context, not an Activity context. In this case you
+     *      cannot use the UI, e.g. no progressDialog, but you can call a method.
      * 3) Make the work in the background single pass and likely to complete (quickly).
      * 4) If possible prevent the most common Activity killer by locking into portrait.
      * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
@@ -130,7 +131,7 @@ public class Signup extends AppCompatActivity {
         private Context context;
         private String title;
 
-        public AcctCreateVerifyTask(Context activity, String name){
+        public AcctCreateVerifyTask(AppCompatActivity activity, String name){
             context = activity;
             title = name;
         }

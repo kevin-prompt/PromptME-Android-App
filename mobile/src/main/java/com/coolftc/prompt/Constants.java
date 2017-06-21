@@ -52,6 +52,7 @@ public class Constants {
     public static final String THE_PAST = "1964-02-06T11:50:25+00:00";      // Handy initialization
     // Date Formatting Constants
     public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
+    public static final int DATE_TIME_FMT_SHORT = 1;        // Short Date and Time Display format
 
     /* Constants used as codes for cross Activity communications. */
     public static final String KEVIN_SPEAKS = "Kevin Speaks";
@@ -143,6 +144,7 @@ public class Constants {
     public static final String DB_FriendsWhere = "select * from friend where confirm = " + SUB_ZZZ;
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
+    public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
     public static final String DB_MessagesAll = "select " + MessageDB.MESSAGE_ID + "," + MessageDB.MESSAGE_NAME + "," +
             MessageDB.MESSAGE_TIME + "," + MessageDB.MESSAGE_MSG + "," + MessageDB.MESSAGE_STATUS + "," + MessageDB.MESSAGE_PROCESSED +
             " from message order by " + MessageDB.MESSAGE_ID + " desc";
