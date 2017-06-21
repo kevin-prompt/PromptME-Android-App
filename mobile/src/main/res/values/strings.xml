@@ -15,6 +15,7 @@
     <string name="lblDeepLinkWelcome">Welcome to Prompt</string>
     <string name="lblConnections">Connections</string>
     <string name="lblPromptMe">Prompt Me</string>
+    <string name="lblWelcomeHelp">Tap on a connection to send a Prompt.</string>
     <string name="mysteryme">Me</string>
     <string name="sup_title_name">MAKE A NAME</string>
     <string name="sup_detail_name">Enter any name you like, you can always change it later.</string>
@@ -57,7 +58,7 @@
     <string name="btnConfirmCode">Create Account</string>
     <string name="btnResendCode">Resend Code</string>
     <string name="img_contactpic">Contact Picture</string>
-    <string name="contact_pri">Prompt Contacts</string>
+    <string name="contact_pri">Prompt Connections</string>
     <string name="contact_inv">Pending Invitations</string>
     <string name="contact_all">Full Contacts</string>
     <string name="deliver">Deliver</string>

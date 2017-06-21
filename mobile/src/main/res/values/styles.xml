@@ -58,4 +58,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ActivityTheme" parent="AppTheme" >
+        <item name="colorPrimary">@color/promptblue</item>
+        <item name="colorPrimaryDark">@color/mpromptbluedk</item>
+        <item name="colorAccent">@color/promptcomp</item>
+    </style>
+
 </resources>

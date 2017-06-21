@@ -5,10 +5,10 @@
     <dimen name="signup_btn_text">17sp</dimen>
     <dimen name="signup_btn_width">260dp</dimen>
     <dimen name="txt_edit_size">18sp</dimen>
-    <dimen name="lbl_med_size">17sp</dimen>
-    <dimen name="lbl_big_size">25sp</dimen>
-    <dimen name="lbl_sml_size">10sp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="lbl_sml_size">8sp</dimen>
+    <dimen name="lbl_med_size">16sp</dimen>
+    <dimen name="lbl_big_size">24sp</dimen>
+    <dimen name="fab_margin">32dp</dimen>
     <dimen name="abt_center_margin">20dp</dimen>
     <dimen name="abt_ver_spacer">18dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
