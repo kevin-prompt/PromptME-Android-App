@@ -25,7 +25,6 @@ import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterCore;
 import java.util.Map;
 import java.util.TimeZone;
-
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -35,8 +34,8 @@ import io.fabric.sdk.android.Fabric;
     For SMS, Digits handles everything after collection, then verification
     is more a matter of confirming between servers.
 
-   The Signup screens are set to only be portrait to avoid some UI and
-   Technical complications. Given the one time use of the screen, it
+    The Signup screens are set to only be portrait to avoid some UI and
+    Technical complications. Given the one time use of the screen, it
     should not be a big deal. Preventing a portrait/landscape context
     switch should help avoid problems with the AsynchTask used in the
     account creation/verification. Other context changes are much less
@@ -116,10 +115,16 @@ public class Signup extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
-     * The nested AsyncTask class is used to off-load the network call to a separate thread.
-     * Considerations:  If the parent activity is destroyed, the code can cause trouble, so
-     * try to avoid unnecessary re-creations of the activity, e.g. context switches.
+    /**
+     * The nested AsyncTask class is used to off-load the network call to a separate
+     * thread but allow quick feedback to the user.
+     * Considerations:  Memory can leak as an inner class holds a reference to outer.
+     * 1) Create as an explicit inner class, not an antonymous one.
+     * 2) Pass in the Application context, not an Activity context. In this case you
+     *      cannot use the UI, e.g. no progressDialog, but you can call a method.
+     * 3) Make the work in the background single pass and likely to complete (quickly).
+     * 4) If possible prevent the most common Activity killer by locking into portrait.
+     * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
     private class AcctCreateVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;

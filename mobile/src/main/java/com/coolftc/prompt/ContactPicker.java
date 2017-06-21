@@ -113,38 +113,6 @@ public class ContactPicker extends AppCompatActivity {
 
         // Once the accounts are populated, go ahead and use the cache processor.
         ShowDetailsCache(search);
-
-//        // The "uniques" hold all the unique names (phone/email) that are on the list.
-//        Map<String, Boolean> uniques = new HashMap<>();
-//
-//        // The "details" hold the final data sent to the display list.
-//        List<Map<String, String>> details = new ArrayList<>();
-//
-//        // Move the account data into the desired details format.
-//        for(Account acct : accounts) {
-//            // Sometimes we want to skip displaying records.
-//            if (uniques.containsKey(acct.unique)) continue;
-//            if (!acct.Found(search)) continue;
-//
-//            Map<String, String> hold = new TreeMap<>();
-//
-//            // Specify which display format to use and save off the unique.
-//            if (acct.custom.equalsIgnoreCase(TITLE_ROW)) {
-//                hold.put(CP_PER_ID, "0");
-//            } else {
-//                hold.put(CP_PER_ID, acct.bestId());
-//                uniques.put(acct.unique, true);
-//            }
-//            // Copy the data to display.
-//            hold.put(CP_TYPE, acct.localId);
-//            hold.put(CP_NAME, acct.bestName());
-//            hold.put(CP_EXTRA, acct.unique);
-//            hold.put(CP_FACE, acct.contactPicUri());
-//            details.add(hold);
-//        }
-//
-//        ContactAdapter adapter = new ContactAdapter(this, details, R.layout.contactpicker_row, StatusMapFROM, StatusMapTO);
-//        mListView.setAdapter(adapter);
     }
 
     /*

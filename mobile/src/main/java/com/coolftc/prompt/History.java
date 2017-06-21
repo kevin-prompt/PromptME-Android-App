@@ -77,30 +77,6 @@ public class History extends AppCompatActivity {
         // Load up the messages from the database
         GetMessages();
         ShowDetailsCache(search);
-
-//        // The "details" hold the final data sent to the display list.
-//        List<Map<String, String>> details = new ArrayList<>();
-//        String waiting = getResources().getString(R.string.processing);
-//
-//        // Move the account data into the desired details format.
-//        for(Reminder msg : reminders) {
-//            Map<String, String> hold = new TreeMap<>();
-//            if (!msg.Found(search)) continue;
-//
-//            // Copy the data to display.
-//            hold.put(HS_REM_ID, msg.idStr());
-//            if(msg.processed) {
-//                hold.put(HS_TIME, msg.targetTime);
-//            }else{
-//                hold.put(HS_TIME, waiting);
-//            }
-//            hold.put(HS_WHO, msg.target.bestName());
-//            hold.put(HS_MSG, msg.message);
-//            details.add(hold);
-//        }
-//
-//        HistoryAdapter adapter = new HistoryAdapter(this, details, R.layout.contactpicker_row, StatusMapFROM, StatusMapTO);
-//        mListView.setAdapter(adapter);
     }
 
     /*
@@ -121,7 +97,7 @@ public class History extends AppCompatActivity {
             // Copy the data to display.
             hold.put(HS_REM_ID, msg.idStr());
             if(msg.processed) {
-                hold.put(HS_TIME, msg.targetTime);
+                hold.put(HS_TIME, msg.GetPromptTime(getApplicationContext()));
             }else{
                 hold.put(HS_TIME, waiting);
             }

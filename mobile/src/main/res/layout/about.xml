@@ -137,6 +137,25 @@
         app:layout_constraintTop_toBottomOf="@+id/abtWhoAmI"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
 
+    <TextView android:id="@+id/lblSystemUp"
+        android:text="@string/system"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/abt_center_margin"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/abtAccount"/>
+
+    <TextView android:id="@+id/abtSystemVer"
+        android:text="@string/checking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abt_center_margin"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblSystemUp"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
     <TextView android:id="@+id/lblCopyright"
         android:text="@string/ver_copyright"
         android:layout_width="wrap_content"

@@ -110,17 +110,34 @@ public class Settings extends AppCompatActivity {
 
         String holdFmt;
         String fmt = getPickShortDateFmt(context);
+        String tmt = getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime;
         context = null;
         //Resources res = context.getResources();
 
         switch (datetype){
 
             case DATE_FMT_SHORT:
-                holdFmt = DB_fmtDateShrtMiddle;
-                if(fmt.equalsIgnoreCase("big")) holdFmt = DB_fmtDateShrtBig;
-                if(fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtDateShrtLittle;
-                return holdFmt;
+                try {
+                    holdFmt = DB_fmtDateShrtMiddle;
+                    if (fmt.equalsIgnoreCase("big")) holdFmt = DB_fmtDateShrtBig;
+                    if (fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtDateShrtLittle;
+                    return holdFmt;
+                } catch (Exception ex) {
+                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_FMT_SHORT");
+                    return DB_fmtDateShrtMiddle;
+                }
 
+            case DATE_TIME_FMT_SHORT:
+                try {
+                    holdFmt = DB_fmtDateShrtMiddle;
+                    if (fmt.equalsIgnoreCase("big")) holdFmt = DB_fmtDateShrtBig;
+                    if (fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtDateShrtLittle;
+                    holdFmt += " @ " + tmt;
+                    return holdFmt;
+                } catch (Exception ex) {
+                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
+                    return DB_fmtDateShrtMiddle + " @ " + DB_fmtDateTime;
+                }
 //            case DATE_FMT_OBSERVED:
 //                try {
 //                    holdFmt = "'" + res.getString(R.string.lblObserved) + " 'E ";

@@ -18,6 +18,7 @@ public class Actor extends Account {
     public String ticket = "";      // The key used to access web services.
     public String token = "";       // The push token (GCM).
     public String device = "";      // The unique device identifier.
+    public int pending = 0;         // The number of expected future prompts (cached here)
     public boolean force = false;   // When true the data duplicated on server has changed
     // These are also stored on the server.
     public String custom = "";      // The custom, third party identifier.

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="promptwhite">#FFFFFF</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="promptbluedk">#0A3C6E</color>
-    <color name="promptblue">#3C648C</color>
+    <color name="promptblue">#3c648c</color>
+    <color name="promptcomp">#8c643c</color>
     <color name="promptbluelt">#82A0BE</color>
     <color name="promptblueex">#C8D2F0</color>
+    <color name="promptbluesp">#d2e6fa</color>
+    <color name="mpromptbluelt">#6C91BC</color>
+    <color name="mpromptcomplt">#BE9267</color>
     <color name="promptblueac">#14283C</color>
-    <color name="promptproblem">#B44040</color>
+    <color name="promptproblem">#8C473C</color>
+    <color name="mpromptbluedk">#003a5f</color>
+    <color name="mpromptcompdk">#5C3A14</color>
+    <color name="promptwhite">#FFFFFF</color>
 </resources>
