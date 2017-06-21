@@ -49,7 +49,7 @@ public class ContactPicker extends AppCompatActivity {
     EditText contactSearch;
     // The contact permission is stored to reduce management overhead.
     int contactPermissionCheck;
-    // The "accounts" collect all the possible people to display.
+    // The "mAccounts" collect all the possible people to display.
     List<Account> accounts = new ArrayList< >();
     // This is the mapping of the details map to each specific person.
     String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_FACE};
@@ -111,13 +111,13 @@ public class ContactPicker extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, SEC_READ_CONTACTS);
         }
 
-        // Once the accounts are populated, go ahead and use the cache processor.
+        // Once the mAccounts are populated, go ahead and use the cache processor.
         ShowDetailsCache(search);
     }
 
     /*
      *  This is an optimization on the ShowDetails(), in that it just uses the existing
-     *  list of accounts.  This make the type ahead search much quicker, but will not
+     *  list of mAccounts.  This make the type ahead search much quicker, but will not
      *  pick up any changes to the list.
      */
     private void ShowDetailsCache(String search) {
@@ -342,6 +342,14 @@ public class ContactPicker extends AppCompatActivity {
                     ShowDetails("");
                 }
             }
+        }
+    }
+
+    public void delimitClick(View view){
+        /* Not using at the moment */
+        switch (view.getId()) {
+            case R.id.rowpItem:
+                break;
         }
     }
 

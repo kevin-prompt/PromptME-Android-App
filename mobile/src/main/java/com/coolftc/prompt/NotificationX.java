@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  *  This is to manage the incoming prompts.  Mostly it creates a notification
- *  that the user will see and interact with.
+ *  that the user will see and interact with.  Also trigger a data refresh here.
  */
 public class NotificationX extends FirebaseMessagingService {
 
@@ -60,6 +60,12 @@ public class NotificationX extends FirebaseMessagingService {
         }
 
         notificationMgr.notify(NOTIFICATION_ID, mBuilder.build());
+
+        /*
+         *  Trigger Refresh service to bring the application up to date.
+         */
+        Intent sIntent = new Intent(this, Refresh.class);
+        startService(sIntent);
     }
 
 }

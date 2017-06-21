@@ -10,7 +10,9 @@ public class Constants {
      */
     private Constants(){}
 
-    /* Constants used in dealing with the Shared Preference Database. */
+    /* Constants used in dealing with the Shared Preference Database.
+    *  This is a different storage area than used by Settings, although
+    *  a couple of the names are reused for there.*/
     public static final String SP_REG_STORE = "prompt.registry";
     public static final String SP_REG_ID = "prompt.id";
     public static final String SP_REG_TICKET = "prompt.ticket";
@@ -24,6 +26,7 @@ public class Constants {
     public static final String SP_REG_CTNAME = "prompt.contactname";
     public static final String SP_REG_CTFACE = "prompt.contactface";
     public static final String SP_REG_DBID = "prompt.localdb";
+    public static final String SP_REG_PEND = "prompt.pending";
     public static final String SP_REG_CONFIRM = "prompt.confirmed";
     public static final String SP_REG_FORCE = "prompt.force";
     public static final long Owner_ID = -1;

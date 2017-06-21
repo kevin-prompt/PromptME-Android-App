@@ -51,6 +51,7 @@
     <string name="prf_About">About</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
+    <string name="wel_Pending">Pending (%d)</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
@@ -61,6 +62,7 @@
     <string name="contact_pri">Prompt Connections</string>
     <string name="contact_inv">Pending Invitations</string>
     <string name="contact_all">Full Contacts</string>
+    <string name="contact_more">++ Add More Connections ++</string>
     <string name="deliver">Deliver</string>
     <string name="version">Version</string>
     <string name="build_date">Build Date</string>

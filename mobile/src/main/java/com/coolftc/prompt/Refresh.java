@@ -111,12 +111,17 @@ public class Refresh extends IntentService {
         }
 
         /*
-         *  Check for pending prompts (these are just ones sent by this user).
+         *  Check for pending prompts (these are just ones sent by this user). We want to
+         *  cache this value so the main thread has easy access.
          */
         try {
             mNotes = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
             if (ghost.ticket.length() > 0) {
-                int hold = getPendPromptCnt();
+                int holdPend = getPendPromptCnt();
+                if (ghost.pending != holdPend){
+                    ghost.pending = holdPend;
+                    ghost.SyncPrime(false,this);
+                }
             }
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentC");
@@ -439,26 +444,20 @@ public class Refresh extends IntentService {
     }
 
     /*
-     *  Get the count of messages of a certain age.
+     *  Get the count of messages of a certain age.  The messages are stored in the local
+     *  DB with a timestamp in UTC, so we just want to get what time it is now in the UTC
+     *  timezone.  SQLite stores dates as strings and this comparison seems to work. We
+     *  then can cache this value for later display to the user.
      */
     private int getPendPromptCnt() {
         SQLiteDatabase db = mNotes.getReadableDatabase();
         String[] filler = {};
         String holdNowUTC = KTime.ParseNow(KT_fmtDate3339k, UTC_TIMEZONE).toString();
-        String holdNow = KTime.ParseNow(KT_fmtDate3339k).toString();
-        //Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNow), filler);
-        String holdAll = "select * from message order by " + MessageDB.MESSAGE_ID + " desc";
-        Cursor cursor1 = db.rawQuery(holdAll, filler);
-        while(cursor1.moveToNext()) {
-            String holdDate = cursor1.getString(cursor1.getColumnIndex(MessageDB.MESSAGE_TIME));
-            String x = holdDate;
-            //String now = KTime.ParseToFormat(holdDate, KTime.KT_fmtDate3339k,)
-        }
+        Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNowUTC), filler);
         int count = 0;
-        //cursor.moveToFirst();
-        //count = cursor.getInt(0);
-        //cursor.close();
-        cursor1.close();
+        cursor.moveToFirst();
+        count = cursor.getInt(0);
+        cursor.close();
         return count;
     }
 }

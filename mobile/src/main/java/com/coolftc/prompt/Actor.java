@@ -59,6 +59,7 @@ public class Actor extends Account {
         contactName = registered.getString(SP_REG_CTNAME, "");
         contactPic = registered.getString(SP_REG_CTFACE, "");
         localId = registered.getString(SP_REG_DBID, "");
+        pending = registered.getInt(SP_REG_PEND, 0);
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
         force = registered.getBoolean(SP_REG_FORCE, false);
 
@@ -94,7 +95,7 @@ public class Actor extends Account {
         SharedPreferences.Editor editor = registered.edit();
         editor.putLong(SP_REG_ID, acctId);
         editor.putString(SP_REG_TICKET, ticket);
-        editor.putString(SP_REG_UNIQUE, unique);
+        editor.putString(SP_REG_UNIQUE, cleanUnique());
         editor.putString(SP_REG_DISPLAY, display);
         editor.putInt(SP_REG_SCYCLE, sleepcycle);
         editor.putString(SP_REG_GCM, token);
@@ -103,6 +104,7 @@ public class Actor extends Account {
         editor.putString(SP_REG_CTNAME, contactName);
         editor.putString(SP_REG_CTFACE, contactPicUri());
         editor.putString(SP_REG_DBID, localId);
+        editor.putInt(SP_REG_PEND, pending);
         editor.putBoolean(SP_REG_CONFIRM, confirmed);
         editor.putBoolean(SP_REG_FORCE, force);
         editor.apply();

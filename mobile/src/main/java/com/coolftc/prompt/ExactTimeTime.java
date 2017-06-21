@@ -65,6 +65,8 @@ public class ExactTimeTime extends Fragment {
         View view = inflater.inflate(R.layout.exacttime_time, container, false);
 
         TimePicker timePicker = (TimePicker) view.findViewById(R.id.exactTimePicker);
+
+        timePicker.setIs24HourView(Settings.getUse24Clock(getActivity().getApplicationContext()));
         Calendar timeset;
         try {
             timeset = KTime.ParseToCalendar(mTimeStamp, KTime.KT_fmtDate3339fk);

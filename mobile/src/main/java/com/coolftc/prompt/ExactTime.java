@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 
 import java.util.Calendar;
 
@@ -33,6 +35,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     private String mTimeStamp;
     private String mDatePicked;
     private String mTimePicked;
+    private PageFragmentMgr mPageFragmentMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +54,31 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
             mTimePicked = mTimeStamp.substring(11);
         }
 
-        PageFragmentMgr mPageFragmentMgr = new PageFragmentMgr(getSupportFragmentManager());
+        mPageFragmentMgr = new PageFragmentMgr(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         if(mViewPager != null){ mViewPager.setAdapter(mPageFragmentMgr);}
     }
 
-    @Override
-    public void setDate(String date) {
-        mDatePicked = date;
+    private void setTimeAgain(View view){
+        // The Timepicker has a bug with not calling its click listener for AM/PM
+        // see https://issuetracker.google.com/issues/36931448
+        // As it happens, we can just get the final time on exit and live with that.
+        if(view == null) return;
+        RelativeLayout holdParent = (RelativeLayout) view.getParent();
+        if(holdParent == null) return;
+        TimePicker timePicker = (TimePicker) holdParent.findViewById(R.id.exactTimePicker);
+        Integer hour = 0; Integer min = 0;
+        if(timePicker != null) {
+            hour = timePicker.getCurrentHour();
+            min = timePicker.getCurrentMinute();
+            setTime((hour < 10 ? "0" + hour.toString() : hour.toString()) + ":" + (min < 10 ? "0" + min.toString() : min.toString()) + mTimeStamp.substring(16));
+        }
     }
+
+    @Override
+    public void setDate(String date) { mDatePicked = date; }
 
     @Override
     public void setTime(String time) {
@@ -72,6 +89,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
      *  The navigation buttons for the fragments
      */
     public void PickTime(View view){
+        setTimeAgain(view);
         mViewPager.setCurrentItem(FR_POS_EXTIME, true);
     }
     public void PickDate(View view){
@@ -83,6 +101,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
      */
     public void PickFinish(View view){
         boolean past = false;
+        setTimeAgain(view);  // Double check on the date.
         String holdpick = mDatePicked + "T" + mTimePicked;
 
         try {
