@@ -4,15 +4,11 @@ import static com.coolftc.prompt.Constants.*;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,8 +39,8 @@ import java.util.TreeMap;
 public class Welcome extends AppCompatActivity {
     // The contact list.
     ListView mListView;
-    // The "accounts" collect all the possible people to display.
-    List<Account> accounts = new ArrayList< >();
+    // The "mAccounts" collect all the possible people to display.
+    List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the details map to each specific person.
     String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_FACE};
     int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpFacePic};
@@ -120,19 +116,20 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void Display(){
-        // This is a new list from scratch.  This is a global list (for this class), so
+        // This is a new account list from scratch.  This is a global list (for this class), so
         // it can be used later by other methods.
-        accounts = new ArrayList<>();
+        mAccounts = new ArrayList<>();
+        // This will come in handy a couple times.
+        Actor actor = new Actor(getApplicationContext());
 
         // Have the Title match the larger contacts screen.
-        Account delimtFriends = new Account();
-        delimtFriends.display = getResources().getString(R.string.contact_pri);
-        delimtFriends.tag = TITLE_ROW;
-        accounts.add(delimtFriends);
+        AddDelimitRow(R.string.contact_pri);
         // Grab the primary user, which is stored in the preferences.
-        accounts.add(new Actor(this));
+        mAccounts.add(actor);
         //Get all friends stored locally.
         LoadFriends(FriendDB.SQLITE_TRUE);
+        // Add a title to suggest adding new connections
+        AddDelimitRow(R.string.contact_more);
 
         // The "uniques" hold all the unique names that are on the list
         Map<String, Boolean> uniques = new HashMap<>();
@@ -141,7 +138,7 @@ public class Welcome extends AppCompatActivity {
         List<Map<String, String>> details = new ArrayList<>();
 
         // Move the account data into the desired details format.
-        for(Account acct : accounts) {
+        for(Account acct : mAccounts) {
             // Sometimes we want to skip displaying records.
             if (uniques.containsKey(acct.unique)) continue;
 
@@ -165,11 +162,10 @@ public class Welcome extends AppCompatActivity {
         WelcomeAdapter adapter = new WelcomeAdapter(this, details, R.layout.contactpicker_row, StatusMapFROM, StatusMapTO);
         mListView.setAdapter(adapter);
 
-    }
-
-    public void JumpConnections(View view) {
-        Intent intent = new Intent(this, ContactPicker.class);
-        startActivity(intent);
+        // Just having this check should be good enough, as Refresh is called
+        // upon incoming notifications as well as entry into this screen.
+        TextView holdView = (TextView)findViewById(R.id.welPending);
+        if(holdView != null) { holdView.setText(String.format(getResources().getString(R.string.wel_Pending), actor.pending)); }
     }
 
     // Used by floating action button to directly enter a prompt for the user.
@@ -196,6 +192,17 @@ public class Welcome extends AppCompatActivity {
     }
 
     /*
+     *  Adds a descriptive row to the list
+     */
+    private void AddDelimitRow(int resourceId){
+        Account delimtFriend = new Account();
+        delimtFriend.display = getResources().getString(resourceId);
+        delimtFriend.tag = TITLE_ROW;
+        mAccounts.add(delimtFriend);
+    }
+
+    /*
+    /*
      * This reads all the local friends/invites into an account list.
      */
     private void LoadFriends(Integer friendType){
@@ -218,11 +225,25 @@ public class Welcome extends AppCompatActivity {
                 local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
                 local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
                 local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
-                accounts.add(local);
+                mAccounts.add(local);
             }
             cursor.close();
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".queryFriends"); }
         finally { social.close(); }
+    }
+
+    public void delimitClick(View view){
+        switch (view.getId()) {
+            case R.id.rowpItem:
+                TextView holdView;
+                holdView = (TextView) view.findViewById(R.id.rowpDelimitName);
+                if(holdView != null) {
+                    if (holdView.getText().toString().equalsIgnoreCase(getResources().getString(R.string.contact_more))) {
+                        startActivity(new Intent(this, ContactPicker.class));
+                    }
+                }
+                break;
+        }
     }
 
     public void pickOnClick(View view) {
@@ -236,7 +257,7 @@ public class Welcome extends AppCompatActivity {
 
                     // Find the matching Account.
                     Account holdAcct = null;
-                    for(Account acct : accounts) {
+                    for(Account acct : mAccounts) {
                         if (acct.unique.equalsIgnoreCase(uSelect)) {
                             holdAcct = acct;
                             break;

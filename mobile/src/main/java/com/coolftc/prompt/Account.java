@@ -48,6 +48,7 @@ public class Account implements Serializable {
     public String bestId(){ return localId.length()>0 ? localId : contactId; }
     public boolean isEmail(){ return unique.contains("@"); }
     public String sleepcycleStr(){ return Integer.toString(sleepcycle);}
+    public String cleanUnique(){ return isEmail() ? unique : unique.replaceAll("[^0-9]", ""); }
 
     /*
      *  This method will search a few of the fields to determine if the

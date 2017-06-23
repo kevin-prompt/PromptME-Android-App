@@ -164,6 +164,15 @@ public class KTime {
     }
 
     /*
+     *  Is the date supplied in the past?
+     *  Requires a date and the format of that data be passed in.
+     */
+    public static boolean IsPast(String inTime, String inFormat)  throws ExpParseToCalendar{
+        String now = ParseNow(inFormat).toString();
+        return 0 > CalcDateDifference(inTime, now, inFormat, KT_MILLISECONDS);
+    }
+
+    /*
      *  Convert a time from one timezone to another.
      */
     public static Calendar ConvertTimezone(Calendar inTime, String timezone){

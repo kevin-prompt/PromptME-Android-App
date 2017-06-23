@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="time_name">
-        <item>Exact Time</item>
         <item>Today</item>
         <item>Tonight</item>
         <item>Tomorrow</item>
-        <item>Weekend</item>
-        <item>Week</item>
+        <item>On Weekend</item>
+        <item>Next Week</item>
         <item>Sunday</item>
         <item>Monday</item>
         <item>Tuesday</item>
@@ -14,19 +13,7 @@
         <item>Thursday</item>
         <item>Friday</item>
         <item>Saturday</item>
-        <item>Fortnight</item>
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
+        <item>Fortnight Hence</item>
     </string-array>
     <string-array name="time_adj">
         <item></item>
