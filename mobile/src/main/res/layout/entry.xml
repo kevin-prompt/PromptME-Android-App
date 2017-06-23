@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -43,8 +44,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/sendContactExtra"
         android:layout_centerHorizontal="true"
-        android:onClick="NewExactTime"
-        android:textSize="@dimen/lbl_med_size">
+        android:textSize="@dimen/lbl_big_size">
     </TextView>
     <TextView android:id="@+id/sendRecurTime"
         android:layout_width="wrap_content"
@@ -106,6 +106,7 @@
     </EditText>
 
     <Button android:id="@+id/sendSendBtn" android:text="@string/send"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:onClick="SendMessage"
@@ -125,5 +126,39 @@
         android:layout_alignParentStart="true"
         android:paddingTop="10dp">
     </CheckBox>
+
+    <CheckBox android:id="@+id/sendExactTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exact_prompt"
+        android:onClick="ShowExactTime"
+        android:layout_below="@+id/sendMessage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="10dp">
+    </CheckBox>
+
+    <SeekBar android:id="@+id/sendTimeAdj2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="96"
+        android:progress="49"
+        android:layout_below="@+id/sendRecure"
+        android:layout_toRightOf="@+id/sendTimeName"
+        android:paddingTop="20dp"/>
+
+    <TextView android:id="@+id/lblSendEarly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblEarly"
+        android:layout_below="@id/sendTimeAdj2"
+        android:layout_alignLeft="@id/sendTimeAdj2"/>
+
+    <TextView android:id="@+id/lblSendLate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblLate"
+        android:layout_below="@id/sendTimeAdj2"
+        android:layout_alignRight="@id/sendTimeAdj2"/>
 
 </RelativeLayout>
