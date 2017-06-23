@@ -128,7 +128,7 @@
     <string name="recur_wek_end">Repeat every %4$s forever.</string>
     <string name="repeat_propmpt">Repeat this Prompt</string>
     <string name="exact_prompt">Pick Exact Time</string>
-    <string name="entry_help">Select time and enter a message.</string>
+    <string name="entry_help">Select a Time.</string>
     <string name="settings">Settings</string>
     <string name="history">History</string>
     <string name="connections">Connections</string>

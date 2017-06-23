@@ -23,9 +23,9 @@
         android:layout_height="20dp"
         android:layout_toRightOf="@+id/sendFacePic"
         android:layout_toEndOf="@+id/sendFacePic"
-        android:paddingLeft="5dp"
-        android:paddingStart="5dp"
-        android:paddingRight="5dp">
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:paddingRight="8dp">
     </TextView>
     <TextView android:id="@+id/sendContactExtra"
         android:layout_width="match_parent"
@@ -34,9 +34,9 @@
         android:layout_toRightOf="@+id/sendFacePic"
         android:layout_toEndOf="@+id/sendFacePic"
         android:textSize="@dimen/lbl_sml_size"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingStart="5dp">
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingStart="8dp">
     </TextView>
     <TextView android:id="@+id/sendTargeTime"
         android:layout_width="wrap_content"
@@ -64,34 +64,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/entry_help"
+        android:layout_alignTop="@+id/sendTimeName"
+        android:layout_toLeftOf="@+id/sendTimeName"
+        android:layout_toStartOf="@+id/sendTimeName"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
         android:layout_below="@+id/lblDisplayBar">
     </TextView>
 
     <Spinner android:id="@+id/sendTimeName"
-        android:layout_width="150dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblEntryHelp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingStart="5dp"
-        android:layout_marginTop="17dp"
+        android:layout_below="@+id/lblDisplayBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingStart="8dp"
+        android:layout_marginTop="16dp"
         android:entries="@array/time_name">
     </Spinner>
 
-    <Spinner android:id="@+id/sendTimeAdj"
-        android:layout_width="150dp"
+    <SeekBar android:id="@+id/sendTimeAdj"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblEntryHelp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingStart="5dp"
-        android:layout_marginTop="17dp"
-        android:entries="@array/time_adj">
-    </Spinner>
+        android:max="95"
+        android:progress="47"
+        android:layout_below="@id/sendTimeName"
+        android:layout_marginLeft="@dimen/ent_timeadj_margin"
+        android:layout_marginStart="@dimen/ent_timeadj_margin"
+        android:layout_marginRight="@dimen/ent_timeadj_margin"
+        android:layout_marginEnd="@dimen/ent_timeadj_margin"
+        android:paddingTop="32dp"/>
+
+    <TextView android:id="@+id/lblSendEarly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblEarly"
+        android:layout_below="@id/sendTimeAdj"
+        android:layout_alignLeft="@id/sendTimeAdj"
+        android:layout_alignStart="@id/sendTimeAdj"/>
+
+    <TextView android:id="@+id/lblSendLate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblLate"
+        android:layout_below="@id/sendTimeAdj"
+        android:layout_alignRight="@id/sendTimeAdj"
+        android:layout_alignEnd="@id/sendTimeAdj"/>
 
     <EditText android:id="@+id/sendMessage"
         android:layout_width="match_parent"
@@ -101,7 +121,7 @@
         android:ems="10"
         android:layout_marginRight="75dp"
         android:layout_marginEnd="75dp"
-        android:layout_below="@+id/sendTimeName"
+        android:layout_below="@+id/sendTimeAdj"
         android:layout_marginTop="15dp">
     </EditText>
 
@@ -112,7 +132,7 @@
         android:onClick="SendMessage"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/sendTimeName"
+        android:layout_below="@+id/sendTimeAdj"
         android:layout_marginTop="25dp">
     </Button>
 
@@ -138,27 +158,5 @@
         android:paddingTop="10dp">
     </CheckBox>
 
-    <SeekBar android:id="@+id/sendTimeAdj2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="96"
-        android:progress="49"
-        android:layout_below="@+id/sendRecure"
-        android:layout_toRightOf="@+id/sendTimeName"
-        android:paddingTop="20dp"/>
-
-    <TextView android:id="@+id/lblSendEarly"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lblEarly"
-        android:layout_below="@id/sendTimeAdj2"
-        android:layout_alignLeft="@id/sendTimeAdj2"/>
-
-    <TextView android:id="@+id/lblSendLate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lblLate"
-        android:layout_below="@id/sendTimeAdj2"
-        android:layout_alignRight="@id/sendTimeAdj2"/>
 
 </RelativeLayout>

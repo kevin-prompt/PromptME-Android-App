@@ -12,5 +12,6 @@
     <dimen name="fab_margin">32dp</dimen>
     <dimen name="abt_center_margin">16dp</dimen>
     <dimen name="abt_ver_spacer">16dp</dimen>
+    <dimen name="ent_timeadj_margin">48dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
 </resources>

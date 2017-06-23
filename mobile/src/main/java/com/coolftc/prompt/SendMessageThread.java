@@ -2,6 +2,7 @@ package com.coolftc.prompt;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import static com.coolftc.prompt.Constants.*;
@@ -38,6 +39,9 @@ public class SendMessageThread extends Thread {
             }else {
                 updFailure(localId, actual.response);
             }
+            // Trigger the Refresh to update the Pending count.
+            Intent intent = new Intent(mContext, Refresh.class);
+            mContext.startService(intent);
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".run");
         } finally {

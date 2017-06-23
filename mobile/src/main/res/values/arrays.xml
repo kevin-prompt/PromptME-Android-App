@@ -14,14 +14,14 @@
         <item>Friday</item>
         <item>Saturday</item>
         <item>Fortnight Hence</item>
+        <item>Next Month</item>
     </string-array>
     <string-array name="time_adj">
-        <item></item>
+        <item>Early</item>
         <item>Morning</item>
         <item>Afternoon</item>
         <item>Evening</item>
         <item>Night</item>
-        <item>Early</item>
         <item>Late</item>
         <item>Next</item>
     </string-array>
