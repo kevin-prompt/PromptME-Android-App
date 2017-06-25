@@ -78,6 +78,7 @@ public class Constants {
     public static final int SEC_READ_CONTACTS = 10003;
     public static final int FR_POS_EXDATE = 0;
     public static final int FR_POS_EXTIME = 1;
+    public static final String KY_HIST_FRAG = "history.fragment";
 
     /* Constants used in dealing with the FutureTell API and other web sites */
     public static final String SUB_ZZZ = "ZZZ";
@@ -115,6 +116,7 @@ public class Constants {
     public static final String HS_TIME = "time";
     public static final String HS_WHO = "who";
     public static final String HS_MSG = "message";
+    public static final String HS_TIME_PAST = "inthepast";
     /* Recurrence. */
     public static final int UNIT_TYPE_DAY = 4;
     public static final int UNIT_TYPE_MONTH = 6;
@@ -148,11 +150,11 @@ public class Constants {
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
     public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
-    public static final String DB_MessagesAll = "select " + MessageDB.MESSAGE_ID + "," + MessageDB.MESSAGE_NAME + "," +
+    public static final String DB_MessagesAll = "select " + MessageDB.MESSAGE_ID + "," + MessageDB.MESSAGE_NAME + "," + MessageDB.MESSAGE_CREATE + "," +
             MessageDB.MESSAGE_TIME + "," + MessageDB.MESSAGE_MSG + "," + MessageDB.MESSAGE_STATUS + "," + MessageDB.MESSAGE_PROCESSED +
             " from message order by " + MessageDB.MESSAGE_ID + " desc";
-    public static final int UPD_SCREEN_TM = 30000;                  // How often in msec to update the screen from data base
-    public static final int UPD_SCREEN_TQ = 10000;                  // How often in msec to update the screen from data base (first minute)
+    public static final int UPD_SCREEN_TM = 60000;                  // How often in msec to update the screen from data base
+    public static final int UPD_SCREEN_TQ = 7000;                  // How often in msec to update the screen from data base (first minute)
 
 
 

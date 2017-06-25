@@ -12,19 +12,22 @@
     </TextView>
     <TextView android:id="@+id/rowhTargetTime"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </TextView>
     <TextView android:id="@+id/rowhTargetName"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true">
     </TextView>
     <TextView android:id="@+id/rowhMessage"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/rowhTargetTime">

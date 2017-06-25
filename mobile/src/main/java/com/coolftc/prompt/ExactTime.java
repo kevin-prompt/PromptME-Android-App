@@ -85,6 +85,9 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
         mTimePicked = time;
     }
 
+    @Override
+    public void newSort() { throw new UnsupportedOperationException(); }
+
     /*
      *  The navigation buttons for the fragments
      */

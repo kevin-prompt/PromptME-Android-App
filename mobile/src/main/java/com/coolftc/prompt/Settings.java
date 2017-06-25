@@ -38,6 +38,8 @@ public class Settings extends AppCompatActivity {
     public static final boolean DEFAULT_USE24CLOCK = false;
     public static final String PREF_PICKSHORTDATEFMT = "1003";
     public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
+    public static final String PREF_SORT_ORDER = "prompt.sortorder";
+    public static final int DEFAULT_SORT_ORDER = 0; // This means to sort by prompt time (not create date)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,21 @@ public class Settings extends AppCompatActivity {
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PICKSHORTDATEFMT, DEFAULT_PICKSHORTDATEFMT);
         context = null;
         return holdAnswer;
+    }
+
+    // Return which sort order is in effect for prompts.
+    public static int getPromptSortOrder(Context context) {
+        int holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_SORT_ORDER, DEFAULT_SORT_ORDER);
+        context = null;
+        return holdAnswer;
+    }
+
+    // Allow non-settings screen to update this value.
+    public static void setPromptSortOrder(Context context, int sort){
+        SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        ali.putInt(PREF_SORT_ORDER, sort);
+        ali.apply();
+        context = null;
     }
 
     /*

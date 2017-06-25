@@ -373,7 +373,8 @@ public class Entry extends AppCompatActivity {
                     mTargetTime = data.getExtras().getString(IN_TIMESTAMP);
                     ShowDetails();
                 }else{
-                    mTimename.setSelection(DEFAULT_NAME); // Just return to a know safe state.
+                    CheckBox holdChkbox = (CheckBox) findViewById(R.id.sendExactTime);
+                    if(holdChkbox != null) {holdChkbox.setChecked(false);}
                 }
                 break;
             case KY_RECURE:     // Returning from recurrence picker.
@@ -421,14 +422,14 @@ public class Entry extends AppCompatActivity {
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         ali.targetTime = mTargetTime;
-        ali.targetTimenameId = mTimename.getSelectedItemPosition() + 1;
-        ali.targetTimename = mTimename.getSelectedItem().toString();
-        ali.targetTimeadjId = mTimeadj.getProgress()/16;
-        ali.targetTimeadj = mTimeadjData.get(mTimeadj.getProgress()/16);
-        ali.recureUnit = mRecurUnit;
-        ali.recurePeriod = mRecurPeriod;
-        ali.recureNumber = mRecurNbr;
-        ali.recureEnd = mRecurEnd;
+        ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
+        ali.targetTimeName = mTimename.getSelectedItem().toString();
+        ali.targetTimeAdjId = mTimeadj.getProgress()/16;
+        ali.targetTimeAdj = mTimeadjData.get(mTimeadj.getProgress()/16);
+        ali.recurUnit = mRecurUnit;
+        ali.recurPeriod = mRecurPeriod;
+        ali.recurNumber = mRecurNbr;
+        ali.recurEnd = mRecurEnd;
 
         SendMessageThread smt = new SendMessageThread(getApplicationContext(), ali);
         smt.start();

@@ -39,7 +39,7 @@ public class ExactTimeTime extends Fragment {
         if (context instanceof FragmentTalkBack) {
             mActivity = (FragmentTalkBack) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement FragmentTalkBack");
+            throw new RuntimeException(context.toString() + context.getResources().getString(R.string.err_no_fragmenttalkback));
         }
     }
 

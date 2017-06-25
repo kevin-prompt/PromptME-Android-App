@@ -54,11 +54,14 @@
             android:name=".Entry"
             android:parentActivityName=".Welcome"
             android:label="@string/ent_name"/>
-        <activity android:name=".ExactTime" />
+        <activity
+            android:name=".ExactTime"
+            android:label="@string/now_name"/>
         <activity android:name=".Recurrence" />
         <activity
             android:name=".History"
             android:parentActivityName=".Welcome"
+            android:label="@string/his_name"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Signup"

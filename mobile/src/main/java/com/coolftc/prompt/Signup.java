@@ -131,14 +131,19 @@ public class Signup extends AppCompatActivity {
         private Context context;
         private String title;
 
-        public AcctCreateVerifyTask(AppCompatActivity activity, String name){
+        public AcctCreateVerifyTask(AppCompatActivity activity, String name) {
             context = activity;
             title = name;
         }
 
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(context, title, context.getResources().getString(R.string.processing), true, true);
-            progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
+            progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    cancel(true);
+                }
+            });
         }
 
         protected void onPostExecute(Actor result) {
@@ -151,7 +156,7 @@ public class Signup extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Boolean... values) {
-            if(!values[0]) Toast.makeText(context, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+            if (!values[0]) Toast.makeText(context, R.string.msgNoNet, Toast.LENGTH_LONG).show();
         }
 
         /*
@@ -173,12 +178,12 @@ public class Signup extends AppCompatActivity {
 
             Actor acct = new Actor(context);
             WebServices ws = new WebServices();
-            if(ws.IsNetwork(context)) {
+            if (ws.IsNetwork(context)) {
                 WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
                 regData.uname = criteria[0];
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
-                acct.display = regData.dname;
+                acct.display = regData.dname.length() > 0 ? regData.dname : regData.uname;
                 regData.scycle = Integer.parseInt(criteria[2]);
                 acct.sleepcycle = regData.scycle;
                 regData.cname = criteria[3];
@@ -191,10 +196,10 @@ public class Signup extends AppCompatActivity {
                 regData.verify = false; // Don't send out a verification code
 
                 WebServiceModels.RegisterResponse user = ws.Registration(regData);
-                if(user.response >= 200 && user.response < 300) {
+                if (user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
-                    if(!regData.verify) {
+                    if (!regData.verify) {
                         WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
                         confirm.code = Long.parseLong(criteria[4]);   // code 2 = digits
                         confirm.provider = criteria[5];
@@ -206,7 +211,7 @@ public class Signup extends AppCompatActivity {
                     }
                     acct.SyncPrime(false, context);
                 }
-            }else{
+            } else {
                 publishProgress(false);
             }
             return acct;

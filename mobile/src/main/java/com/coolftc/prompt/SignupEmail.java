@@ -150,7 +150,7 @@ public class SignupEmail extends AppCompatActivity {
                 regData.uname = criteria[0];
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
-                acct.display = regData.dname;
+                acct.display = regData.dname.length() > 0 ? regData.dname : regData.uname;
                 regData.scycle = Integer.parseInt(criteria[2]);
                 acct.sleepcycle = regData.scycle;
                 regData.cname = criteria[3];
