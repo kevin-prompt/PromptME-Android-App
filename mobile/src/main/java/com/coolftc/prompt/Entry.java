@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -42,9 +40,8 @@ public class Entry extends AppCompatActivity {
     // Data needed to create a message
     private Account mTarget;                     // Who is getting this message
     private Spinner mTimename;                   // Simple time - name
-    private Spinner mTimeadj;                    // Simple time - adjustment
-    private ArrayAdapter<String> mTimeadjAdapter;// Allows changes to mTimeadj spinner.
     private List<String> mTimeadjData;           // Holds the raw data for mTimeadj
+    private SeekBar mTimeadj;                   // Simple time - adjustment
 
     // This data needs explicit persistence
     private String mTargetTime;                  // If Simple time is exact, this is the real time.
@@ -53,11 +50,6 @@ public class Entry extends AppCompatActivity {
     private int mRecurNbr = RECUR_INVALID;       // The number of times to recur (has priority over mRecurEnd).
     private String mRecurEnd;                    // The end date used for recurrence.
 
-    // Using constants instead of an enum for these Simple time names.
-    private static final int EXACT = 1;
-    private static final int TODAY = 2;
-    private static final int TONIGHT = 3;
-    private static final int TOMORROW = 4;
     private static final int DEFAULT_NAME = 0;
 
     @Override
@@ -82,47 +74,33 @@ public class Entry extends AppCompatActivity {
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Configure the Spinners, set default, add listeners after to speed things up.
+
         mTimename = (Spinner) findViewById(R.id.sendTimeName);
-        mTimeadj = (Spinner) findViewById(R.id.sendTimeAdj);
-        mTimeadjData = Arrays.asList(getResources().getStringArray(R.array.time_adj));
-        mTimeadjAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
-        mTimeadjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ResetSpinAdj();
-        mTimeadj.setAdapter(mTimeadjAdapter);
-        mTimeadjAdapter.notifyDataSetChanged();
         mTimename.setSelection(DEFAULT_NAME);
-        mTimeadj.setSelection(2);
+
+        mTimeadj = (SeekBar) findViewById(R.id.sendTimeAdj);
+        mTimeadjData = Arrays.asList(getResources().getStringArray(R.array.time_adj));
 
         mTimename.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
            @Override
            // Can call getItemAtPosition(position) if need to access the selected item.
            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-               switch (pos) {
-                   case 0:
-                       PopulateSpinAdj(TODAY);
-                       break;
-                   case 1:
-                       PopulateSpinAdj(TONIGHT);
-                       break;
-                   default:
-                       ResetSpinAdj();
-                       break;
-               }
                ShowDetails();
            }
            @Override
            public void onNothingSelected(AdapterView<?> arg0) {  }
         });
-        mTimeadj.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mTimeadj.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            // Can call getItemAtPosition(position) if need to access the selected item.
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if(mTimename.getSelectedItemPosition() > 0) {// ignore if exact time set in mTimename
-                    ShowDetails();
-                }
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                ShowDetails();
             }
             @Override
-            public void onNothingSelected(AdapterView<?> arg0) {  }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         ShowDetails();
@@ -159,79 +137,6 @@ public class Entry extends AppCompatActivity {
     }
 
     /*
-     *  When some time names are selected, it is nice to remove any unattainable adjustments
-     *  from the selections. Generally the idea is to remove adjustments that are in the past.
-     */
-    private void PopulateSpinAdj(int name){
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-
-        if (name == EXACT) {
-            mTimeadj.setSelection(0);
-            mTimeadjAdapter.clear();
-            mTimeadjAdapter.add(mTimeadjData.get(0));
-        }
-
-        if (name == TODAY) {
-            mTimeadj.setSelection(0);
-            mTimeadjAdapter.clear();
-            mTimeadjAdapter.add(mTimeadjData.get(0));
-            if (hour < 12) mTimeadjAdapter.add(mTimeadjData.get(1)); // Morning 7 - 11:59am
-            if (hour < 18) mTimeadjAdapter.add(mTimeadjData.get(2)); // Afternoon 12 - 5pm
-            if (hour < 23) mTimeadjAdapter.add(mTimeadjData.get(3)); // Night 5 - 11pm
-            if (hour < 10) mTimeadjAdapter.add(mTimeadjData.get(4)); // Early 6 - 9am
-            mTimeadjAdapter.add(mTimeadjData.get(5)); // Late 9 - 11:59pm
-            mTimeadjAdapter.add(mTimeadjData.get(6)); // Next
-        }
-
-        if (name == TONIGHT){
-            mTimeadj.setSelection(0);
-            mTimeadjAdapter.clear();
-            mTimeadjAdapter.add(mTimeadjData.get(0));
-            if (hour < 21) mTimeadjAdapter.add(mTimeadjData.get(4)); // Early 5 - 9pm
-            mTimeadjAdapter.add(mTimeadjData.get(5)); // Late 9 - 11:59pm
-            // Skipping mTimeadjData(6) "Next", because Tomorrow Night is how people say it.
-        }
-
-        if (name == TOMORROW) {
-            mTimeadj.setSelection(0);
-            mTimeadjAdapter.clear();
-            mTimeadjAdapter.add(mTimeadjData.get(0));
-            mTimeadjAdapter.add(mTimeadjData.get(1));
-            mTimeadjAdapter.add(mTimeadjData.get(2));
-            mTimeadjAdapter.add(mTimeadjData.get(3));
-            mTimeadjAdapter.add(mTimeadjData.get(4));
-            mTimeadjAdapter.add(mTimeadjData.get(5));
-            // Skipping mTimeadjData(6) "Next" because it is kind of ambiguous.
-        }
-
-        mTimeadjAdapter.notifyDataSetChanged();
-    }
-
-    /*
-     *  Fill out the time adjustments spinner with the full list of items.
-     */
-    private void ResetSpinAdj(){
-        mTimeadj.setSelection(0);
-        mTimeadjAdapter.clear();
-        for (String adj : mTimeadjData) {
-            mTimeadjAdapter.add(adj);
-        }
-        mTimeadjAdapter.notifyDataSetChanged();
-    }
-
-    /*
-     *  Since the spinner can be changed, need to check explicitly what is selected based on original data.
-     */
-    private int GetRealAdj(String adj) {
-        int ndx = 0;
-        for (String hold : mTimeadjData) {
-            if(adj.equalsIgnoreCase(hold)) return ndx;
-            ndx++;
-        }
-        return 0;  // if not found fall back to zero
-    }
-
-    /*
      *  Population of the screen.
      */
     private void ShowDetails(){
@@ -255,7 +160,7 @@ public class Entry extends AppCompatActivity {
         // Special processing if an exact time is in use
         holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
-            String dTime = "";
+            String dTime;
             String dateTimeFmt = Settings.getDateDisplayFormat(getApplicationContext(), DATE_TIME_FMT_SHORT);
             try {
                 Calendar delivery = KTime.ParseToCalendar(mTargetTime, KTime.KT_fmtDate3339fk);
@@ -268,8 +173,7 @@ public class Entry extends AppCompatActivity {
             mTimeadj.setEnabled(false);
         } else {
             holdRaw += mTimename.getSelectedItem().toString();
-            if (mTimeadj.getSelectedItemPosition() > 0)
-                holdRaw += ", " + mTimeadj.getSelectedItem().toString();
+            holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/16);
         }
         holdText = (TextView) findViewById(R.id.sendTargeTime);
         if(holdText != null) { holdText.setText(holdRaw);}
@@ -450,10 +354,8 @@ public class Entry extends AppCompatActivity {
                 timestamp.putExtra(IN_TIMESTAMP, mTargetTime);
                 startActivityForResult(timestamp, KY_DATETIME);
             }else { // unchecked
-                ResetSpinAdj();
                 mTimename.setEnabled(true);
                 mTimeadj.setEnabled(true);
-                mTimename.setSelection(DEFAULT_NAME); // Just return to a know safe state.
                 ShowDetails();
             }
         }
@@ -469,11 +371,10 @@ public class Entry extends AppCompatActivity {
             case KY_DATETIME:     // Returning from the datetime picker.
                 if (resultCode == RESULT_OK) {
                     mTargetTime = data.getExtras().getString(IN_TIMESTAMP);
-                    PopulateSpinAdj(EXACT);
                     ShowDetails();
                 }else{
-                    ResetSpinAdj();
-                    mTimename.setSelection(DEFAULT_NAME); // Just return to a know safe state.
+                    CheckBox holdChkbox = (CheckBox) findViewById(R.id.sendExactTime);
+                    if(holdChkbox != null) {holdChkbox.setChecked(false);}
                 }
                 break;
             case KY_RECURE:     // Returning from recurrence picker.
@@ -521,14 +422,14 @@ public class Entry extends AppCompatActivity {
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         ali.targetTime = mTargetTime;
-        ali.targetTimenameId = mTimename.getSelectedItemPosition() + 1;
-        ali.targetTimename = mTimename.getSelectedItem().toString();
-        ali.targetTimeadjId = GetRealAdj(mTimeadj.getSelectedItem().toString());
-        ali.targetTimeadj = mTimeadj.getSelectedItem().toString();
-        ali.recureUnit = mRecurUnit;
-        ali.recurePeriod = mRecurPeriod;
-        ali.recureNumber = mRecurNbr;
-        ali.recureEnd = mRecurEnd;
+        ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
+        ali.targetTimeName = mTimename.getSelectedItem().toString();
+        ali.targetTimeAdjId = mTimeadj.getProgress()/16;
+        ali.targetTimeAdj = mTimeadjData.get(mTimeadj.getProgress()/16);
+        ali.recurUnit = mRecurUnit;
+        ali.recurPeriod = mRecurPeriod;
+        ali.recurNumber = mRecurNbr;
+        ali.recurEnd = mRecurEnd;
 
         SendMessageThread smt = new SendMessageThread(getApplicationContext(), ali);
         smt.start();

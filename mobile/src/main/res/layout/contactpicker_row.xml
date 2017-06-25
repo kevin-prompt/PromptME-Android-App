@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rowpItem"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="72dp"
     android:onClick="pickOnClick"
     android:padding="10sp">
 
@@ -17,8 +17,8 @@
         android:visibility="gone">
     </TextView>
     <ImageView android:id="@+id/rowpFacePic"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:contentDescription="@string/img_contactpic"
         android:src="@drawable/contactdoe_26"
         android:layout_alignParentLeft="true"
@@ -26,23 +26,24 @@
     </ImageView>
     <TextView android:id="@+id/rowpContactName"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
         android:layout_toRightOf="@+id/rowpFacePic"
         android:layout_toEndOf="@+id/rowpFacePic"
-        android:paddingLeft="5dp"
-        android:paddingStart="5dp"
-        android:paddingRight="5dp">
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingRight="16dp">
     </TextView>
     <TextView android:id="@+id/rowpContactExtra"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
         android:layout_below="@+id/rowpContactName"
         android:layout_toRightOf="@+id/rowpFacePic"
         android:layout_toEndOf="@+id/rowpFacePic"
-        android:textSize="@dimen/lbl_sml_size"
-        android:paddingLeft="5dp"
-        android:paddingStart="5dp"
-        android:paddingRight="5dp">
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingRight="16dp">
     </TextView>
 
 </RelativeLayout>

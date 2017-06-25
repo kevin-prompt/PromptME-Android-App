@@ -86,6 +86,16 @@ public class Welcome extends AppCompatActivity {
          */
         Intent sIntent = new Intent(this, Refresh.class);
         startService(sIntent);
+
+        /*
+         *  Make sure someone did not navigate back here un prepared.
+         */
+        Actor acct = new Actor(this);
+        if (acct.ticket.length() == 0) {
+            Intent intent = new Intent(this, Signup.class);
+            startActivity(intent);
+        }
+
     }
 
     /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar

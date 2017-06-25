@@ -2,6 +2,7 @@ package com.coolftc.prompt;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import static com.coolftc.prompt.Constants.*;
@@ -38,6 +39,9 @@ public class SendMessageThread extends Thread {
             }else {
                 updFailure(localId, actual.response);
             }
+            // Trigger the Refresh to update the Pending count.
+            Intent intent = new Intent(mContext, Refresh.class);
+            mContext.startService(intent);
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".run");
         } finally {
@@ -56,14 +60,14 @@ public class SendMessageThread extends Thread {
             WebServiceModels.PromptRequest rData = new WebServiceModels.PromptRequest();
             rData.when = msg.targetTime;
             rData.timezone = msg.target.timezone;
-            rData.timename = msg.targetTimenameId;
-            rData.timeadj = msg.targetTimeadjId;
+            rData.timename = msg.targetTimeNameId;
+            rData.timeadj = msg.targetTimeAdjId;
             rData.scycle = msg.target.sleepcycle;
             rData.receiveId = msg.target.acctId;
-            rData.units = msg.recureUnit;
-            rData.period = msg.recurePeriod;
-            rData.recurs = msg.recureNumber;
-            rData.end = msg.recureEnd;
+            rData.units = msg.recurUnit;
+            rData.period = msg.recurPeriod;
+            rData.recurs = msg.recurNumber;
+            rData.end = msg.recurEnd;
             rData.message = msg.message;
 
             realTime = ws.NewPrompt(from.ticket, from.acctIdStr(), rData);
@@ -82,12 +86,12 @@ public class SendMessageThread extends Thread {
         values.put(MessageDB.MESSAGE_UNIQUE, msg.target.unique);
         values.put(MessageDB.MESSAGE_NAME, msg.target.bestName());
         values.put(MessageDB.MESSAGE_TIME, msg.targetTime);
-        values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimenameId);
-        values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeadjId);
-        values.put(MessageDB.MESSAGE_R_UNIT, msg.recureUnit);
-        values.put(MessageDB.MESSAGE_R_PERIOD, msg.recurePeriod);
-        values.put(MessageDB.MESSAGE_R_NUMBER, msg.recureNumber);
-        values.put(MessageDB.MESSAGE_R_END, msg.recureEnd);
+        values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimeNameId);
+        values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeAdjId);
+        values.put(MessageDB.MESSAGE_R_UNIT, msg.recurUnit);
+        values.put(MessageDB.MESSAGE_R_PERIOD, msg.recurPeriod);
+        values.put(MessageDB.MESSAGE_R_NUMBER, msg.recurNumber);
+        values.put(MessageDB.MESSAGE_R_END, msg.recurEnd);
         values.put(MessageDB.MESSAGE_MSG, msg.message);
         values.put(MessageDB.MESSAGE_SRVR_ID, 0);   // No server id yet.
         values.put(MessageDB.MESSAGE_STATUS, 0);    // No status yet.

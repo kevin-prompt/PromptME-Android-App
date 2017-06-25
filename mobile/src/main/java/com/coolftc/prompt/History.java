@@ -1,16 +1,23 @@
 package com.coolftc.prompt;
 
 import static com.coolftc.prompt.Constants.*;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,6 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +37,7 @@ import java.util.TreeMap;
  * From this screen one can navigate to the welcome screen by pressing the
  * floating add button (to add another prompt).
  */
-public class History extends AppCompatActivity {
+public class History extends AppCompatActivity  implements FragmentTalkBack{
 
      // The message list.
      ListView mListView;
@@ -70,12 +78,45 @@ public class History extends AppCompatActivity {
         });
     }
 
+
+    /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar
+     * while hiding less used ones on the traditional menu.  The xml configuration determines how they
+     * are shown. The system will call the onCreate when the user presses the menu button.
+     * Note: Android refuses to show icon+text on the ActionBar in portrait, so deal with it. */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.history_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mnuSort:
+                // Create a dialog to allow changes to sorting.
+                FragmentManager mgr = getFragmentManager();
+                Fragment frag = mgr.findFragmentByTag(KY_HIST_FRAG);
+                if (frag != null) {
+                    mgr.beginTransaction().remove(frag).commit();
+                }
+                HistoryDialog sorter = new HistoryDialog();
+                sorter.show(mgr, KY_HIST_FRAG);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /*
      *  Load up the messages into the global list, then parse them out to the list view.
      */
     private void ShowDetails(String search) {
         // Load up the messages from the database
         GetMessages();
+        if(Settings.getPromptSortOrder(getApplicationContext()) == Settings.DEFAULT_SORT_ORDER)
+            Collections.sort(reminders, Reminder.ByDeliveryDate);
+        else
+            Collections.sort(reminders, Reminder.ByCreateDate);
         ShowDetailsCache(search);
     }
 
@@ -96,8 +137,9 @@ public class History extends AppCompatActivity {
 
             // Copy the data to display.
             hold.put(HS_REM_ID, msg.idStr());
-            if(msg.processed) {
+            if(msg.isProcessed) {
                 hold.put(HS_TIME, msg.GetPromptTime(getApplicationContext()));
+                hold.put(HS_TIME_PAST, msg.IsPromptPast());
             }else{
                 hold.put(HS_TIME, waiting);
             }
@@ -129,8 +171,9 @@ public class History extends AppCompatActivity {
                 local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
                 local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
+                local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
                 local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
-                local.processed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
+                local.isProcessed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
                 reminders.add(local);
             }
             cursor.close();
@@ -139,12 +182,34 @@ public class History extends AppCompatActivity {
 
     }
 
-   /*
-    * This provides a custom handling of the list of messages.  Other that formatting the displayed
-    * values, there is not too much special going on here.
-    * NOTE: Be sure to use match_parent (or specific values) for the height and width of the ListView
-    * and rows. Otherwise the getView is called A LOT! since it has to guess at sizing.
-    */
+    @Override
+    public void setDate(String date) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTime(String time) {
+        throw new UnsupportedOperationException();
+    }
+
+    /*
+     *  The dialog has adjusted the sort parameters, resort and redisplay the data.
+     */
+    @Override
+    public void newSort() {
+        if(Settings.getPromptSortOrder(getApplicationContext()) == Settings.DEFAULT_SORT_ORDER)
+            Collections.sort(reminders, Reminder.ByDeliveryDate);
+        else
+            Collections.sort(reminders, Reminder.ByCreateDate);
+        ShowDetailsCache("");
+    }
+
+    /*
+     * This provides a custom handling of the list of messages.  Other that formatting the displayed
+     * values, there is not too much special going on here.
+     * NOTE: Be sure to use match_parent (or specific values) for the height and width of the ListView
+     * and rows. Otherwise the getView is called A LOT! since it has to guess at sizing.
+     */
     private class HistoryAdapter extends SimpleAdapter {
         private static final int TYPE_ITEM = 0;
         private static final int TYPE_MAX_COUNT = 1;
@@ -188,6 +253,8 @@ public class History extends AppCompatActivity {
                     case TYPE_ITEM:
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetTime);
                         holdView.setText(holdData.get(HS_TIME));
+                        if(holdData.get(HS_TIME_PAST).length() == 0) // not in the past, so bold
+                            holdView.setTypeface(null, Typeface.BOLD);
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetName);
                         holdView.setText(holdData.get(HS_WHO));
                         holdView = (TextView) convertView.findViewById(R.id.rowhMessage);
@@ -213,7 +280,7 @@ public class History extends AppCompatActivity {
 
             ShowDetails("");
             hRefreshCntr += UPD_SCREEN_TQ;
-            if(hRefreshCntr < UPD_SCREEN_TQ*5){
+            if(hRefreshCntr < UPD_SCREEN_TQ*7){
                 hRefresh.postDelayed(this, UPD_SCREEN_TQ);
             } else {
                 hRefresh.postDelayed(this, UPD_SCREEN_TM);
