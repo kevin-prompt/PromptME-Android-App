@@ -17,8 +17,8 @@
         android:textSize="@dimen/txt_edit_size"
         android:inputType="textFilter"
         android:maxLines="1"
-        android:drawableLeft="@android:drawable/ic_menu_search"
-        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawableLeft="@drawable/ic_search_black_24dp"
+        android:drawableStart="@drawable/ic_search_black_24dp"
         android:hint="@string/ctp_edit_hint">
         <requestFocus />
     </EditText>
@@ -38,6 +38,6 @@
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_people_white_24dp" />
 
 </RelativeLayout>

@@ -118,7 +118,7 @@
         android:layout_height="86dp"
         android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
         android:hint="@string/message"
-        android:ems="10"
+        android:textSize="@dimen/txt_edit_size"
         android:layout_marginRight="80dp"
         android:layout_marginEnd="80dp"
         android:layout_below="@+id/sendTimeAdj"

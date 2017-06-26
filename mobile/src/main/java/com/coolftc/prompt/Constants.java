@@ -112,11 +112,13 @@ public class Constants {
     public static final String CP_FACE = "face";
     public static final String TITLE_ROW = "AliCon2016";
     /* History list. */
-    public static final String HS_REM_ID = "reminder";
-    public static final String HS_TIME = "time";
-    public static final String HS_WHO = "who";
-    public static final String HS_MSG = "message";
-    public static final String HS_TIME_PAST = "inthepast";
+    public static final String HS_REM_ID = "history.reminder";
+    public static final String HS_TIME = "history.time";
+    public static final String HS_WHO_FROM = "history.source";
+    public static final String HS_MSG = "history.message";
+    public static final String HS_WHO_TO = "history.target";
+    public static final String HS_RECURS = "history.recurs";
+    public static final String HS_TIME_PAST = "history.past";
     /* Recurrence. */
     public static final int UNIT_TYPE_DAY = 4;
     public static final int UNIT_TYPE_MONTH = 6;
@@ -150,10 +152,8 @@ public class Constants {
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
     public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
-    public static final String DB_MessagesAll = "select " + MessageDB.MESSAGE_ID + "," + MessageDB.MESSAGE_NAME + "," + MessageDB.MESSAGE_CREATE + "," +
-            MessageDB.MESSAGE_TIME + "," + MessageDB.MESSAGE_MSG + "," + MessageDB.MESSAGE_STATUS + "," + MessageDB.MESSAGE_PROCESSED +
-            " from message order by " + MessageDB.MESSAGE_ID + " desc";
-    public static final int UPD_SCREEN_TM = 60000;                  // How often in msec to update the screen from data base
+    public static final String DB_MessagesAll = "select * from message " + MessageDB.MESSAGE_ID;
+    public static final int UPD_SCREEN_TM = 60000;                 // How often in msec to update the screen from data base
     public static final int UPD_SCREEN_TQ = 7000;                  // How often in msec to update the screen from data base (first minute)
 
 

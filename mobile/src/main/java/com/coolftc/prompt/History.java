@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /*
- * The History Display shows all reminders created on the local device. The
+ * The History Display shows all mReminders created on the local device. The
  * list is shown in reverse chronological order.  If a reminder has not yet
  * been sent to the server, a "processing..." message will also be displayed.
  * From this screen one can navigate to the welcome screen by pressing the
@@ -39,15 +40,17 @@ import java.util.TreeMap;
  */
 public class History extends AppCompatActivity  implements FragmentTalkBack{
 
-     // The message list.
-     ListView mListView;
-     // The search box.
-     EditText historySearch;
-     // The "reminder" collection of all the possible messages.
-     List<Reminder> reminders = new ArrayList< >();
-     // This is the mapping of the details map to each specific message.
-     String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_WHO, HS_MSG};
-     int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhTargetName, R.id.rowhMessage};
+    // The message list.
+    private ListView mListView;
+    // The search box.
+    private EditText mHistorySearch;
+    // The "reminder" collection of all the possible messages.
+    private List<Reminder> mReminders = new ArrayList< >();
+    // This is the mapping of the details map to each specific message.
+    private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
+    private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
+    // Who is the user
+    private Actor mUser;
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -60,13 +63,14 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         // Set up the UI
         setContentView(R.layout.history);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        historySearch = (EditText) findViewById(R.id.txtSearch_HS);
+        mHistorySearch = (EditText) findViewById(R.id.txtSearch_HS);
         mListView = (ListView) findViewById(R.id.listContacts_HS);
         ShowDetails("");
-        hRefresh.postDelayed(rRefresh, 5000);
+        hRefresh.postDelayed(rRefresh, UPD_SCREEN_TQ);
+        mUser = new Actor(getApplicationContext());
 
         // As a user types in characters, trim the reminder list.
-        historySearch.addTextChangedListener(new TextWatcher() {
+        mHistorySearch.addTextChangedListener(new TextWatcher() {
             // The "filter" contains all that has been typed into search.  Might want a debounce on this, too.
             // For example, ignore this event if 1 second has not elapsed since the last time it was fired.
             @Override
@@ -114,9 +118,9 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         // Load up the messages from the database
         GetMessages();
         if(Settings.getPromptSortOrder(getApplicationContext()) == Settings.DEFAULT_SORT_ORDER)
-            Collections.sort(reminders, Reminder.ByDeliveryDate);
+            Collections.sort(mReminders, Reminder.ByDeliveryDate);
         else
-            Collections.sort(reminders, Reminder.ByCreateDate);
+            Collections.sort(mReminders, Reminder.ByCreateDate);
         ShowDetailsCache(search);
     }
 
@@ -131,19 +135,34 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         String waiting = getResources().getString(R.string.processing);
 
         // Move the account data into the desired details format.
-        for(Reminder msg : reminders) {
+        for(Reminder msg : mReminders) {
             Map<String, String> hold = new TreeMap<>();
             if (!msg.Found(search)) continue;
 
-            // Copy the data to display.
+            // Hidden message id
             hold.put(HS_REM_ID, msg.idStr());
+            // Delivery time and indication if past.  If not processed, assume not in past.
+            hold.put(HS_TIME_PAST, msg.IsPromptPast());
             if(msg.isProcessed) {
                 hold.put(HS_TIME, msg.GetPromptTime(getApplicationContext()));
-                hold.put(HS_TIME_PAST, msg.IsPromptPast());
             }else{
                 hold.put(HS_TIME, waiting);
             }
-            hold.put(HS_WHO, msg.target.bestName());
+            // If message to self, skip it, otherwise show who created it.
+            if(!msg.isSelfie()){
+                hold.put(HS_WHO_FROM, msg.from.bestName());
+                hold.put(HS_WHO_TO, msg.target.bestName());
+            }else {
+                hold.put(HS_WHO_FROM, "");
+                hold.put(HS_WHO_TO, "");
+            }
+            // Check if recurring, just put anything in the value.
+            if (msg.recurUnit != RECUR_INVALID) {
+                hold.put(HS_RECURS, "X");
+            } else {
+                hold.put(HS_RECURS, "");
+            }
+            // The actual message
             hold.put(HS_MSG, msg.message);
             details.add(hold);
         }
@@ -162,19 +181,21 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_MessagesAll, filler);
         try{
-            reminders.clear();
+            mReminders.clear();
             while(cursor.moveToNext()) {
-                Account acct = new Account();
                 Reminder local = new Reminder();
-                local.target = acct;
+                local.target = new Account();
+                local.from = new Account();
                 local.id = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_ID));
                 local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
+                local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
                 local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
+                local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
                 local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
                 local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
                 local.isProcessed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
-                reminders.add(local);
+                mReminders.add(local);
             }
             cursor.close();
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetMessages"); }
@@ -198,9 +219,9 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     @Override
     public void newSort() {
         if(Settings.getPromptSortOrder(getApplicationContext()) == Settings.DEFAULT_SORT_ORDER)
-            Collections.sort(reminders, Reminder.ByDeliveryDate);
+            Collections.sort(mReminders, Reminder.ByDeliveryDate);
         else
-            Collections.sort(reminders, Reminder.ByCreateDate);
+            Collections.sort(mReminders, Reminder.ByCreateDate);
         ShowDetailsCache("");
     }
 
@@ -233,6 +254,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         public View getView(int position, View convertView, ViewGroup parent) {
             int type = getItemViewType(position);
             TextView holdView;
+            ImageView holdImage;
 
             if (convertView == null) {
                 switch (type) {
@@ -255,8 +277,13 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                         holdView.setText(holdData.get(HS_TIME));
                         if(holdData.get(HS_TIME_PAST).length() == 0) // not in the past, so bold
                             holdView.setTypeface(null, Typeface.BOLD);
-                        holdView = (TextView) convertView.findViewById(R.id.rowhTargetName);
-                        holdView.setText(holdData.get(HS_WHO));
+                        holdImage = (ImageView) convertView.findViewById(R.id.rowhRecur);
+                        if(holdData.get(HS_RECURS) != null && holdData.get(HS_RECURS).length() > 0)
+                            holdImage.setVisibility(View.VISIBLE);
+                        holdView = (TextView) convertView.findViewById(R.id.rowhTargetFrom);
+                        holdView.setText(holdData.get(HS_WHO_FROM));
+                        holdView = (TextView) convertView.findViewById(R.id.rowhTargetTo);
+                        holdView.setText(holdData.get(HS_WHO_TO));
                         holdView = (TextView) convertView.findViewById(R.id.rowhMessage);
                         holdView.setText(holdData.get(HS_MSG));
                         break;
@@ -273,16 +300,18 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
 
     // Non-Thread Timer used to periodically refresh the display list. SendMessageThread updates
     // the DB with completed messages delivery time, typically after the user first sees this screen.
-    // For the first 5 iterations we want to use the faster refresh rate of TQ.  This should cover
-    // the time a person would actually be looking at the screen, then back off to save battery.
+    // For the first minute we want to use the faster refresh rate of TQ and do a full reload of the
+    // screen.  This should cover the time a person would actually be looking at the screen,
+    // then back off and don't reload the messages to save battery.
     private Runnable rRefresh = new Runnable() {
         public void run() {
 
-            ShowDetails("");
             hRefreshCntr += UPD_SCREEN_TQ;
             if(hRefreshCntr < UPD_SCREEN_TQ*7){
+                ShowDetails("");
                 hRefresh.postDelayed(this, UPD_SCREEN_TQ);
             } else {
+                ShowDetailsCache("");
                 hRefresh.postDelayed(this, UPD_SCREEN_TM);
             }
         }

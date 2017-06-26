@@ -25,22 +25,24 @@ public class MessageDB  extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "message.db";
     private static final int DATABASE_VERSION = 1;
     // Status Table & Attributes
-    public static final String MESSAGE_TABLE = "message";
-    public static final String MESSAGE_ID = BaseColumns._ID;
-    public static final String MESSAGE_UNIQUE = "uniquename";
-    public static final String MESSAGE_NAME = "targetname";
-    public static final String MESSAGE_TIME = "timeexact";
-    public static final String MESSAGE_TIMENAME = "timename";
-    public static final String MESSAGE_TIMEADJ = "timeadj";
-    public static final String MESSAGE_R_UNIT = "recurunit";
-    public static final String MESSAGE_R_PERIOD = "recurperiod";
-    public static final String MESSAGE_R_NUMBER = "recurnbr";
-    public static final String MESSAGE_R_END = "recurend";
-    public static final String MESSAGE_MSG = "promptmsg";
-    public static final String MESSAGE_SRVR_ID = "serverid";
-    public static final String MESSAGE_STATUS = "status";
-    public static final String MESSAGE_CREATE = "created";
-    public static final String MESSAGE_PROCESSED = "processed";
+    public static final String MESSAGE_TABLE = "message";           // Table name.
+    public static final String MESSAGE_ID = BaseColumns._ID;        // Table key.
+    public static final String MESSAGE_TARGET = "uniquename";       // Unique name of the message target.
+    public static final String MESSAGE_SOURCE = "sourcename";       // Unique name of the message source.
+    public static final String MESSAGE_NAME = "targetname";         // Display name of the message target.
+    public static final String MESSAGE_FROM = "fromname";           // Display name of the message source.
+    public static final String MESSAGE_TIME = "timeexact";          // The actual expected delivery time (per server).
+    public static final String MESSAGE_TIMENAME = "timename";       // The code used for simplified time name.
+    public static final String MESSAGE_TIMEADJ = "timeadj";         // The code used for simplified time adjustment.
+    public static final String MESSAGE_R_UNIT = "recurunit";        // Part of recurring parameters.  Units = 0 means no recurrence.
+    public static final String MESSAGE_R_PERIOD = "recurperiod";    // Part of recurring parameters.
+    public static final String MESSAGE_R_NUMBER = "recurnbr";       // Part of recurring parameters.
+    public static final String MESSAGE_R_END = "recurend";          // Part of recurring parameters.
+    public static final String MESSAGE_MSG = "promptmsg";           // The message.
+    public static final String MESSAGE_SRVR_ID = "serverid";        // The note id of the message on the server.
+    public static final String MESSAGE_STATUS = "status";           // The status of the message wrt the server. Non-zero = non-good.
+    public static final String MESSAGE_CREATE = "created";          // The timestamp of the record in this local database (in UTC).
+    public static final String MESSAGE_PROCESSED = "processed";     // True = server has processed the request.  See status for how that went.
 
     // Extra helper data
     // see http://www.sqlite.org/datatype3.html for information about sqlite datatypes.
@@ -67,8 +69,10 @@ public class MessageDB  extends SQLiteOpenHelper {
         // Create Status Table.
         db.execSQL("create table "  + MESSAGE_TABLE + " (" +
                 MESSAGE_ID          + TABLE_TYPE_INT + " primary key autoincrement" + TABLE_DELIMIT +
-                MESSAGE_UNIQUE      + TABLE_TYPE_TEXT + TABLE_DELIMIT +
+                MESSAGE_TARGET      + TABLE_TYPE_TEXT + TABLE_DELIMIT +
+                MESSAGE_SOURCE      + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_NAME        + TABLE_TYPE_TEXT + TABLE_DELIMIT +
+                MESSAGE_FROM        + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_TIME        + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_TIMENAME    + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_TIMEADJ     + TABLE_TYPE_INT + TABLE_DELIMIT +

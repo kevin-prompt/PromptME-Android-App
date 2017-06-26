@@ -83,8 +83,10 @@ public class SendMessageThread extends Thread {
         SQLiteDatabase db = mMessage.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(MessageDB.MESSAGE_UNIQUE, msg.target.unique);
+        values.put(MessageDB.MESSAGE_TARGET, msg.target.unique);
+        values.put(MessageDB.MESSAGE_SOURCE, msg.from.unique);
         values.put(MessageDB.MESSAGE_NAME, msg.target.bestName());
+        values.put(MessageDB.MESSAGE_FROM, msg.from.bestName());
         values.put(MessageDB.MESSAGE_TIME, msg.targetTime);
         values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimeNameId);
         values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeAdjId);

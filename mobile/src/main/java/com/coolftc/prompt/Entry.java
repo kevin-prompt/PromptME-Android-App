@@ -418,14 +418,13 @@ public class Entry extends AppCompatActivity {
         }
 
         ali.target = mTarget;
+        ali.from = new Actor(this);
         holdText = (TextView) findViewById(R.id.sendMessage);
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         ali.targetTime = mTargetTime;
         ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
-        ali.targetTimeName = mTimename.getSelectedItem().toString();
         ali.targetTimeAdjId = mTimeadj.getProgress()/16;
-        ali.targetTimeAdj = mTimeadjData.get(mTimeadj.getProgress()/16);
         ali.recurUnit = mRecurUnit;
         ali.recurPeriod = mRecurPeriod;
         ali.recurNumber = mRecurNbr;
