@@ -7,6 +7,6 @@
     <item android:id="@+id/mnuHistory"
         android:title="@string/his_name" />
     <item android:id="@+id/mnuWelcomeSettings"
-        android:title="@string/settings"
+        android:title="@string/set_name"
         app:showAsAction="never" />
 </menu>

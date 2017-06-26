@@ -164,12 +164,14 @@ public class KTime {
     }
 
     /*
-     *  Is the date supplied in the past?
-     *  Requires a date and the format of that data be passed in.
+     *  Is the date supplied in the past? Requires a date and the format of
+     *  the data be passed in.  The input date must be UTC.
      */
     public static boolean IsPast(String inTime, String inFormat)  throws ExpParseToCalendar{
-        String now = ParseNow(inFormat).toString();
-        return 0 > CalcDateDifference(inTime, now, inFormat, KT_MILLISECONDS);
+        String now = ParseNow(inFormat, UTC_TIMEZONE).toString();
+        Calendar inTimeC = ParseToCalendar(inTime, inFormat);
+        Calendar nowC = ParseToCalendar(now, inFormat);
+        return 0 > inTimeC.getTimeInMillis() - nowC.getTimeInMillis();
     }
 
     /*

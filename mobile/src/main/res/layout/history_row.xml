@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rowhItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,15 +15,30 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
+        tools:text="06/26/2017 @ 2:05PM"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </TextView>
-    <TextView android:id="@+id/rowhTargetName"
+    <ImageView android:id="@+id/rowhRecur"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:contentDescription="@string/img_recurring"
+        android:src="@drawable/ic_replay_black_18dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:visibility="invisible"
+        android:layout_toRightOf="@id/rowhTargetTime"
+        android:layout_toEndOf="@id/rowhTargetTime">
+    </ImageView>
+    <TextView android:id="@+id/rowhTargetFrom"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
+        android:layout_toRightOf="@id/rowhRecur"
+        android:layout_toEndOf="@id/rowhRecur"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true">
     </TextView>
     <TextView android:id="@+id/rowhMessage"
         android:layout_width="match_parent"
@@ -31,5 +47,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/rowhTargetTime">
+    </TextView>
+    <TextView android:id="@+id/rowhTargetTo"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:textSize="@dimen/lbl_med_size"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true">
     </TextView>
 </RelativeLayout>
