@@ -47,6 +47,16 @@ import java.util.TimeZone;
     WEEK_OF_YEAR        'w' :: corresponds to the WEEK_OF_YEAR field.
     YEAR                'y' :: corresponds to the YEAR field.
     *Not Supported.
+ *
+ * Finally...
+ * The old Java Calendar and Date classes have been supplanted in Java 8 and later by the
+ * java.time (http://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html)
+ * framework. The new classes are inspired by the highly successful Joda-Time
+ * (http://www.joda.org/joda-time/) framework, intended as its successor, similar in concept
+ * but re-architected. Defined byJSR 310 (http://jcp.org/en/jsr/detail?id=310). Extended by
+ * the ThreeTen-Extra (http://www.threeten.org/threeten-extra/) project. See the Tutorial
+ * (http://docs.oracle.com/javase/tutorial/datetime/TOC.html).
+ * Hard to say when/if this will ever be viable in Android.
  */
 public class KTime {
 

@@ -167,8 +167,14 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
             details.add(hold);
         }
 
+        // Try to keep the listbox from scrolling on its own.
+        // See https://stackoverflow.com/questions/3014089/maintain-save-restore-scroll-position-when-returning-to-a-listview/5688490#5688490
+        int index = mListView.getFirstVisiblePosition();
+        View v = mListView.getChildAt(0);
+        int top = (v == null) ? 0 : (v.getTop() - mListView.getPaddingTop());
         HistoryAdapter adapter = new HistoryAdapter(this, details, R.layout.contactpicker_row, StatusMapFROM, StatusMapTO);
         mListView.setAdapter(adapter);
+        mListView.setSelectionFromTop(index, top);
     }
 
    /*
@@ -306,12 +312,13 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     private Runnable rRefresh = new Runnable() {
         public void run() {
 
+            String holdSearch = mHistorySearch.getText().toString();
             hRefreshCntr += UPD_SCREEN_TQ;
             if(hRefreshCntr < UPD_SCREEN_TQ*7){
-                ShowDetails("");
+                ShowDetails(holdSearch);
                 hRefresh.postDelayed(this, UPD_SCREEN_TQ);
             } else {
-                ShowDetailsCache("");
+                ShowDetailsCache(holdSearch);
                 hRefresh.postDelayed(this, UPD_SCREEN_TM);
             }
         }

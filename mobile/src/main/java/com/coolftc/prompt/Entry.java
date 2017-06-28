@@ -57,7 +57,7 @@ public class Entry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        // For data with no impact on the visuals, see onRestoreInstanceState().
+        // When saved data is also passed in normally, it needs to be restored here.
         if (savedInstanceState != null) {
             mTarget = (Account) savedInstanceState.getSerializable(IN_USER_ACCT);
         }else {

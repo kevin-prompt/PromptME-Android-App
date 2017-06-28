@@ -16,4 +16,5 @@
     <color name="mpromptbluedk">#003a5f</color>
     <color name="mpromptcompdk">#5C3A14</color>
     <color name="promptwhite">#FFFFFF</color>
+    <color name="promptblack">#000000</color>
 </resources>

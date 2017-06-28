@@ -71,6 +71,7 @@ public class Constants {
     public static final String IN_TIMESTAMP = "timestamp";
     public static final String IN_EXACTPICK = "exactpick";
     public static final String IN_PERIOD = "period";
+    public static final String IN_FIRSTDOW = "dayofweek";
     public static final String IN_UNIT = "unit";
     public static final String IN_ENDTIME = "endtime";
     public static final String IN_ENDNBR = "endnumber";
@@ -127,7 +128,7 @@ public class Constants {
     public static final int RECUR_UNIT_DEFAULT = UNIT_TYPE_DAY;
     public static final int RECUR_PERIOD_DEFAULT = 1;
     public static final String RECUR_END_DEFAULT = "";  // The date picker will fill this out.
-    public static final int RECUR_END_NBR = 4;
+    public static final int RECUR_END_NBR = 3;
     public static final int SUN_FLAG = 1;
     public static final int MON_FLAG = 2;
     public static final int TUE_FLAG = 4;

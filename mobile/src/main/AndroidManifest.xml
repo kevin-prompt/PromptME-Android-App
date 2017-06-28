@@ -57,7 +57,9 @@
         <activity
             android:name=".ExactTime"
             android:label="@string/now_name"/>
-        <activity android:name=".Recurrence" />
+        <activity
+            android:name=".Recurrence"
+            android:label="@string/rec_name"/>
         <activity
             android:name=".History"
             android:parentActivityName=".Welcome"

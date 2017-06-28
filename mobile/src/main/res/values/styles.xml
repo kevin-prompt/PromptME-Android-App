@@ -23,6 +23,12 @@
         <item name="colorAccent">@color/promptbluedk</item>
     </style>
 
+    <style name="ActivityTheme" parent="AppTheme" >
+        <item name="colorPrimary">@color/promptblue</item>
+        <item name="colorPrimaryDark">@color/mpromptbluedk</item>
+        <item name="colorAccent">@color/promptcomp</item>
+    </style>
+
     <style name="SignupButton" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -57,11 +63,5 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="ActivityTheme" parent="AppTheme" >
-        <item name="colorPrimary">@color/promptblue</item>
-        <item name="colorPrimaryDark">@color/mpromptbluedk</item>
-        <item name="colorAccent">@color/promptcomp</item>
-    </style>
 
 </resources>
