@@ -10,6 +10,7 @@
     <dimen name="lbl_big_size">24sp</dimen>
     <dimen name="lbl_sup_size">40sp</dimen>
     <dimen name="fab_margin">32dp</dimen>
+    <dimen name="fin_margin">16dp</dimen>
     <dimen name="abt_center_margin">16dp</dimen>
     <dimen name="abt_ver_spacer">16dp</dimen>
     <dimen name="ent_timeadj_margin">48dp</dimen>

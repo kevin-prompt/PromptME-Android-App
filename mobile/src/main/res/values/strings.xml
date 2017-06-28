@@ -8,6 +8,7 @@
     <string name="ent_name">Entry</string>
     <string name="now_name">Date / Time</string>
     <string name="his_name">History</string>
+    <string name="rec_name">Recurring</string>
     <string name="isRegistered">Registered? </string>
     <string name="msgNoNet">Network Connection not found.</string>
     <string name="blank"></string>
@@ -97,6 +98,7 @@
     <string name="finish">Finish</string>
     <string name="cancel">Cancel</string>
     <string name="occurrences">Occurrences.</string>
+    <string name="times">Times</string>
     <string name="taptochoose">(tap to choose)</string>
     <string name="repeat">Repeat</string>
     <string name="problemTitle">Please Review</string>
@@ -110,10 +112,11 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
+    <string name="or">- or -</string>
     <string name="every">Every</string>
     <string name="silent">Silent</string>
     <string name="dateof">Date of </string>
-    <string name="stopafter">Stop After</string>
+    <string name="stopafter">End After:</string>
     <string name="checking">Checking&#8230;</string>
     <string name="recur_daily_nbr">Repeat daily %2$d times.</string>
     <string name="recur_daily_day">Repeat daily until %3$s.</string>

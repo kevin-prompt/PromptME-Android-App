@@ -14,27 +14,25 @@
         android:layout_centerHorizontal="true">
     </TimePicker>
 
-    <Button android:id="@+id/exactTimeFin"
+    <Button android:id="@+id/exactTimeNext" android:text="@string/pickdate"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/pickdate"
         android:onClick="PickDate"
-        android:layout_toLeftOf="@+id/exactTimeNext"
-        android:layout_toStartOf="@+id/exactTimeNext"
+        android:layout_toLeftOf="@+id/exactTimeFinish"
+        android:layout_toStartOf="@+id/exactTimeFinish"
         android:layout_alignParentBottom="true"/>
 
-    <Button android:id="@+id/exactTimeNext"
+    <Button android:id="@+id/exactTimeFinish" android:text="@string/finish"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/finish"
         android:onClick="PickFinish"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginRight="@dimen/fin_margin"
+        android:layout_marginEnd="@dimen/fin_margin"/>
 
 </RelativeLayout>
 
