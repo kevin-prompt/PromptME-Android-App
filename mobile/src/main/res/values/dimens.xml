@@ -6,6 +6,7 @@
     <dimen name="signup_btn_width">260dp</dimen>
     <dimen name="txt_edit_size">18sp</dimen>
     <dimen name="lbl_sml_size">8sp</dimen>
+    <dimen name="lbl_medsml_size">12sp</dimen>
     <dimen name="lbl_med_size">16sp</dimen>
     <dimen name="lbl_big_size">24sp</dimen>
     <dimen name="lbl_sup_size">40sp</dimen>

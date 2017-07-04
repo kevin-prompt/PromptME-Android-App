@@ -2,21 +2,26 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.text.format.DateFormat;
+
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.TimeZone;
 
 import static com.coolftc.prompt.Constants.DATE_TIME_FMT_SHORT;
+import static com.coolftc.prompt.Constants.RECUR_INVALID;
 
 /**
  *  Representation of the message, including who, when and what. This is useful for passing
  *  around both messages to be (sent) and messages that have been (in history).
  */
-public class Reminder {
+public class Reminder  implements Serializable {
 
+    private static final long serialVersionUID = 6234225499461379739L; // Required for serialization.
     public Account from;                // The person sending the message.
     public Account target;              // The person getting the message.
-    public long id = 0;                 // Prompt Key
+    public long id = 0;                 // Prompt Key stored locally.
+    public long serverId = 0;           // Prompt Key on the server.
 
     // When a message is sent, the server provides the exact time that it will ultimately be sent.
     // It is stored in KTime.KT_fmtDate3339f for use with API.
@@ -39,9 +44,20 @@ public class Reminder {
     public int status = 0;              // If there are any issues, the code is stored here.
     public String created = "";         // The timestamp of when the message was created.
 
-    public String idStr() { return Long.toString(id); }
-    public boolean isSelfie() { return target.unique.equalsIgnoreCase(from.unique); }
+    // Use constants instead of enums in java to save on resources.
+    private static final int PROMPT = 1;
+    private static final int RECURRING = 2;
+    private static final int CREATED = 3;
 
+    // Some simple formatting methods.
+    public String IdStr() { return Long.toString(id); }
+    public boolean IsSelfie() { return target.unique.equalsIgnoreCase(from.unique); }
+    public boolean IsRecurring() { return recurUnit != RECUR_INVALID; }
+    public String GetPromptTime(Context context) { return GetFormattedTime(context,  PROMPT); }
+    public String GetRecurringTime(Context context) { return GetFormattedTime(context,  RECURRING); }
+    public String GetCreatedTime(Context context) { return GetFormattedTime(context,  CREATED); }
+    //  The actual value is not of particular importance, just needs a String where false is zero length.
+    public String IsPromptPast() { return IsPast()? "past" : ""; }
 
     /*
      *  This method will search a few of the fields to determine if the
@@ -54,17 +70,30 @@ public class Reminder {
         return (term.length() == 0 || target.display.toLowerCase().contains(lowTerm) || message.toLowerCase().contains(lowTerm));
     }
 
-
     /*
      *  This provides a human readable timestamp based on date / time
      *  formatting selected in Settings.  It assumes caller wants to
      *  see the date in the local timezone.
      */
-    public String GetPromptTime(Context context) {
+    private String GetFormattedTime(Context context, int ts){
+        String holdTimeStamp;
+        switch (ts){
+            case PROMPT:
+                holdTimeStamp = targetTime;
+                break;
+            case RECURRING:
+                holdTimeStamp = recurEnd;
+                break;
+            case CREATED:
+                holdTimeStamp = created;
+                break;
+            default:
+                return context.getResources().getString(R.string.unknown);
+        }
         Calendar delivery = null;
         String dateTimeFmt = Settings.getDateDisplayFormat(context, DATE_TIME_FMT_SHORT);
         try {
-            delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(targetTime, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
+            delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
             return DateFormat.format(dateTimeFmt, delivery).toString();
         } catch (ExpParseToCalendar expParseToCalendar) {
             return context.getResources().getString(R.string.unknown);
@@ -72,21 +101,23 @@ public class Reminder {
     }
 
     /*
-     *  This is used to determine if the prompt time has passed.
+     *  Helper to indicate if the prompt is past or future.
+     *  Generally the assumption will be the prompt is not in the past.
      */
-    public String IsPromptPast() {
-        if (!isProcessed) return "";
-        if (mTartgetTimePast) return "past";
+    public boolean IsPast() {
+        if (!isProcessed) return false;
+        if (mTartgetTimePast) return true;
         try {
             if (KTime.IsPast(targetTime, KTime.KT_fmtDate3339fk)) {
                 mTartgetTimePast = true;
-                return "past";
+                return true;
             } else {
-                return "";
+                return false;
             }
         } catch (ExpParseToCalendar expParseToCalendar) {
-            return "";
+            return false;
         }
+
     }
 
     // Helps sort by prompt create Date

@@ -289,7 +289,7 @@ public class Entry extends AppCompatActivity {
      */
     private boolean IsForever(){
         try {
-            return KTime.CalcDateDifference(mRecurEnd, KTime.ParseNow(KTime.KT_fmtDate3339k).toString(), KTime.KT_fmtDate3339k, KTime.KT_YEARS) > FOREVER_LESS;
+            return KTime.CalcDateDifference(mRecurEnd, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString(), KTime.KT_fmtDate3339fk, KTime.KT_YEARS) > FOREVER_LESS;
         } catch (ExpParseToCalendar ex) {
             return false;
         }

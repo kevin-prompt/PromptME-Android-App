@@ -38,32 +38,37 @@
                     android:scheme="coolftc" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".Detail"
+            android:label="@string/det_name"
+            android:parentActivityName=".History"/>
         <activity
             android:name=".ContactPicker"
             android:parentActivityName=".Welcome"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Settings"
-            android:parentActivityName=".Welcome"
-            android:label="@string/set_name" />
+            android:label="@string/set_name"
+            android:parentActivityName=".Welcome" />
         <activity
             android:name=".About"
-            android:parentActivityName=".Settings"
-            android:label="@string/abt_name" />
+            android:label="@string/abt_name"
+            android:parentActivityName=".Settings" />
         <activity
             android:name=".Entry"
-            android:parentActivityName=".Welcome"
-            android:label="@string/ent_name"/>
+            android:label="@string/ent_name"
+            android:parentActivityName=".Welcome" />
         <activity
             android:name=".ExactTime"
-            android:label="@string/now_name"/>
+            android:label="@string/now_name" />
         <activity
             android:name=".Recurrence"
-            android:label="@string/rec_name"/>
+            android:label="@string/rec_name" />
         <activity
             android:name=".History"
-            android:parentActivityName=".Welcome"
             android:label="@string/his_name"
+            android:parentActivityName=".Welcome"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Signup"

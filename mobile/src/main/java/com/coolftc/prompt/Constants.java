@@ -76,6 +76,9 @@ public class Constants {
     public static final String IN_ENDTIME = "endtime";
     public static final String IN_ENDNBR = "endnumber";
     public static final String IN_DISP_TIME = "displaytime";
+//    public static final String IN_MESS_DBID = "messagedbid";
+//    public static final String IN_MESS_SRVR = "messageserver";
+    public static final String IN_MESSAGE = "message";
     public static final int SEC_READ_CONTACTS = 10003;
     public static final int FR_POS_EXDATE = 0;
     public static final int FR_POS_EXTIME = 1;
@@ -144,6 +147,8 @@ public class Constants {
     public static final String IN_NOTE_FROM = "fromName";
     public static final String IN_NOTE_FROMID = "fromId";
     public static final String IN_NOTE_RAW = "line2-notify";
+    /* Details */
+    public static final int MSG_ID_INVALID = -1;
 
     /* Constants used in dealing with the SQLite Database and Shared Preference Database. */
     public static final String Owner_DBID = "-1";
@@ -153,7 +158,9 @@ public class Constants {
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
     public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
-    public static final String DB_MessagesAll = "select * from message " + MessageDB.MESSAGE_ID;
+    public static final String DB_MessagesAll = "select * from message";
+    public static final String DB_MessageByLocal = "select * from message where " + MessageDB.MESSAGE_ID + " = '" + SUB_ZZZ + "'";
+    public static final String DB_MessageByServer = "select * from message where " + MessageDB.MESSAGE_SRVR_ID + " = '" + SUB_ZZZ + "'";
     public static final int UPD_SCREEN_TM = 60000;                 // How often in msec to update the screen from data base
     public static final int UPD_SCREEN_TQ = 7000;                  // How often in msec to update the screen from data base (first minute)
 

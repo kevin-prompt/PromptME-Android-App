@@ -97,7 +97,7 @@ public class SendMessageThread extends Thread {
         values.put(MessageDB.MESSAGE_MSG, msg.message);
         values.put(MessageDB.MESSAGE_SRVR_ID, 0);   // No server id yet.
         values.put(MessageDB.MESSAGE_STATUS, 0);    // No status yet.
-        values.put(MessageDB.MESSAGE_CREATE, KTime.ParseNow(KTime.KT_fmtDate3339k).toString());
+        values.put(MessageDB.MESSAGE_CREATE, KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString());
         values.put(MessageDB.MESSAGE_PROCESSED, (processed?MessageDB.SQLITE_TRUE:MessageDB.SQLITE_FALSE));
 
         return db.insert(MessageDB.MESSAGE_TABLE, null, values);  // Returns -1 if there is an error.

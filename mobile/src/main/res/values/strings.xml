@@ -9,6 +9,7 @@
     <string name="now_name">Date / Time</string>
     <string name="his_name">History</string>
     <string name="rec_name">Recurring</string>
+    <string name="det_name">Detail</string>
     <string name="isRegistered">Registered? </string>
     <string name="msgNoNet">Network Connection not found.</string>
     <string name="blank"></string>
@@ -77,6 +78,8 @@
     <string name="build_date">Build Date</string>
     <string name="broadcast">Broadcast</string>
     <string name="ads">Ads</string>
+    <string name="arrived">Prompt Arrived at</string>
+    <string name="scheduled">Prompt Scheduled for</string>
     <string name="who_am_i">Who Am I</string>
     <string name="system">System</string>
     <string name="title_activity_exact_time">Pick a Time</string>
@@ -97,6 +100,9 @@
     <string name="forever">Forever</string>
     <string name="finish">Finish</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="reply">Reply</string>
     <string name="occurrences">Occurrences.</string>
     <string name="times">Times</string>
     <string name="taptochoose">(tap to choose)</string>
@@ -118,6 +124,8 @@
     <string name="dateof">Date of </string>
     <string name="stopafter">End After:</string>
     <string name="checking">Checking&#8230;</string>
+    <string name="nbr_one">1</string>
+    <string name="nbr_three">3</string>
     <string name="recur_daily_nbr">Repeat daily %2$d times.</string>
     <string name="recur_daily_day">Repeat daily until %3$s.</string>
     <string name="recur_daily_end">Repeat daily forever.</string>
@@ -137,6 +145,12 @@
     <string name="exact_prompt">Pick Exact Time</string>
     <string name="entry_help">Select a Time.</string>
     <string name="connections">Connections</string>
+    <string name="is_recurring">*Recurring Prompt</string>
+    <string name="is_recurring_end">*Recurring until</string>
+    <string name="personal_prompt">Personal Prompt</string>
+    <string name="from_prompt">Prompt Sent From </string>
+    <string name="target_prompt">Prompt Sent To </string>
+    <string name="created">Created </string>
     <string name="unknown">Unknown</string>
     <string name="www_domain">www.coolftc.com</string>
     <string name="message">Message</string>
@@ -149,6 +163,7 @@
     <string name="err_bad_auth">Not a valid account (%d)</string>
     <string name="err_bad_server">Server issue, try later (%d)</string>
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>
+    <string name="err_no_message">There is a problem finding the details of that message.</string>
 </resources>
 
 

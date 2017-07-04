@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import static com.coolftc.prompt.Constants.*;
-import static com.coolftc.prompt.KTime.KT_fmtDate3339k;
+import static com.coolftc.prompt.KTime.KT_fmtDate3339fk;
 import static com.coolftc.prompt.KTime.UTC_TIMEZONE;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -41,7 +41,7 @@ public class Refresh extends IntentService {
     @Override
     protected void onHandleIntent(Intent hint) {
         Actor ghost = new Actor(this);
-        String timeNow = KTime.ParseNow(KT_fmtDate3339k).toString();
+        String timeNow = KTime.ParseNow(KT_fmtDate3339fk).toString();
 
         /*
          *  Check the notification token. The signup process needs the push notification
@@ -88,7 +88,7 @@ public class Refresh extends IntentService {
         try {
             mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
-            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KT_fmtDate3339k, KTime.KT_MINUTES) > 10) {
+            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KT_fmtDate3339fk, KTime.KT_MINUTES) > 10) {
                 WebServices ws = new WebServices();
                 if (ws.IsNetwork(this)) {
                     Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
@@ -452,7 +452,7 @@ public class Refresh extends IntentService {
     private int getPendPromptCnt() {
         SQLiteDatabase db = mNotes.getReadableDatabase();
         String[] filler = {};
-        String holdNowUTC = KTime.ParseNow(KT_fmtDate3339k, UTC_TIMEZONE).toString();
+        String holdNowUTC = KTime.ParseNow(KT_fmtDate3339fk, UTC_TIMEZONE).toString();
         Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNowUTC), filler);
         int count = 0;
         cursor.moveToFirst();

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.Detail">
+
+    <TextView android:id="@+id/dtlNoteTime"
+        tools:text="Arrived 06/29/2017 @ 4:43pm"
+        android:textSize="@dimen/lbl_med_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/dtlRecurring"
+        tools:text="*Recurring Prompt until Forever."
+        android:textSize="@dimen/lbl_medsml_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/dtlNoteTime"
+        app:layout_constraintTop_toBottomOf="@+id/dtlNoteTime"
+        android:layout_marginTop="4dp"/>
+
+    <TextView android:id="@+id/lblDisplayBar" style="@style/HorzBar"
+        app:layout_constraintTop_toBottomOf="@+id/dtlRecurring"
+        app:layout_constraintLeft_toRightOf="parent"
+        android:layout_marginTop="8dp">
+    </TextView>
+
+    <TextView android:id="@+id/dtlMessage"
+        tools:text="I had given up, I did not know who to trust.  So I designed a chair, coming from heaven and hell.  I was in prison, but now I am broken to pieces."
+        android:textSize="@dimen/lbl_med_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/lblDisplayBar"
+        app:layout_constraintLeft_toRightOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <TextView android:id="@+id/dtlWho"
+        tools:text="Personal Prompt"
+        android:textSize="@dimen/lbl_med_size"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/dtlMessage"
+        app:layout_constraintLeft_toLeftOf="@+id/dtlMessage"
+        android:layout_marginTop="16dp"/>
+
+    <TextView android:id="@+id/dtlCreated"
+        tools:text="Created 06/25/2017 @ 7:30pm"
+        android:textSize="@dimen/lbl_medsml_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/dtlWho"
+        app:layout_constraintLeft_toLeftOf="@+id/dtlWho"/>
+
+    <Button android:id="@+id/dtlCancel" android:text="@string/cancel"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:onClick=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/dtlMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="@dimen/fin_margin"
+        android:layout_marginEnd="@dimen/fin_margin"/>
+
+    <Button android:id="@+id/dtlCopy" android:text="@string/copy"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:onClick=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="@dimen/fin_margin"
+        android:layout_marginEnd="@dimen/fin_margin"/>
+
+</android.support.constraint.ConstraintLayout>
