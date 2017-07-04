@@ -41,7 +41,7 @@ public class Welcome extends AppCompatActivity {
     ListView mListView;
     // The "mAccounts" collect all the possible people to display.
     List<Account> mAccounts = new ArrayList< >();
-    // This is the mapping of the details map to each specific person.
+    // This is the mapping of the detail map to each specific person.
     String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_FACE};
     int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpFacePic};
 
@@ -144,10 +144,10 @@ public class Welcome extends AppCompatActivity {
         // The "uniques" hold all the unique names that are on the list
         Map<String, Boolean> uniques = new HashMap<>();
 
-        // The "details" hold the final data sent to the display list.
+        // The "detail" hold the final data sent to the display list.
         List<Map<String, String>> details = new ArrayList<>();
 
-        // Move the account data into the desired details format.
+        // Move the account data into the desired detail format.
         for(Account acct : mAccounts) {
             // Sometimes we want to skip displaying records.
             if (uniques.containsKey(acct.unique)) continue;

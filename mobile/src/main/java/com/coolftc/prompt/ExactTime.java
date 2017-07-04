@@ -103,8 +103,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
      *  Check the time selected is in the future and then return it.
      *  NOTE: The time picker does not ask for seconds, fractions there of, or an offset.
      *  For simplicity, these values are just copied from whatever exists prior
-     *  to the time getting picked (i.e. the initial time value). The result is a format of
-     *  KTime.KT_fmtDate3339k.
+     *  to the time getting picked (i.e. the initial time value).
      */
     public void PickFinish(View view){
         boolean past = false;

@@ -46,11 +46,9 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     private EditText mHistorySearch;
     // The "reminder" collection of all the possible messages.
     private List<Reminder> mReminders = new ArrayList< >();
-    // This is the mapping of the details map to each specific message.
+    // This is the mapping of the detail map to each specific message.
     private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
     private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
-    // Who is the user
-    private Actor mUser;
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -67,7 +65,6 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         mListView = (ListView) findViewById(R.id.listContacts_HS);
         ShowDetails("");
         hRefresh.postDelayed(rRefresh, UPD_SCREEN_TQ);
-        mUser = new Actor(getApplicationContext());
 
         // As a user types in characters, trim the reminder list.
         mHistorySearch.addTextChangedListener(new TextWatcher() {
@@ -82,6 +79,43 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
         });
     }
 
+    /*
+     *  Go to the message entry screen, default to the user as target.
+     */
+    public void NewMessage(View view) {
+        Intent intent = new Intent(this, ContactPicker.class);
+        startActivity(intent);
+    }
+
+    /*
+     *  Go to the message detail screen, send along the selected reminder to avoid DB read.
+     */
+    public void OldMessage(View view) {
+        try {
+            switch (view.getId()) {
+                case R.id.rowhItem:
+                    // Get the important data out of the row.
+                    TextView holdView;
+                    holdView = (TextView) view.findViewById(R.id.rowh_Id);
+                    long uSelect = Long.parseLong(holdView.getText().toString());
+
+                    // Now find the Reminder data and send it along (to save a trip to the database.
+                    for(Reminder msg : mReminders) {
+                        if (msg.id == uSelect) {
+                            Intent intent = new Intent(this, Detail.class);
+                            Bundle mBundle = new Bundle();
+                            mBundle.putSerializable(IN_MESSAGE, msg);
+                            intent.putExtras(mBundle);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+                    break;
+            }
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+        }
+    }
 
     /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar
      * while hiding less used ones on the traditional menu.  The xml configuration determines how they
@@ -130,17 +164,17 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
      *  pick up any changes to the list.
      */
     private void ShowDetailsCache(String search) {
-        // The "details" hold the final data sent to the display list.
+        // The "detail" hold the final data sent to the display list.
         List<Map<String, String>> details = new ArrayList<>();
         String waiting = getResources().getString(R.string.processing);
 
-        // Move the account data into the desired details format.
+        // Move the account data into the desired detail format.
         for(Reminder msg : mReminders) {
             Map<String, String> hold = new TreeMap<>();
             if (!msg.Found(search)) continue;
 
             // Hidden message id
-            hold.put(HS_REM_ID, msg.idStr());
+            hold.put(HS_REM_ID, msg.IdStr());
             // Delivery time and indication if past.  If not processed, assume not in past.
             hold.put(HS_TIME_PAST, msg.IsPromptPast());
             if(msg.isProcessed) {
@@ -149,7 +183,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 hold.put(HS_TIME, waiting);
             }
             // If message to self, skip it, otherwise show who created it.
-            if(!msg.isSelfie()){
+            if(!msg.IsSelfie()){
                 hold.put(HS_WHO_FROM, msg.from.bestName());
                 hold.put(HS_WHO_TO, msg.target.bestName());
             }else {
@@ -193,14 +227,22 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 local.target = new Account();
                 local.from = new Account();
                 local.id = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_ID));
-                local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
-                local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
+                local.serverId = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_SRVR_ID));
                 local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
+                local.targetTimeNameId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMENAME));
+                local.targetTimeAdjId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEADJ));
                 local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
+                local.recurPeriod = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_PERIOD));
+                local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
+                local.recurEnd = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_R_END));
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
-                local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
-                local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
                 local.isProcessed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
+                local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
+                local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
+                local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
+                local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
+                local.target.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TARGET));
+                local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
                 mReminders.add(local);
             }
             cursor.close();
@@ -276,7 +318,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 @SuppressWarnings("unchecked")
                 Map<String, String> holdData = (Map<String, String>) getItem(position);
                 holdView = (TextView) convertView.findViewById(R.id.rowh_Id);
-                holdView.setText(holdData.get(CP_PER_ID));
+                holdView.setText(holdData.get(HS_REM_ID));
                 switch (type) {
                     case TYPE_ITEM:
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetTime);
@@ -297,11 +339,6 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
             }
             return convertView;
         }
-    }
-
-    public void NewMessage(View view) {
-        Intent intent = new Intent(this, ContactPicker.class);
-        startActivity(intent);
     }
 
     // Non-Thread Timer used to periodically refresh the display list. SendMessageThread updates

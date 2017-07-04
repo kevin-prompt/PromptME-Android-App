@@ -57,7 +57,7 @@ public class ExactTimeDate extends Fragment {
         if (getArguments() != null) {
             mTimeStamp = getArguments().getString(IN_EX_DATE);
         } else {
-            mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339k).toString();
+            mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
         }
     }
 
