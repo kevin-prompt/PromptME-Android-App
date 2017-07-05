@@ -26,11 +26,11 @@ public class Reminder  implements Serializable {
     private boolean mTartgetTimePast = false;    // used as a cache since once in the past, always...
 
     // Simplified time.
-    public int targetTimeNameId = 0;    // Time name code.
-    public int targetTimeAdjId = 0;     // Time adjustment code.
+    public int targetTimeNameId = 0;        // Time name code.
+    public int targetTimeAdjId = 0;         // Time adjustment code.
 
     // Recurrence
-    public int recurUnit = 0;           // If set to RECUR_INVALID then no recurrence.
+    public int recurUnit = RECUR_INVALID;   // If set to RECUR_INVALID then no recurrence.
     public int recurPeriod = 0;
     public int recurNumber = 0;
     public String recurEnd = "";

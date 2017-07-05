@@ -48,10 +48,12 @@ public class Entry extends AppCompatActivity {
     private String mTargetTime;                  // If Simple time is exact, this is the real time.
     private int mRecurUnit = RECUR_INVALID;      // The units used for recurrence.
     private int mRecurPeriod = RECUR_INVALID;    // The period used for recurrence.
-    private int mRecurNbr = RECUR_INVALID;       // The number of times to recur (has priority over mRecurEnd).
+    private int mRecurNumber = RECUR_INVALID;    // The number of times to recur (has priority over mRecurEnd).
     private String mRecurEnd;                    // The end date used for recurrence.
 
-    private static final int DEFAULT_NAME = 0;
+    private int mDefaultTimeName = 0;
+    private int mDefaultTimeAdj = 0;
+    private String mDefaultMessage = "";
     private static final int SEEK_MARK = 16;     // The seek bar has a range of 0 - 95, includes 5 marks
 
     @Override
@@ -59,12 +61,25 @@ public class Entry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
+        boolean firstRun = false;
         // When saved data is also passed in normally, it needs to be restored here.
         if (savedInstanceState != null) {
             mTarget = (Account) savedInstanceState.getSerializable(IN_USER_ACCT);
         }else {
             if (extras != null) {
+                firstRun = true;
                 mTarget = (Account) extras.getSerializable(IN_USER_ACCT);
+                Reminder pre = (Reminder) extras.getSerializable(IN_MESSAGE);
+                if(pre != null){
+                    mDefaultTimeName = pre.targetTimeNameId;
+                    mDefaultTimeAdj = pre.targetTimeAdjId * SEEK_MARK;
+                    mDefaultMessage = pre.message;
+                    mRecurEnd = pre.recurEnd;
+                    mRecurNumber = pre.recurNumber;
+                    mRecurPeriod = pre.recurPeriod;
+                    mRecurUnit = pre.recurUnit;
+                }
+
             } else {
                 // if nothing passed in, just default self-message.
                 mTarget = new Actor(this);
@@ -75,12 +90,24 @@ public class Entry extends AppCompatActivity {
         setContentView(R.layout.entry);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Configure the Spinners, set default, add listeners after to speed things up.
+        // Configure the Spinners, set defaults, add listeners.
+        if(firstRun) {
+            TextView holdText = (TextView) findViewById(R.id.sendMessage);
+            if (holdText != null && mDefaultMessage.length() > 0) {
+                holdText.setText(mDefaultMessage);
+            }
+            CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
+            if (holdChkBox != null && mRecurUnit != RECUR_INVALID) {
+                holdChkBox.setChecked(true);
+            }
+            firstRun = false;
+        }
 
         mTimename = (Spinner) findViewById(R.id.sendTimeName);
-        mTimename.setSelection(DEFAULT_NAME);
+        mTimename.setSelection(mDefaultTimeName);
 
         mTimeadj = (SeekBar) findViewById(R.id.sendTimeAdj);
+        mTimeadj.setProgress(mDefaultTimeAdj);
         mTimeadjData = Arrays.asList(getResources().getStringArray(R.array.time_adj));
 
         mTimename.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -119,7 +146,7 @@ public class Entry extends AppCompatActivity {
         outState.putString(IN_TIMESTAMP, mTargetTime);
         outState.putInt(IN_UNIT, mRecurUnit);
         outState.putInt(IN_PERIOD, mRecurPeriod);
-        outState.putInt(IN_ENDNBR, mRecurNbr);
+        outState.putInt(IN_ENDNBR, mRecurNumber);
         if (mRecurEnd == null) mRecurEnd = "";
         outState.putString(IN_ENDTIME, mRecurEnd);
         outState.putSerializable(IN_USER_ACCT, mTarget);
@@ -134,7 +161,7 @@ public class Entry extends AppCompatActivity {
         mTargetTime = savedInstanceState.getString(IN_TIMESTAMP);
         mRecurUnit = savedInstanceState.getInt(IN_UNIT);
         mRecurPeriod = savedInstanceState.getInt(IN_PERIOD);
-        mRecurNbr = savedInstanceState.getInt(IN_ENDNBR);
+        mRecurNumber = savedInstanceState.getInt(IN_ENDNBR);
         mRecurEnd = savedInstanceState.getString(IN_ENDTIME);
     }
 
@@ -206,7 +233,7 @@ public class Entry extends AppCompatActivity {
             // Daily
             if(mRecurPeriod == 1){
                 // Ending
-                if(mRecurNbr > 0){
+                if(mRecurNumber > 0){
                     holdResource = R.string.recur_daily_nbr;
                 }else{
                     if(IsForever()){
@@ -217,7 +244,7 @@ public class Entry extends AppCompatActivity {
                 }
             } else { // More than 1 day
                 // Ending
-                if(mRecurNbr > 0){
+                if(mRecurNumber > 0){
                     holdResource = R.string.recur_day_nbr;
                 }else{
                     if(IsForever()){
@@ -231,7 +258,7 @@ public class Entry extends AppCompatActivity {
 
         // Week
         if(mRecurUnit == UNIT_TYPE_WEEKDAY){
-            if(mRecurNbr > 0){
+            if(mRecurNumber > 0){
                 holdResource = R.string.recur_wek_nbr;
             }else{
                 if(IsForever()){
@@ -259,7 +286,7 @@ public class Entry extends AppCompatActivity {
         // Month
         if(mRecurUnit == UNIT_TYPE_MONTH){
             if(mRecurPeriod == 1){
-                if(mRecurNbr > 0){
+                if(mRecurNumber > 0){
                     holdResource = R.string.recur_monthly_nbr;
                 }else{
                     if(IsForever()){
@@ -269,7 +296,7 @@ public class Entry extends AppCompatActivity {
                     }
                 }
             } else {
-                if (mRecurNbr > 0) {
+                if (mRecurNumber > 0) {
                     holdResource = R.string.recur_mon_nbr;
                 } else {
                     if (IsForever()) {
@@ -283,7 +310,7 @@ public class Entry extends AppCompatActivity {
 
         if(holdResource == 0) return "";
         String template = getResources().getText(holdResource).toString();
-        return String.format(template, mRecurPeriod, mRecurNbr, mRecurEnd, weekdays);
+        return String.format(template, mRecurPeriod, mRecurNumber, mRecurEnd, weekdays);
     }
 
     /*
@@ -315,8 +342,8 @@ public class Entry extends AppCompatActivity {
                 if (mRecurEnd == null) {
                     mRecurEnd = RECUR_END_DEFAULT;
                 }
-                if (mRecurNbr == RECUR_INVALID) {
-                    mRecurNbr = RECUR_END_NBR;
+                if (mRecurNumber == RECUR_INVALID) {
+                    mRecurNumber = RECUR_END_NBR;
                 }
                 String displayTime = "";
                 TextView holdText = (TextView) findViewById(R.id.sendTargeTime);
@@ -326,7 +353,7 @@ public class Entry extends AppCompatActivity {
                 recurring.putExtra(IN_UNIT, mRecurUnit);
                 recurring.putExtra(IN_PERIOD, mRecurPeriod);
                 recurring.putExtra(IN_ENDTIME, mRecurEnd);
-                recurring.putExtra(IN_ENDNBR, mRecurNbr);
+                recurring.putExtra(IN_ENDNBR, mRecurNumber);
                 recurring.putExtra(IN_DISP_TIME, displayTime);
                 startActivityForResult(recurring, KY_RECURE);
             }else{ // unchecked
@@ -384,14 +411,14 @@ public class Entry extends AppCompatActivity {
                     mRecurUnit = data.getExtras().getInt(IN_UNIT);
                     mRecurPeriod = data.getExtras().getInt(IN_PERIOD);
                     mRecurEnd = data.getExtras().getString(IN_ENDTIME);
-                    mRecurNbr = data.getExtras().getInt(IN_ENDNBR);
+                    mRecurNumber = data.getExtras().getInt(IN_ENDNBR);
                     ShowDetails();
                 } else {        // Not OK, set check box to false and reset local data
                     CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
                     if(holdChkBox!=null) { holdChkBox.setChecked(false); }
                     mRecurUnit = RECUR_INVALID;
                     mRecurPeriod = RECUR_INVALID;
-                    mRecurNbr = RECUR_INVALID;
+                    mRecurNumber = RECUR_INVALID;
                     mRecurEnd = "";
                 }
         }
@@ -431,7 +458,7 @@ public class Entry extends AppCompatActivity {
         ali.targetTimeAdjId = mTimeadj.getProgress() / SEEK_MARK;
         ali.recurUnit = mRecurUnit;
         ali.recurPeriod = mRecurPeriod;
-        ali.recurNumber = mRecurNbr;
+        ali.recurNumber = mRecurNumber;
         ali.recurEnd = mRecurEnd;
 
         SendMessageThread smt = new SendMessageThread(getApplicationContext(), ali);

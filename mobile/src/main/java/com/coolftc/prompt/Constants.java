@@ -77,8 +77,6 @@ public class Constants {
     public static final String IN_ENDTIME = "endtime";
     public static final String IN_ENDNBR = "endnumber";
     public static final String IN_DISP_TIME = "displaytime";
-//    public static final String IN_MESS_DBID = "messagedbid";
-//    public static final String IN_MESS_SRVR = "messageserver";
     public static final String IN_MESSAGE = "message";
     public static final int SEC_READ_CONTACTS = 10003;
     public static final int FR_POS_EXDATE = 0;
@@ -156,7 +154,8 @@ public class Constants {
     public static final String Owner_DBID = "-1";
     public static final String ISO3166_Default = "US";
     public static final String DB_FriendsAll = "select * from friend";
-    public static final String DB_FriendsWhere = "select * from friend where confirm = " + SUB_ZZZ;
+    public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = " + SUB_ZZZ;
+    public static final String DB_FriendByName = "select * from friend where " + FriendDB.FRIEND_UNIQUE + " = " + SUB_ZZZ;
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
     public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
