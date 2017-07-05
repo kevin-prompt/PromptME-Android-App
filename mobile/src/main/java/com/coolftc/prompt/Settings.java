@@ -129,7 +129,6 @@ public class Settings extends AppCompatActivity {
         String fmt = getPickShortDateFmt(context);
         String tmt = getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime;
         context = null;
-        //Resources res = context.getResources();
 
         switch (datetype){
 
@@ -155,37 +154,17 @@ public class Settings extends AppCompatActivity {
                     ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
                     return DB_fmtDateShrtMiddle + " @ " + DB_fmtDateTime;
                 }
-//            case DATE_FMT_OBSERVED:
-//                try {
-//                    holdFmt = "'" + res.getString(R.string.lblObserved) + " 'E ";
-//                    if(fmt.equalsIgnoreCase("big")) holdFmt += DB_fmtDateMonthBig;
-//                    if(fmt.equalsIgnoreCase("mid")) holdFmt += DB_fmtDateMonthMiddle;
-//                    if(fmt.equalsIgnoreCase("sml")) holdFmt += DB_fmtDateMonthLittle;
-//                    holdFmt += "' " + res.getString(R.string.lblAt) + " '";
-//                    holdFmt += getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime;
-//                    return holdFmt;
-//                } catch (Exception ex) { ExpClass.LogEX(ex, "Settings.chgStateSlate-DATE_FMT_OBSERVED"); return "'Observed 'E MMM dd, yyyy ' at ' h:mmaa"; }
-//
-//            case DATE_FMT_ALERT_CURR:
-//                try {
-//                    holdFmt = "' -:- " + res.getString(R.string.lblUntil) + " '";
-//                    holdFmt += getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime;
-//                    if(fmt.equalsIgnoreCase("sml"))
-//                        holdFmt += " " + DB_fmtDateNoYearLittle;
-//                    else
-//                        holdFmt += " " + DB_fmtDateNoYearBigMid;
-//                    return holdFmt;
-//                } catch (Exception ex) { ExpClass.LogEX(ex, "Settings.chgStateSlate-DATE_FMT_ALERT_CURR"); return "' -:- Until 'h:mmaa MMM dd"; }
-//
-//            case DATE_FMT_ALERT_EXP:
-//                try {
-//                    holdFmt = DB_fmtLongMonthMiddle;
-//                    if(fmt.equalsIgnoreCase("big")) holdFmt = DB_fmtLongMonthBig;
-//                    if(fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtLongMonthLittle;
-//                    holdFmt += " @ " + (getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime);
-//                    return holdFmt;
-//                } catch (Exception ex) { ExpClass.LogEX(ex, "Settings.chgStateSlate-DATE_FMT_ALERT_EXP"); return "MMMM dd, yyyy @ h:mmaa"; }
-
+            case DATE_TIME_FMT_REV:
+                try{
+                    holdFmt = DB_fmtDateShrtMiddle;
+                    if (fmt.equalsIgnoreCase("big")) holdFmt = DB_fmtDateShrtBig;
+                    if (fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtDateShrtLittle;
+                    holdFmt = tmt + " on " + holdFmt;
+                    return holdFmt;
+                } catch (Exception ex) {
+                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
+                    return DB_fmtDateShrtMiddle + " @ " + DB_fmtDateTime;
+                }
             default:
                 throw new IllegalArgumentException();
 

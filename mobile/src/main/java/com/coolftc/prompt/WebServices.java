@@ -364,6 +364,39 @@ public class WebServices {
 
     }
 
+    /*
+        Delete a Prompt message. Resource = v1/user/<id>/note/<noteId>?ticket=<ticket> (DELETE)
+    */
+    public int DelPrompt(String ticket, String id, String note){
+        HttpURLConnection webC = null;
+
+        try {
+            String realPath = FTI_Message_Del.replace(SUB_ZZZ, id) + note;
+            URL web = new URL(FTI_BaseURL + realPath + FTI_Ticket + ticket);
+            webC = (HttpURLConnection) web.openConnection();
+            webC.setRequestMethod("DELETE");
+            webC.setRequestProperty("Accept", "application/json");
+            webC.setUseCaches(false);
+            webC.setAllowUserInteraction(false);
+            webC.setConnectTimeout(FTI_TIMEOUT);
+            webC.setReadTimeout(FTI_TIMEOUT);
+            webC.connect();
+
+            int status = webC.getResponseCode();
+            return status;
+        }
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); return 0;}
+        finally {
+            if (webC != null) {
+                try {
+                    webC.disconnect();
+                }
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); return 0;}
+            }
+        }
+    }
+
+
 
 }
 

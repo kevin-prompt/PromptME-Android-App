@@ -41,7 +41,8 @@ public class Entry extends AppCompatActivity {
     private Account mTarget;                     // Who is getting this message
     private Spinner mTimename;                   // Simple time - name
     private List<String> mTimeadjData;           // Holds the raw data for mTimeadj
-    private SeekBar mTimeadj;                   // Simple time - adjustment
+    private SeekBar mTimeadj;                    // Simple time - adjustment
+
 
     // This data needs explicit persistence
     private String mTargetTime;                  // If Simple time is exact, this is the real time.
@@ -51,6 +52,7 @@ public class Entry extends AppCompatActivity {
     private String mRecurEnd;                    // The end date used for recurrence.
 
     private static final int DEFAULT_NAME = 0;
+    private static final int SEEK_MARK = 16;     // The seek bar has a range of 0 - 95, includes 5 marks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +175,7 @@ public class Entry extends AppCompatActivity {
             mTimeadj.setEnabled(false);
         } else {
             holdRaw += mTimename.getSelectedItem().toString();
-            holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/16);
+            holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/ SEEK_MARK);  // want a number 0 - 5
         }
         holdText = (TextView) findViewById(R.id.sendTargeTime);
         if(holdText != null) { holdText.setText(holdRaw);}
@@ -423,8 +425,10 @@ public class Entry extends AppCompatActivity {
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         ali.targetTime = mTargetTime;
+        // Listbox index is one less that the value we need for the time name.
         ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
-        ali.targetTimeAdjId = mTimeadj.getProgress()/16;
+        // Want a number from 0 to 5, so do an integer division to truncate fraction.
+        ali.targetTimeAdjId = mTimeadj.getProgress() / SEEK_MARK;
         ali.recurUnit = mRecurUnit;
         ali.recurPeriod = mRecurPeriod;
         ali.recurNumber = mRecurNbr;

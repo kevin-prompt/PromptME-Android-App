@@ -2,14 +2,11 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.text.format.DateFormat;
-
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.TimeZone;
-
-import static com.coolftc.prompt.Constants.DATE_TIME_FMT_SHORT;
-import static com.coolftc.prompt.Constants.RECUR_INVALID;
+import static com.coolftc.prompt.Constants.*;
 
 /**
  *  Representation of the message, including who, when and what. This is useful for passing
@@ -48,12 +45,15 @@ public class Reminder  implements Serializable {
     private static final int PROMPT = 1;
     private static final int RECURRING = 2;
     private static final int CREATED = 3;
+    private static final int DETAIL = 4;
 
     // Some simple formatting methods.
     public String IdStr() { return Long.toString(id); }
+    public String ServerIdStr() { return Long.toString(serverId); }
     public boolean IsSelfie() { return target.unique.equalsIgnoreCase(from.unique); }
     public boolean IsRecurring() { return recurUnit != RECUR_INVALID; }
     public String GetPromptTime(Context context) { return GetFormattedTime(context,  PROMPT); }
+    public String GetPromptTimeRev(Context context) { return GetFormattedTime(context, DETAIL); }
     public String GetRecurringTime(Context context) { return GetFormattedTime(context,  RECURRING); }
     public String GetCreatedTime(Context context) { return GetFormattedTime(context,  CREATED); }
     //  The actual value is not of particular importance, just needs a String where false is zero length.
@@ -77,21 +77,29 @@ public class Reminder  implements Serializable {
      */
     private String GetFormattedTime(Context context, int ts){
         String holdTimeStamp;
+        int holdFormat;
         switch (ts){
             case PROMPT:
                 holdTimeStamp = targetTime;
+                holdFormat = DATE_TIME_FMT_SHORT;
                 break;
             case RECURRING:
                 holdTimeStamp = recurEnd;
+                holdFormat = DATE_TIME_FMT_SHORT;
                 break;
             case CREATED:
                 holdTimeStamp = created;
+                holdFormat = DATE_TIME_FMT_SHORT;
+                break;
+            case DETAIL:
+                holdTimeStamp = targetTime;
+                holdFormat = DATE_TIME_FMT_REV;
                 break;
             default:
                 return context.getResources().getString(R.string.unknown);
         }
-        Calendar delivery = null;
-        String dateTimeFmt = Settings.getDateDisplayFormat(context, DATE_TIME_FMT_SHORT);
+        Calendar delivery;
+        String dateTimeFmt = Settings.getDateDisplayFormat(context, holdFormat);
         try {
             delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
             return DateFormat.format(dateTimeFmt, delivery).toString();

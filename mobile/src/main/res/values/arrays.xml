@@ -4,8 +4,8 @@
         <item>Today</item>
         <item>Tonight</item>
         <item>Tomorrow</item>
-        <item>On Weekend</item>
-        <item>Next Week</item>
+        <item>The Weekend</item>
+        <item>Within a Week</item>
         <item>Sunday</item>
         <item>Monday</item>
         <item>Tuesday</item>
@@ -13,6 +13,7 @@
         <item>Thursday</item>
         <item>Friday</item>
         <item>Saturday</item>
+        <item>Next Week</item>
         <item>Fortnight Hence</item>
         <item>Next Month</item>
     </string-array>

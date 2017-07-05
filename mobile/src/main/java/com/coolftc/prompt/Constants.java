@@ -56,6 +56,7 @@ public class Constants {
     // Date Formatting Constants
     public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
     public static final int DATE_TIME_FMT_SHORT = 1;        // Short Date and Time Display format
+    public static final int DATE_TIME_FMT_REV = 2;          // Short Time and Date Display format
 
     /* Constants used as codes for cross Activity communications. */
     public static final String KEVIN_SPEAKS = "Kevin Speaks";
@@ -92,6 +93,7 @@ public class Constants {
     public static final String FTI_Register = "/v1/user";
     public static final String FTI_RegisterExtra = "/v1/user/"+SUB_ZZZ;
     public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/note";
+    public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/note/";
     public static final String FTI_Friends = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;
@@ -129,7 +131,7 @@ public class Constants {
     public static final int UNIT_TYPE_WEEKDAY = 100;
     public static final int RECUR_INVALID = -1;         // Values start here.
     public static final int RECUR_UNIT_DEFAULT = UNIT_TYPE_DAY;
-    public static final int RECUR_PERIOD_DEFAULT = 1;
+    public static final int RECUR_PERIOD_DEFAULT = 0;
     public static final String RECUR_END_DEFAULT = "";  // The date picker will fill this out.
     public static final int RECUR_END_NBR = 3;
     public static final int SUN_FLAG = 1;

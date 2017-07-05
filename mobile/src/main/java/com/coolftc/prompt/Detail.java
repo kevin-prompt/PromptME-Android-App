@@ -1,11 +1,14 @@
 package com.coolftc.prompt;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.coolftc.prompt.Constants.*;
 
@@ -35,7 +38,6 @@ public class Detail extends AppCompatActivity {
         mUser = new Actor(getApplicationContext());
         if(!mPrompt.isProcessed) { BuildPrompt(); }
         ShowDetails();
-
     }
 
     /*
@@ -59,6 +61,25 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
+     *  This deletes the Prompt from the local data store, and if it has not yet
+     *  been processed, it is also removed from the server pending queue.
+     */
+    public void CancelPrompt(View view){
+        WebServices ws = new WebServices();
+
+        if(!mPrompt.IsPast() && !ws.IsNetwork(this)) {
+            Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        CancelMessageThread cmt = new CancelMessageThread(getApplicationContext(), mPrompt);
+        cmt.start();
+
+        Intent intent = new Intent(this, History.class);
+        startActivity(intent);
+    }
+
+    /*
      *  Fill out a Reminder to display based on input data.  This is a best effort,
      *  if there is no further data the display will have to deal with it.
      */
@@ -77,9 +98,9 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
-     *  While the raw data for this screen is provided by either the local database or
-     *  as a carry-on of the notification, what is shown to the user goes through a bit
-     *  of transformation to make it sound reasonable.
+     *  The raw data for this screen is provided as a parameter, or via the local
+     *  database, what is shown to the user goes through a bit of transformation
+     *  to make it look reasonable.
      */
     private void ShowDetails() {
         TextView holdText;
@@ -96,7 +117,7 @@ public class Detail extends AppCompatActivity {
         // The time label depends on if the prompt is still in the future.
         int res = mPrompt.IsPast() ? R.string.arrived : R.string.scheduled;
         holdFormatted =  getResources().getString(res);
-        holdFormatted += " " + mPrompt.GetPromptTime(getApplicationContext());
+        holdFormatted += " " + mPrompt.GetPromptTimeRev(getApplicationContext());
         holdText = (TextView) findViewById(R.id.dtlNoteTime);
         if(holdText != null) { holdText.setText(holdFormatted); }
 
@@ -136,6 +157,13 @@ public class Detail extends AppCompatActivity {
         holdFormatted = getString(R.string.created) + " " + mPrompt.GetCreatedTime(getApplicationContext());
         holdText = (TextView) findViewById(R.id.dtlCreated);
         if (holdText != null) holdText.setText(holdFormatted);
+
+        // Status message
+        if(mPrompt.status != 0){
+            holdFormatted = getString(R.string.status) + ": " + Integer.toString(mPrompt.status);
+            holdText = (TextView) findViewById(R.id.dtlStatus);
+            if (holdText != null) holdText.setText(holdFormatted);
+        }
 
         if(mPrompt.IsPast()) {
             holdFormatted = getString(R.string.delete);
