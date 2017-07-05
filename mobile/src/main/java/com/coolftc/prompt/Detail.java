@@ -1,18 +1,22 @@
 package com.coolftc.prompt;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.coolftc.prompt.Constants.*;
 
 public class Detail extends AppCompatActivity {
 
-    Reminder mPrompt = new Reminder();
-    Actor mUser = null;
+    private Reminder mPrompt = new Reminder();
+    private Actor mUser = null;
+    private FriendDB mSocial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,6 @@ public class Detail extends AppCompatActivity {
         mUser = new Actor(getApplicationContext());
         if(!mPrompt.isProcessed) { BuildPrompt(); }
         ShowDetails();
-
     }
 
     /*
@@ -59,6 +62,59 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
+     *  This deletes the Prompt from the local data store, and if it has not yet
+     *  been processed, it is also removed from the server pending queue.
+     */
+    public void CancelPrompt(View view){
+        WebServices ws = new WebServices();
+
+        if(!mPrompt.IsPast() && !ws.IsNetwork(this)) {
+            Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        CancelMessageThread cmt = new CancelMessageThread(getApplicationContext(), mPrompt);
+        cmt.start();
+
+        Intent intent = new Intent(this, History.class);
+        startActivity(intent);
+    }
+
+    /*
+     *  This allows a navigation to the Entry screen, with some data populated,
+     *  specifically, who will get the message, and sometimes the message itself.
+     */
+    public void CopyPrompt(View view) {
+
+        try {
+
+            Bundle mBundle = new Bundle();
+            // If the Prompt is created by the user, then they can copy that Prompt.
+            // A "copy" passes along the target address as the target address and
+            // makes the message available to use as a default.
+            if (mUser.unique.equalsIgnoreCase(mPrompt.from.unique)) {
+                mBundle.putSerializable(IN_USER_ACCT, mUser);
+                mBundle.putSerializable(IN_MESSAGE, mPrompt);
+            }
+            // If the Prompt came from a friend, then the user can reply to it.
+            // A reply passes along the from address as the target address.
+            // We need to fill out the information about the account for Entry to use it.
+            else { // Reply
+                mSocial = new FriendDB(getApplicationContext());
+                mBundle.putSerializable(IN_USER_ACCT, GetAccountByName(mPrompt.from.unique));
+            }
+
+            Intent intent = new Intent(this, Entry.class);
+            intent.putExtras(mBundle);
+            startActivity(intent);
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".CopyPrompt");
+        } finally {
+            if(mSocial != null) mSocial.close();
+        }
+    }
+
+    /*
      *  Fill out a Reminder to display based on input data.  This is a best effort,
      *  if there is no further data the display will have to deal with it.
      */
@@ -77,9 +133,9 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
-     *  While the raw data for this screen is provided by either the local database or
-     *  as a carry-on of the notification, what is shown to the user goes through a bit
-     *  of transformation to make it sound reasonable.
+     *  The raw data for this screen is provided as a parameter, or via the local
+     *  database, what is shown to the user goes through a bit of transformation
+     *  to make it look reasonable.
      */
     private void ShowDetails() {
         TextView holdText;
@@ -87,7 +143,7 @@ public class Detail extends AppCompatActivity {
         String holdFormatted;
 
         // If there is no time, then things have not gone well.
-        if(mPrompt.targetTime.length() == 0) {
+        if(mPrompt.targetTime == null || mPrompt.targetTime.length() == 0) {
             holdText = (TextView) findViewById(R.id.dtlNoteTime);
             if(holdText != null) holdText.setText(R.string.err_no_message);
             return;
@@ -96,7 +152,7 @@ public class Detail extends AppCompatActivity {
         // The time label depends on if the prompt is still in the future.
         int res = mPrompt.IsPast() ? R.string.arrived : R.string.scheduled;
         holdFormatted =  getResources().getString(res);
-        holdFormatted += " " + mPrompt.GetPromptTime(getApplicationContext());
+        holdFormatted += " " + mPrompt.GetPromptTimeRev(getApplicationContext());
         holdText = (TextView) findViewById(R.id.dtlNoteTime);
         if(holdText != null) { holdText.setText(holdFormatted); }
 
@@ -137,6 +193,13 @@ public class Detail extends AppCompatActivity {
         holdText = (TextView) findViewById(R.id.dtlCreated);
         if (holdText != null) holdText.setText(holdFormatted);
 
+        // Status message
+        if(mPrompt.status != 0){
+            holdFormatted = getString(R.string.status) + ": " + Integer.toString(mPrompt.status);
+            holdText = (TextView) findViewById(R.id.dtlStatus);
+            if (holdText != null) holdText.setText(holdFormatted);
+        }
+
         if(mPrompt.IsPast()) {
             holdFormatted = getString(R.string.delete);
         } else {
@@ -153,14 +216,6 @@ public class Detail extends AppCompatActivity {
         holdPush = (Button) findViewById(R.id.dtlCopy);
         if(holdPush != null) holdPush.setText(holdFormatted);
 
-    }
-
-    private Reminder GetMessageByServer(Long id) {
-        return GetMessage(DB_MessageByServer.replace(SUB_ZZZ, id.toString()));
-    }
-
-    private Reminder GetMessageByLocal(Long id){
-        return GetMessage(DB_MessageByLocal.replace(SUB_ZZZ, id.toString()));
     }
 
     /*
@@ -201,4 +256,40 @@ public class Detail extends AppCompatActivity {
         return local;
     }
 
+    private Reminder GetMessageByServer(Long id) {
+        return GetMessage(DB_MessageByServer.replace(SUB_ZZZ, id.toString()));
+    }
+
+    private Reminder GetMessageByLocal(Long id){
+        return GetMessage(DB_MessageByLocal.replace(SUB_ZZZ, id.toString()));
+    }
+
+    /*
+     *  Get a filled out Account for the Entry screen.  The Message only has
+     *  the unique and display names for the accounts.
+     */
+    private Account GetAccountByName(String uname){
+        SQLiteDatabase db = mSocial.getReadableDatabase();
+        String[] filler = {};
+        Cursor cursor = db.rawQuery(DB_FriendByName.replace(SUB_ZZZ, uname), filler);
+        try{
+            Account local = new Account();
+            if(cursor.moveToNext()) {
+                local.localId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_ID));
+                local.acctId = cursor.getLong(cursor.getColumnIndex(FriendDB.FRIEND_ACCT_ID));
+                local.unique = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_UNIQUE));
+                local.display = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_DISPLAY));
+                local.timezone = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_TIMEZONE));
+                local.sleepcycle = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_SCYCLE));
+                local.contactId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_ID));
+                local.contactName = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_NAME));
+                local.contactPic = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_PIC));
+                local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
+                local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
+                local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
+            }
+            cursor.close();
+            return local;
+        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetAccountByName"); return new Account(); }
+    }
 }

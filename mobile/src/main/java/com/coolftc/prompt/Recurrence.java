@@ -174,7 +174,6 @@ public class Recurrence extends AppCompatActivity {
      */
     private void ShowDetails() {
         TextView holdText;
-        EditText holdEdit;
 
         holdText = (TextView) findViewById(R.id.reptDelivery);
         if(holdText!=null) { holdText.setText(mDisplay); }
@@ -198,8 +197,6 @@ public class Recurrence extends AppCompatActivity {
                 break;
         }
 
-        holdEdit = (EditText) findViewById(R.id.reptOccurNbr);
-        if(holdEdit!=null && mRecurNbr != RECUR_INVALID) { holdEdit.setText(String.format(Locale.getDefault(),"%d", mRecurNbr)); }
         holdText = (TextView) findViewById(R.id.reptEndDate);
         if(mRecurNbr <= 0 && mRecurEnd.length() > 0) {
             long years;
@@ -263,23 +260,14 @@ public class Recurrence extends AppCompatActivity {
      */
     private void StandardPeriod(int desc) {
         TextView holdText;
-        EditText holdEdit;
         RelativeLayout holdDayMonth;
 
         holdDayMonth = (RelativeLayout) findViewById(R.id.grpDayMonth);
         if(holdDayMonth != null) holdDayMonth.setVisibility(View.VISIBLE);
 
-//        holdText = (TextView) findViewById(R.id.reptEvery);
-//        if(holdText != null) holdText.setVisibility(View.VISIBLE);
         holdText = (TextView) findViewById(R.id.reptEveryTime);
         if(holdText != null) {
             holdText.setText(getResources().getString(desc));
-//            holdText.setVisibility(View.VISIBLE);
-        }
-        holdEdit = (EditText) findViewById(R.id.reptPeriod);
-        if(holdEdit != null) {
-            if(holdEdit.getText().length()==0) { holdEdit.setText(String.format(Locale.getDefault(),"%d", mRecurPeriod)); }
-//            holdEdit.setVisibility(View.VISIBLE);
         }
     }
 
@@ -291,22 +279,6 @@ public class Recurrence extends AppCompatActivity {
 
         holdDayMonth = (RelativeLayout) findViewById(R.id.grpWeekly);
         if(holdDayMonth != null) holdDayMonth.setVisibility(View.VISIBLE);
-//        CheckBox holdChkb;
-//
-//        holdChkb = (CheckBox) findViewById(R.id.reptSun);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptMon);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptTue);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptWed);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptThr);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptFri);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
-//        holdChkb = (CheckBox) findViewById(R.id.reptSat);
-//        if(holdChkb != null) { holdChkb.setVisibility(View.VISIBLE); }
     }
 
 
