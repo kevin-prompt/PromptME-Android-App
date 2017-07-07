@@ -174,6 +174,7 @@ public class Recurrence extends AppCompatActivity {
      */
     private void ShowDetails() {
         TextView holdText;
+        EditText holdEdit;
 
         holdText = (TextView) findViewById(R.id.reptDelivery);
         if(holdText!=null) { holdText.setText(mDisplay); }
@@ -196,6 +197,12 @@ public class Recurrence extends AppCompatActivity {
             default:
                 break;
         }
+
+        holdEdit = (EditText) findViewById(R.id.reptPeriod);
+        if(holdEdit != null && mRecurPeriod > 0) { holdEdit.setText(String.format(Locale.getDefault(), "%d", mRecurPeriod)); }
+
+        holdEdit = (EditText) findViewById(R.id.reptOccurNbr);
+        if(holdEdit != null && mRecurNbr > 0) { holdEdit.setText(String.format(Locale.getDefault(), "%d", mRecurNbr)); }
 
         holdText = (TextView) findViewById(R.id.reptEndDate);
         if(mRecurNbr <= 0 && mRecurEnd.length() > 0) {
@@ -327,11 +334,22 @@ public class Recurrence extends AppCompatActivity {
 
         // The date picker returns in onActivityResult().
         Intent timestamp = new Intent(this, ExactTime.class);
-        if(mRecurEnd.equalsIgnoreCase(RECUR_END_DEFAULT))
+        if(mRecurEnd.equalsIgnoreCase(RECUR_END_DEFAULT) || IsForever())
             timestamp.putExtra(IN_TIMESTAMP, KTime.ParseNow(KTime.KT_fmtDate3339fk));
         else
             timestamp.putExtra(IN_TIMESTAMP, mRecurEnd);
         startActivityForResult(timestamp, KY_DATETIME);
+    }
+
+    /*
+     *  Calculate if the date is effectively "forever".
+     */
+    private boolean IsForever(){
+        try {
+            return KTime.CalcDateDifference(mRecurEnd, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString(), KTime.KT_fmtDate3339fk, KTime.KT_YEARS) > FOREVER_LESS;
+        } catch (ExpParseToCalendar ex) {
+            return false;
+        }
     }
 
     /*
@@ -375,9 +393,14 @@ public class Recurrence extends AppCompatActivity {
         if(holdRdo!=null) { testRdo = holdRdo.isChecked(); }
         if (testRdo) { // Never end
             rtn.putExtra(IN_ENDNBR, 0);
-            Calendar future = Calendar.getInstance();
+            Calendar future = KTime.ConvertTimezone(Calendar.getInstance(), KTime.UTC_TIMEZONE);
             future.add(Calendar.YEAR, FOREVER_MORE);
-            rtn.putExtra(IN_ENDTIME, DateFormat.format(KTime.KT_fmtDate3339fk, future));
+            CharSequence reFormatted = DateFormat.format(KTime.KT_fmtDate3339k, future);
+            try { // Need to reformat this as DateFormat does not support fractional seconds.
+                rtn.putExtra(IN_ENDTIME, KTime.ParseToFormat(reFormatted.toString(), KTime.KT_fmtDate3339k, KTime.UTC_TIMEZONE, KTime.KT_fmtDate3339fk));
+            } catch (ExpParseToCalendar expParseToCalendar) {
+                rtn.putExtra(IN_ENDTIME, KTime.ParseNow(KTime.KT_fmtDate3339fk));
+            }
         }
         holdRdo = (RadioButton) findViewById(R.id.reptPickDay);
         if(holdRdo!=null) { testRdo = holdRdo.isChecked(); }

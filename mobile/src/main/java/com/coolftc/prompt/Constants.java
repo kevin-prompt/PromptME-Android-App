@@ -122,6 +122,7 @@ public class Constants {
     public static final String HS_MSG = "history.message";
     public static final String HS_WHO_TO = "history.target";
     public static final String HS_RECURS = "history.recurs";
+    public static final String HS_LAST_15 = "history.new";
     public static final String HS_TIME_PAST = "history.past";
     /* Recurrence. */
     public static final int UNIT_TYPE_DAY = 4;
@@ -142,10 +143,16 @@ public class Constants {
     public static final int FOREVER_MORE = 1000;
     public static final int FOREVER_LESS = 500;
     /* Notification */
+    public static final String IN_NOTE_TYPE = "name";
     public static final String IN_NOTE_KEY = "noteId";
-    public static final String IN_NOTE_MSG = "message";
     public static final String IN_NOTE_FROM = "fromName";
     public static final String IN_NOTE_FROMID = "fromId";
+    public static final String IN_NOTE_FROMNICE = "fromDisplay";
+    public static final String IN_NOTE_PEND = "time";
+    public static final String IN_NOTE_RECUR = "recurUnit";
+    public static final String IN_NOTE_MSG = "message";
+    public static final String IN_TYPE_NOTE = "NOTE";
+    public static final String IN_TYPE_INVITE = "INVITE";
     public static final String IN_NOTE_RAW = "line2-notify";
     /* Details */
     public static final int MSG_ID_INVALID = -1;
@@ -164,7 +171,6 @@ public class Constants {
     public static final String DB_MessageByServer = "select * from message where " + MessageDB.MESSAGE_SRVR_ID + " = '" + SUB_ZZZ + "'";
     public static final int UPD_SCREEN_TM = 60000;                 // How often in msec to update the screen from data base
     public static final int UPD_SCREEN_TQ = 7000;                  // How often in msec to update the screen from data base (first minute)
-
 
 
 }

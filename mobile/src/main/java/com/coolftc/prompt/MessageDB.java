@@ -5,22 +5,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-/*
+/**
  *  This class allows access to the database & tables that hold the reminder information.
- *  NOTE: There are 3 primary objects you will work with.  The MessageDB, Readable or
- *  Writable Databases and Cursors.
- *  Cursor   - Call close() as soon as possible (unless using a managed cursor, then never call close()).
- *  Database - Never call close().  If using multiple MessageDB (SQLiteOpenHelper) across threads,
- *              you may get "database is locked" exceptions on occasion.
- *  MessageDB- Call close() as little as possible, but always before the context ends. Try to create
- *              as few of these as possible. If you just have one, the "database is locked" problems
- *              should be very rare.
- *
+    NOTE: There are 3 primary objects you will work with.  The MessageDB, Readable or
+    Writable Databases and Cursors.
+    Cursor   - Call close() as soon as possible (unless using a managed cursor, then never call close()).
+    Database - Never call close().  If using multiple MessageDB (SQLiteOpenHelper) across threads,
+                you may get "database is locked" exceptions on occasion.
+    MessageDB- Call close() as little as possible, but always before the context ends. Try to create
+                as few of these as possible. If you just have one, the "database is locked" problems
+                should be very rare.
+
  *  Note: Creating the MessageDB does not try to do a create/upgrade.  That only
- *  happens upon first read/write database call.  So having (at least the first)
- *  read/write database call in an asynchronous thread will be good for performance.
+    happens upon first read/write database call.  So having (at least the first)
+    read/write database call in an asynchronous thread will be good for performance.
  */
-public class MessageDB  extends SQLiteOpenHelper {
+public class MessageDB extends SQLiteOpenHelper {
     // Database Info
     private static final String DATABASE_NAME = "message.db";
     private static final int DATABASE_VERSION = 1;

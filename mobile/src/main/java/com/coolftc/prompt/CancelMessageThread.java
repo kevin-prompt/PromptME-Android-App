@@ -9,8 +9,8 @@ import static com.coolftc.prompt.Constants.*;
 
 /**
  *  This thread is used to:
- a. Removed a prompt from the table.
- b. Cancel a prompt on the server with the web service, if it is still pending.
+    a. Removed a prompt from the table.
+    b. Cancel a prompt on the server with the web service, if it is still pending.
  */
 
 public class CancelMessageThread extends Thread {
@@ -26,7 +26,7 @@ public class CancelMessageThread extends Thread {
     /*
      *  This tries to delete the message off the server, and if that works, deletes
      *  it locally.  If the message cannot be deleted off the server for good reason,
-     *  e.g. its time has past, just delete it locally.
+     *  e.g. its time has past, still delete it locally.
      */
     @Override
     public void run() {
@@ -35,21 +35,32 @@ public class CancelMessageThread extends Thread {
             Actor sender = new Actor(mContext);
             WebServices ws = new WebServices();
 
-            if(mData.IsPast()){ // There is no message on the server to delete
-                delMessage(mData.id);
-            }else{
-                // This web service call does not require much in request or response.
-                // If the call fails for some reason, we will leave the record but update the status.
-                if(ws.IsNetwork(mContext)) {
-                    int actual = ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
-
-                    if (actual >= 200 && actual < 300) {
-                        delMessage(mData.id);
-                    } else {
-                        updFailure(mData.id, actual);
-                    }
+            // For Recurring notes, we want to always try to remove from the server but still
+            // delete them locally if there is a failure to do so (since they might not be there).
+            if (mData.IsRecurring()) {
+                if (ws.IsNetwork(mContext)) {
+                    ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
+                    DelMessage(mData.id);
                 } else {
                     updFailure(mData.id, NETWORK_DOWN);
+                }
+            } else {
+                // If message delivery time has passed, there is no message on the server to delete.
+                if (mData.IsPast()) {
+                    DelMessage(mData.id);
+                } else {
+                    // If the call fails for some reason, we will leave the record but update
+                    // the status so they can try again.
+                    if (ws.IsNetwork(mContext)) {
+                        int actual = ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
+                        if (actual >= 200 && actual < 300) {
+                            DelMessage(mData.id);
+                        } else {
+                            updFailure(mData.id, actual);
+                        }
+                    } else {
+                        updFailure(mData.id, NETWORK_DOWN);
+                    }
                 }
             }
 
@@ -67,14 +78,16 @@ public class CancelMessageThread extends Thread {
     /*
      *  Delete the record locally.
      */
-    private void delMessage(long id){
+    private void DelMessage(long id){
         SQLiteDatabase db = mMessage.getWritableDatabase();
 
         String where = "_ID=" + Long.toString(id);
         db.delete(MessageDB.MESSAGE_TABLE, where, null);
     }
 
-    // Change an existing record to reflect message failed to send. Mark as processed.
+    /*
+     *  Change an existing record to reflect message failed to send. Mark as processed.
+     */
     private void updFailure(long id, long status) {
         SQLiteDatabase db = mMessage.getWritableDatabase();
 

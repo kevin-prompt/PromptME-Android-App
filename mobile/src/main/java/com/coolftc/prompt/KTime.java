@@ -7,7 +7,9 @@ import java.util.TimeZone;
 
 /**
  * If you already have a Calendar/Date object and just need formatting, use
-   DateFormat or SimpleDateFormat directly!!!
+   DateFormat or SimpleDateFormat directly.  Of course you may need to later
+   use ParseToFormat() to translate between what DateFormat can do and what
+   is desired.
 
  * The primary customization offered is for parsing some string formatted dates.
    The expected formats are:
@@ -25,6 +27,10 @@ import java.util.TimeZone;
    are expected to be a long timezone id, e.g. "America/Los_Angeles". In the date strings
    themselves timezones are "sort of" implied by the offsets to UTC, although this is not
    really the same thing.  That is, the "Z" really means UTC Offset, not timezone.
+   To get the long timezone id use TimeZone.getDefault().getID().
+   To avoid some timezone issues, just manage all internal dates as UTC and display them
+   using the default timezone.  To get a Calendar object with the current UTC time:
+   Calendar utcNow = KTime.ConvertTimezone(Calendar.getInstance(), KTime.UTC_TIMEZONE);
 
    -------------------------------------------------------------------------------
  * Output Formatting template for Android's DateFormat:
@@ -144,7 +150,7 @@ public class KTime {
     }
 
     /*
-     *  Calculates the difference between 2 dates, supplied as formatted strings.
+     *  Calculates the absolute difference between 2 dates, supplied as formatted strings.
      *  The formatting strings are expected to be in the same timezone.
      *  Given the available output formats are not granular, truncation can occur.
      */

@@ -30,7 +30,7 @@ import java.util.List;
 public class Refresh extends IntentService {
     private static final String SRV_NAME = "RefreshService";  // Name can be used for debugging.
     private FriendDB mSocial;
-    private MessageDB mNotes;
+    private MessageDB mMessage;
     // The friendAge is a debounce value for the friend query.
     private static String friendAge = THE_PAST;
 
@@ -83,7 +83,6 @@ public class Refresh extends IntentService {
          *  Sync the mSocial graph.  This will grab data off the server and then clean up
          *  the local database with any Deletes, Changes, Adds.  In that order.  For Adds,
          *  check if there is local contact information that can supplement the data.
-         *  NOTE: We initialize the
          */
         try {
             mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
@@ -99,6 +98,7 @@ public class Refresh extends IntentService {
                     CheckForUpdates(invites, inviteStore);
                     CheckForAdditions(invites, inviteStore);
                     UpdateContactInfo(inviteStore);
+                    CheckForUserDate(ghost, inviteStore);
                     friendAge = timeNow;
                 }
             }
@@ -115,7 +115,7 @@ public class Refresh extends IntentService {
          *  cache this value so the main thread has easy access.
          */
         try {
-            mNotes = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
+            mMessage = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
             if (ghost.ticket.length() > 0) {
                 int holdPend = getPendPromptCnt();
                 if (ghost.pending != holdPend){
@@ -128,7 +128,7 @@ public class Refresh extends IntentService {
             // If there is a date problem, update and see if it works next time.
             friendAge = timeNow;
         } finally {
-            mSocial.close();
+            mMessage.close();
         }
     }
 
@@ -248,6 +248,20 @@ public class Refresh extends IntentService {
             }
         }
         chgFriends(toChg);
+    }
+
+    /*
+     *  This gives us a contact picture.
+     */
+    private void CheckForUserDate(Actor user, Account[] local){
+        for(Account acct : local){
+            if(user.acctId == acct.acctId){
+                if(!user.contactPic.equalsIgnoreCase(acct.contactPic)){
+                    user.contactPic = acct.contactPic;
+                    user.SyncPrime(false, getApplicationContext());
+                }
+            }
+        }
     }
 
     /*
@@ -450,11 +464,11 @@ public class Refresh extends IntentService {
      *  then can cache this value for later display to the user.
      */
     private int getPendPromptCnt() {
-        SQLiteDatabase db = mNotes.getReadableDatabase();
+        SQLiteDatabase db = mMessage.getReadableDatabase();
         String[] filler = {};
         String holdNowUTC = KTime.ParseNow(KT_fmtDate3339fk, UTC_TIMEZONE).toString();
         Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNowUTC), filler);
-        int count = 0;
+        int count;
         cursor.moveToFirst();
         count = cursor.getInt(0);
         cursor.close();

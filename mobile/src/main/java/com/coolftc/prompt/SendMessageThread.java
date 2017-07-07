@@ -28,17 +28,21 @@ public class SendMessageThread extends Thread {
     public void run() {
         try {
             mMessage = new MessageDB(mContext);  // Be sure to close this before leaving the thread.
+
             // Create the record in the local db, but set to not processed.
             long localId = addMessage(mData, false);
+
             // Create the record on the server using the web service. Get the real time back.
             Actor sender = new Actor(mContext);
             WebServiceModels.PromptResponse actual = sendMessage(sender, mData);
+
             // Update the local record with future time or status, and mark as processed.
             if(actual.response >= 200 && actual.response < 300) {
                 updSuccess(localId, actual.noteTime, actual.noteId);
             }else {
                 updFailure(localId, actual.response);
             }
+
             // Trigger the Refresh to update the Pending count.
             Intent intent = new Intent(mContext, Refresh.class);
             mContext.startService(intent);

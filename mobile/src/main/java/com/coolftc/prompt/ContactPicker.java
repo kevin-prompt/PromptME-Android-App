@@ -190,7 +190,7 @@ public class ContactPicker extends AppCompatActivity {
                 accounts.add(local);
             }
             cursor.close();
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".queryFriends"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
     }
 

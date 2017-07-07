@@ -43,6 +43,11 @@ public class Entry extends AppCompatActivity {
     private List<String> mTimeadjData;           // Holds the raw data for mTimeadj
     private SeekBar mTimeadj;                    // Simple time - adjustment
 
+    // Useful information
+    private int mDefaultTimeName = 0;
+    private int mDefaultTimeAdj = 47;
+    private String mDefaultMessage = "";
+    private static final int SEEK_MARK = 16;     // The seek bar has a range of 0 - 95, includes 5 marks
 
     // This data needs explicit persistence
     private String mTargetTime;                  // If Simple time is exact, this is the real time.
@@ -50,11 +55,6 @@ public class Entry extends AppCompatActivity {
     private int mRecurPeriod = RECUR_INVALID;    // The period used for recurrence.
     private int mRecurNumber = RECUR_INVALID;    // The number of times to recur (has priority over mRecurEnd).
     private String mRecurEnd;                    // The end date used for recurrence.
-
-    private int mDefaultTimeName = 0;
-    private int mDefaultTimeAdj = 0;
-    private String mDefaultMessage = "";
-    private static final int SEEK_MARK = 16;     // The seek bar has a range of 0 - 95, includes 5 marks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,6 @@ public class Entry extends AppCompatActivity {
             if (holdChkBox != null && mRecurUnit != RECUR_INVALID) {
                 holdChkBox.setChecked(true);
             }
-            firstRun = false;
         }
 
         mTimename = (Spinner) findViewById(R.id.sendTimeName);
@@ -202,7 +201,8 @@ public class Entry extends AppCompatActivity {
             mTimeadj.setEnabled(false);
         } else {
             holdRaw += mTimename.getSelectedItem().toString();
-            holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/ SEEK_MARK);  // want a number 0 - 5
+            //holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/ SEEK_MARK);  // want a number 0 - 5\
+            holdRaw += ", " + GetTimeAdjustment(mTimename.getSelectedItemPosition());
         }
         holdText = (TextView) findViewById(R.id.sendTargeTime);
         if(holdText != null) { holdText.setText(holdRaw);}
@@ -219,6 +219,20 @@ public class Entry extends AppCompatActivity {
                 holdText.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    /*
+     *  The time adjustments sometimes need to be finessed for time names before tomorrow.
+     *  This will force all adjustments for Tonight to avoid morning or afternoon.
+     */
+    private String GetTimeAdjustment(int name){
+        if(name == 1){
+            if(mTimeadj.getProgress() < 49){
+                return mTimeadjData.get(0);
+            }
+        }
+
+        return mTimeadjData.get(mTimeadj.getProgress() / SEEK_MARK);
     }
 
     /*
@@ -310,7 +324,10 @@ public class Entry extends AppCompatActivity {
 
         if(holdResource == 0) return "";
         String template = getResources().getText(holdResource).toString();
-        return String.format(template, mRecurPeriod, mRecurNumber, mRecurEnd, weekdays);
+        Reminder msg = new Reminder();  // Just going to use the date formatting in this class.
+        msg.recurEnd = mRecurEnd;
+        String formattedDate = IsForever() ? getResources().getString(R.string.forever) : msg.GetRecurringTime(getApplicationContext());
+        return String.format(template, mRecurPeriod, mRecurNumber, formattedDate, weekdays);
     }
 
     /*
@@ -336,14 +353,8 @@ public class Entry extends AppCompatActivity {
                 if (mRecurUnit == RECUR_INVALID) {
                     mRecurUnit = RECUR_UNIT_DEFAULT;
                 }
-                if (mRecurPeriod == RECUR_INVALID) {
-                    mRecurPeriod = RECUR_PERIOD_DEFAULT;
-                }
-                if (mRecurEnd == null) {
+               if (mRecurEnd == null) {
                     mRecurEnd = RECUR_END_DEFAULT;
-                }
-                if (mRecurNumber == RECUR_INVALID) {
-                    mRecurNumber = RECUR_END_NBR;
                 }
                 String displayTime = "";
                 TextView holdText = (TextView) findViewById(R.id.sendTargeTime);
@@ -446,6 +457,8 @@ public class Entry extends AppCompatActivity {
             return;
         }
 
+
+
         ali.target = mTarget;
         ali.from = new Actor(this);
         holdText = (TextView) findViewById(R.id.sendMessage);
@@ -453,7 +466,12 @@ public class Entry extends AppCompatActivity {
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         ali.targetTime = mTargetTime;
         // Listbox index is one less that the value we need for the time name.
-        ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
+        CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
+        if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
+            ali.targetTimeNameId = 0;
+        } else {
+            ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
+        }
         // Want a number from 0 to 5, so do an integer division to truncate fraction.
         ali.targetTimeAdjId = mTimeadj.getProgress() / SEEK_MARK;
         ali.recurUnit = mRecurUnit;
