@@ -31,12 +31,24 @@
         android:layout_toRightOf="@id/rowhTargetTime"
         android:layout_toEndOf="@id/rowhTargetTime">
     </ImageView>
+    <TextView android:id="@+id/rowhNew"
+        android:text="@string/newWord"
+        android:textSize="@dimen/lbl_med_size"
+        android:textStyle="italic"
+        android:textColor="@color/promptcomp"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_toRightOf="@+id/rowhRecur"
+        android:layout_toEndOf="@+id/rowhRecur"/>
     <TextView android:id="@+id/rowhTargetFrom"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:layout_toRightOf="@id/rowhRecur"
-        android:layout_toEndOf="@id/rowhRecur"
+        android:layout_toRightOf="@id/rowhNew"
+        android:layout_toEndOf="@id/rowhNew"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true">

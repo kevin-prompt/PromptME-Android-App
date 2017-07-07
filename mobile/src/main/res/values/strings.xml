@@ -102,6 +102,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="copy">Copy</string>
+    <string name="newWord">New</string>
     <string name="reply">Reply</string>
     <string name="occurrences">Occurrences.</string>
     <string name="times">Times</string>
@@ -138,7 +139,7 @@
     <string name="recur_mon_nbr">Repeat every %1$d months %2$d times.</string>
     <string name="recur_mon_day">Repeat every %1$d months until %3$s.</string>
     <string name="recur_mon_end">Repeat every %1$d months forever.</string>
-    <string name="recur_wek_nbr">Repeat every %4$s%2$d times.</string>
+    <string name="recur_wek_nbr">Repeat every %4$s %2$d times.</string>
     <string name="recur_wek_day">Repeat every %4$s until %3$s.</string>
     <string name="recur_wek_end">Repeat every %4$s forever.</string>
     <string name="repeat_propmpt">Repeat this Prompt</string>

@@ -25,18 +25,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/*
- * The History Display shows all mReminders created on the local device. The
- * list is shown in reverse chronological order.  If a reminder has not yet
- * been sent to the server, a "processing..." message will also be displayed.
- * From this screen one can navigate to the welcome screen by pressing the
- * floating add button (to add another prompt).
+/**
+ *  The History is a display of all Reminders created on the local device. The
+    list is shown in reverse chronological order by default, but can be sorted
+    by descending create date. If a reminder has not yet been sent to the server,
+    a "Processing..." message will also be displayed.
+    From this screen one can navigate to the welcome screen by pressing the
+    parent navigation or to the contact list with the floating people button. To
+    see details of the prompt, tapping on the prompt navigates to detail.
  */
 public class History extends AppCompatActivity  implements FragmentTalkBack{
 
@@ -47,8 +52,8 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     // The "reminder" collection of all the possible messages.
     private List<Reminder> mReminders = new ArrayList< >();
     // This is the mapping of the detail map to each specific message.
-    private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
-    private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
+    private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_LAST_15, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
+    private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhNew, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -80,7 +85,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     }
 
     /*
-     *  Go to the message entry screen, default to the user as target.
+     *  Go to the contact picker to create more prompts.
      */
     public void NewMessage(View view) {
         Intent intent = new Intent(this, ContactPicker.class);
@@ -177,16 +182,16 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
             hold.put(HS_REM_ID, msg.IdStr());
             // Delivery time and indication if past.  If not processed, assume not in past.
             hold.put(HS_TIME_PAST, msg.IsPromptPast());
-            if(msg.isProcessed) {
+            if (msg.processed) {
                 hold.put(HS_TIME, msg.GetPromptTime(getApplicationContext()));
-            }else{
+            } else {
                 hold.put(HS_TIME, waiting);
             }
             // If message to self, skip it, otherwise show who created it.
-            if(!msg.IsSelfie()){
+            if (!msg.IsSelfie()) {
                 hold.put(HS_WHO_FROM, msg.from.bestName());
                 hold.put(HS_WHO_TO, msg.target.bestName());
-            }else {
+            } else {
                 hold.put(HS_WHO_FROM, "");
                 hold.put(HS_WHO_TO, "");
             }
@@ -195,6 +200,15 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 hold.put(HS_RECURS, "X");
             } else {
                 hold.put(HS_RECURS, "");
+            }
+            // Check if new (created in last x minutes)
+            hold.put(HS_LAST_15, "");
+            try {
+                if(KTime.CalcDateDifference(msg.created, KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString(), KTime.KT_fmtDate3339fk, KTime.KT_MINUTES) < 15){
+                    hold.put(HS_LAST_15, "X");
+                }
+            } catch (ExpParseToCalendar expParseToCalendar) {
+                /* Just skip it */
             }
             // The actual message
             hold.put(HS_MSG, msg.message);
@@ -216,7 +230,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     *  This can be used later for the search
     */
     private void GetMessages(){
-        MessageDB message = new MessageDB(this);  // Be sure to close this before leaving the thread.
+        MessageDB message = new MessageDB(getApplicationContext());  // Be sure to close this before leaving the thread.
         SQLiteDatabase db = message.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_MessagesAll, filler);
@@ -236,7 +250,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
                 local.recurEnd = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_R_END));
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
-                local.isProcessed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
+                local.processed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
                 local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
                 local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
                 local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
@@ -326,8 +340,17 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                         if(holdData.get(HS_TIME_PAST).length() == 0) // not in the past, so bold
                             holdView.setTypeface(null, Typeface.BOLD);
                         holdImage = (ImageView) convertView.findViewById(R.id.rowhRecur);
-                        if(holdData.get(HS_RECURS) != null && holdData.get(HS_RECURS).length() > 0)
+                        if(holdData.get(HS_RECURS) != null && holdData.get(HS_RECURS).length() > 0) {
                             holdImage.setVisibility(View.VISIBLE);
+                        } else {
+                            holdImage.setVisibility(View.INVISIBLE);
+                        }
+                        holdView = (TextView) convertView.findViewById(R.id.rowhNew);
+                        if(holdData.get(HS_LAST_15) != null && holdData.get(HS_LAST_15).length() > 0) {
+                            holdView.setVisibility(View.VISIBLE);
+                        }else{
+                            holdView.setVisibility(View.INVISIBLE);
+                        }
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetFrom);
                         holdView.setText(holdData.get(HS_WHO_FROM));
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetTo);

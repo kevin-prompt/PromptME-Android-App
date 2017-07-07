@@ -10,7 +10,7 @@ import static com.coolftc.prompt.Constants.*;
 
 /**
  *  Representation of the message, including who, when and what. This is useful for passing
- *  around both messages to be (sent) and messages that have been (in history).
+ *  around both messages to be (sent) and messages that have been (history or notification).
  */
 public class Reminder  implements Serializable {
 
@@ -19,6 +19,7 @@ public class Reminder  implements Serializable {
     public Account target;              // The person getting the message.
     public long id = 0;                 // Prompt Key stored locally.
     public long serverId = 0;           // Prompt Key on the server.
+    public int type = 0;                // 1 = NOTE, 2 = INVITE
 
     // When a message is sent, the server provides the exact time that it will ultimately be sent.
     // It is stored in KTime.KT_fmtDate3339f for use with API.
@@ -37,7 +38,7 @@ public class Reminder  implements Serializable {
 
     // Message
     public String message = "";
-    public boolean isProcessed = false; // Has the message been sent to the server.
+    public boolean processed = false;   // Has the message been sent to the server.
     public int status = 0;              // If there are any issues, the code is stored here.
     public String created = "";         // The timestamp of when the message was created.
 
@@ -113,7 +114,7 @@ public class Reminder  implements Serializable {
      *  Generally the assumption will be the prompt is not in the past.
      */
     public boolean IsPast() {
-        if (!isProcessed) return false;
+        if (!processed) return false;
         if (mTartgetTimePast) return true;
         try {
             if (KTime.IsPast(targetTime, KTime.KT_fmtDate3339fk)) {
@@ -151,8 +152,8 @@ public class Reminder  implements Serializable {
     public static Comparator<Reminder> ByDeliveryDate = new Comparator<Reminder>() {
         public int compare(Reminder r1, Reminder r2) {
             if (r1 == null || r2 == null) return 0;
-            if (!r1.isProcessed) return -1;
-            if (!r2.isProcessed) return 1;
+            if (!r1.processed) return -1;
+            if (!r2.processed) return 1;
             if (r1.targetTime != null && r2.targetTime != null) {
                 //descending order
                 return r2.targetTime.compareTo(r1.targetTime);

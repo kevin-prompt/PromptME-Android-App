@@ -1,5 +1,6 @@
 package com.coolftc.prompt;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,11 +13,16 @@ import android.widget.Toast;
 
 import static com.coolftc.prompt.Constants.*;
 
+/**
+ *  The Detail screen shows a little bit more information that the history
+    and provides a navigation endpoint for the notification and history. It
+    also supports a copy/reply function as well as a delete.
+ */
 public class Detail extends AppCompatActivity {
 
     private Reminder mPrompt = new Reminder();
     private Actor mUser = null;
-    private FriendDB mSocial;
+    private MessageDB mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +43,14 @@ public class Detail extends AppCompatActivity {
         // that case we do not need to load it from the database. Otherwise we do need to
         // get more information.
         mUser = new Actor(getApplicationContext());
-        if(!mPrompt.isProcessed) { BuildPrompt(); }
+        if(!mPrompt.processed) { BuildPrompt(); }
         ShowDetails();
     }
 
     /*
-     *  Since this is a data entry screen, with some data collection in dialogs,
-     *  we need to persist that extra data in the case of Activity resets.  Make
-     *  sure to call the super as the last thing done.
+     *  We may need data not shown on the screen to navigate intelligently, so
+     *  make sure we keep that in memory in the case of Activity resets.  Make
+     *  sure to call the super as the last thing done in onSaveInstanceState().
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -52,9 +58,9 @@ public class Detail extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
     /*
-     *  Restore the state.  See onSaveInstanceState().
-     *  NOTE: For items that might be provided at startup, need to restore them
-     *  in the OnCreate().
+     *  Restore the state, compliments of onSaveInstanceState().
+     *  NOTE: If you do not see something here, often we need to
+     *  restore data in the OnCreate().
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -62,27 +68,31 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
-     *  This deletes the Prompt from the local data store, and if it has not yet
-     *  been processed, it is also removed from the server pending queue.
+     *  This deletes the Prompt from the local data store, and if it has not
+     *  yet been processed or is a recurring prompt, it also removes it from
+     *  the server pending queue.
      */
     public void CancelPrompt(View view){
         WebServices ws = new WebServices();
 
-        if(!mPrompt.IsPast() && !ws.IsNetwork(this)) {
+        // If we might use the web serivce, we need the network.
+        if(!ws.IsNetwork(this) && (!mPrompt.IsPast() || mPrompt.IsRecurring())) {
             Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
             return;
         }
 
+        // Push possible network (and database) actions off the main thread.
         CancelMessageThread cmt = new CancelMessageThread(getApplicationContext(), mPrompt);
         cmt.start();
 
+        // Return to the History, it will reflect the deleted data after a short interval.
         Intent intent = new Intent(this, History.class);
         startActivity(intent);
     }
 
     /*
-     *  This allows a navigation to the Entry screen, with some data populated,
-     *  specifically, who will get the message, and sometimes the message itself.
+     *  This allows navigation to the Entry screen, with some data populated,
+     *  specifically, who gets the message, and sometimes the message itself (copy).
      */
     public void CopyPrompt(View view) {
 
@@ -96,11 +106,11 @@ public class Detail extends AppCompatActivity {
                 mBundle.putSerializable(IN_USER_ACCT, mUser);
                 mBundle.putSerializable(IN_MESSAGE, mPrompt);
             }
-            // If the Prompt came from a friend, then the user can reply to it.
+            // If the Prompt came from a friend, then the user can "reply" to it.
             // A reply passes along the from address as the target address.
-            // We need to fill out the information about the account for Entry to use it.
-            else { // Reply
-                mSocial = new FriendDB(getApplicationContext());
+            // Lets try and get a bit more information on the Friend, as the
+            // message only has the name.
+            else {
                 mBundle.putSerializable(IN_USER_ACCT, GetAccountByName(mPrompt.from.unique));
             }
 
@@ -109,26 +119,39 @@ public class Detail extends AppCompatActivity {
             startActivity(intent);
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".CopyPrompt");
-        } finally {
-            if(mSocial != null) mSocial.close();
         }
     }
 
     /*
      *  Fill out a Reminder to display based on input data.  This is a best effort,
-     *  if there is no further data the display will have to deal with it.
+     *  if there is no further data the display will have to deal with it.  If the
+     *  data provided is more than is stored in the local DB, add in a new record.
      */
     private void BuildPrompt() {
 
-        // Check if we a local db id.
-        if(mPrompt.id > 0) {
-            Reminder holdPrompt = GetMessageByLocal(mPrompt.id);
-            if(holdPrompt.isProcessed) mPrompt = holdPrompt;
-        }
-        // Maybe we have the server id
-        if(!mPrompt.isProcessed && mPrompt.serverId > 0) {
-            Reminder holdPrompt = GetMessageByServer(mPrompt.serverId);
-            if(holdPrompt.isProcessed) mPrompt = holdPrompt;
+        try {
+            mMessage = new MessageDB(getApplicationContext());  // Be sure to close this before leaving the thread.
+
+            // Check if we have a local DB id to look up the record.
+            if (mPrompt.id > 0) {
+                Reminder holdPrompt = GetMessageByLocal(mPrompt.id);
+                if (holdPrompt.processed) mPrompt = holdPrompt;
+            }
+            // Still not processed? Maybe we have the server id do do a look up.
+            if (!mPrompt.processed && mPrompt.serverId > 0) {
+                Reminder holdPrompt = GetMessageByServer(mPrompt.serverId);
+                if (holdPrompt.processed) mPrompt = holdPrompt;
+            }
+
+            // Looks like this message is not in the local store, add it.
+            if (!mPrompt.processed){
+                mPrompt.status = (int)AddMessage(mPrompt);
+            }
+
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".BuildPrompt");
+        } finally {
+            mMessage.close();
         }
     }
 
@@ -200,10 +223,10 @@ public class Detail extends AppCompatActivity {
             if (holdText != null) holdText.setText(holdFormatted);
         }
 
-        if(mPrompt.IsPast()) {
-            holdFormatted = getString(R.string.delete);
-        } else {
+        if(!mPrompt.IsPast() || mPrompt.IsRecurring()) {
             holdFormatted = getString(R.string.cancel);
+        } else {
+            holdFormatted = getString(R.string.delete);
         }
         holdPush = (Button) findViewById(R.id.dtlCancel);
         if(holdPush != null) holdPush.setText(holdFormatted);
@@ -222,8 +245,7 @@ public class Detail extends AppCompatActivity {
      *  Read a specific message out of the local storage and return it as a Reminder.
      */
     private Reminder GetMessage(String query){
-        MessageDB message = new MessageDB(this);  // Be sure to close this before leaving the thread.
-        SQLiteDatabase db = message.getReadableDatabase();
+        SQLiteDatabase db = mMessage.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(query, filler);
         Reminder local;
@@ -232,27 +254,27 @@ public class Detail extends AppCompatActivity {
         local.from = new Account();
         try{
             // Return null if no record found.
-            if(!cursor.moveToNext()) { return local; }
-            local.id = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_ID));
-            local.serverId = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_SRVR_ID));
-            local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
-            local.targetTimeNameId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMENAME));
-            local.targetTimeAdjId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEADJ));
-            local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
-            local.recurPeriod = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_PERIOD));
-            local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
-            local.recurEnd = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_R_END));
-            local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
-            local.isProcessed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
-            local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
-            local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
-            local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
-            local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
-            local.target.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TARGET));
-            local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
+            if(cursor.moveToNext()) {
+                local.id = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_ID));
+                local.serverId = cursor.getLong(cursor.getColumnIndex(MessageDB.MESSAGE_SRVR_ID));
+                local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
+                local.targetTimeNameId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMENAME));
+                local.targetTimeAdjId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEADJ));
+                local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
+                local.recurPeriod = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_PERIOD));
+                local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
+                local.recurEnd = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_R_END));
+                local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
+                local.processed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED)) == MessageDB.SQLITE_TRUE;
+                local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
+                local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
+                local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
+                local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
+                local.target.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TARGET));
+                local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
+            }
             cursor.close();
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetMessages"); }
-        finally { message.close(); }
         return local;
     }
 
@@ -265,11 +287,40 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
-     *  Get a filled out Account for the Entry screen.  The Message only has
-     *  the unique and display names for the accounts.
+     *  Add a new reminder to local DB.  Usually due to a friend generated prompt
+     *  coming in via notification.
+     */
+    private long AddMessage(Reminder msg) {
+        SQLiteDatabase db = mMessage.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MessageDB.MESSAGE_TARGET, msg.target.unique);
+        values.put(MessageDB.MESSAGE_SOURCE, msg.from.unique);
+        values.put(MessageDB.MESSAGE_NAME, msg.target.bestName());
+        values.put(MessageDB.MESSAGE_FROM, msg.from.bestName());
+        values.put(MessageDB.MESSAGE_TIME, msg.targetTime);
+        values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimeNameId);
+        values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeAdjId);
+        values.put(MessageDB.MESSAGE_R_UNIT, msg.recurUnit);
+        values.put(MessageDB.MESSAGE_R_PERIOD, msg.recurPeriod);
+        values.put(MessageDB.MESSAGE_R_NUMBER, msg.recurNumber);
+        values.put(MessageDB.MESSAGE_R_END, msg.recurEnd);
+        values.put(MessageDB.MESSAGE_MSG, msg.message);
+        values.put(MessageDB.MESSAGE_SRVR_ID, msg.serverId);
+        values.put(MessageDB.MESSAGE_STATUS, 0);
+        values.put(MessageDB.MESSAGE_CREATE, KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString());
+        values.put(MessageDB.MESSAGE_PROCESSED, MessageDB.SQLITE_TRUE);
+
+        return db.insert(MessageDB.MESSAGE_TABLE, null, values);  // Returns -1 if there is an error.
+    }
+
+    /*
+     *  Get a filled out Account for the Entry screen.  The Message DB only has the
+     *  unique and display names for the accounts, so this is used to suppliment it.
      */
     private Account GetAccountByName(String uname){
-        SQLiteDatabase db = mSocial.getReadableDatabase();
+        FriendDB social = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
+        SQLiteDatabase db = social.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_FriendByName.replace(SUB_ZZZ, uname), filler);
         try{
@@ -291,5 +342,6 @@ public class Detail extends AppCompatActivity {
             cursor.close();
             return local;
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetAccountByName"); return new Account(); }
+        finally { social.close(); }
     }
 }
