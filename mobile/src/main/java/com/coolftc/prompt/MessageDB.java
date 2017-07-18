@@ -34,6 +34,8 @@ public class MessageDB extends SQLiteOpenHelper {
     public static final String MESSAGE_TIME = "timeexact";          // The actual expected delivery time (per server).
     public static final String MESSAGE_TIMENAME = "timename";       // The code used for simplified time name.
     public static final String MESSAGE_TIMEADJ = "timeadj";         // The code used for simplified time adjustment.
+    public static final String MESSAGE_SLEEP = "sleepcycle";        // The sleep cycle in place at the time of the message.
+    public static final String MESSAGE_TIMEZONE = "timezone";       // The time zone in place at the time of the message.
     public static final String MESSAGE_R_UNIT = "recurunit";        // Part of recurring parameters.  Units = 0 means no recurrence.
     public static final String MESSAGE_R_PERIOD = "recurperiod";    // Part of recurring parameters.
     public static final String MESSAGE_R_NUMBER = "recurnbr";       // Part of recurring parameters.
@@ -41,6 +43,7 @@ public class MessageDB extends SQLiteOpenHelper {
     public static final String MESSAGE_MSG = "promptmsg";           // The message.
     public static final String MESSAGE_SRVR_ID = "serverid";        // The note id of the message on the server.
     public static final String MESSAGE_STATUS = "status";           // The status of the message wrt the server. Non-zero = non-good.
+    public static final String MESSAGE_SNOOZE_ID = "snoozeid";      // The new note id of the message on the server.
     public static final String MESSAGE_CREATE = "created";          // The timestamp of the record in this local database (in UTC).
     public static final String MESSAGE_PROCESSED = "processed";     // True = server has processed the request.  See status for how that went.
 
@@ -76,6 +79,8 @@ public class MessageDB extends SQLiteOpenHelper {
                 MESSAGE_TIME        + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_TIMENAME    + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_TIMEADJ     + TABLE_TYPE_INT + TABLE_DELIMIT +
+                MESSAGE_SLEEP       + TABLE_TYPE_INT + TABLE_DELIMIT +
+                MESSAGE_TIMEZONE    + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_R_UNIT      + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_R_PERIOD    + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_R_NUMBER    + TABLE_TYPE_INT + TABLE_DELIMIT +
@@ -83,6 +88,7 @@ public class MessageDB extends SQLiteOpenHelper {
                 MESSAGE_MSG         + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_SRVR_ID     + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_STATUS      + TABLE_TYPE_INT  + TABLE_DELIMIT +
+                MESSAGE_SNOOZE_ID   + TABLE_TYPE_INT + TABLE_DELIMIT +
                 MESSAGE_CREATE      + TABLE_TYPE_TEXT + TABLE_DELIMIT +
                 MESSAGE_PROCESSED   + TABLE_TYPE_BOOL + ");");
     }

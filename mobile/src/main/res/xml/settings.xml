@@ -31,6 +31,12 @@
             android:summary="@string/prf_VibrateOnSum"
             android:defaultValue="false">
         </CheckBoxPreference>
+        <EditTextPreference android:key="1004"
+            android:title="@string/prf_Snooze"
+            android:summary="@string/prf_SnoozeSum"
+            android:inputType="number"
+            android:defaultValue="@string/prf_SnoozeDefault">
+        </EditTextPreference>
         <CheckBoxPreference android:key="1002"
             android:title="@string/prf_Use24Clock"
             android:summary="@string/prf_Use24ClockSum"

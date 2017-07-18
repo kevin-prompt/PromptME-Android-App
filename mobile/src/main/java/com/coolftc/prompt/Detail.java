@@ -1,15 +1,21 @@
 package com.coolftc.prompt;
 
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.DialogPreference;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Arrays;
 
 import static com.coolftc.prompt.Constants.*;
 
@@ -72,28 +78,44 @@ public class Detail extends AppCompatActivity {
      *  yet been processed or is a recurring prompt, it also removes it from
      *  the server pending queue.
      */
-    public void CancelPrompt(View view){
+    public void CancelPrompt(final View view){
         WebServices ws = new WebServices();
 
-        // If we might use the web serivce, we need the network.
+        // If we use the web serivce, we need the network.
         if(!ws.IsNetwork(this) && (!mPrompt.IsPast() || mPrompt.IsRecurring())) {
             Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Push possible network (and database) actions off the main thread.
-        CancelMessageThread cmt = new CancelMessageThread(getApplicationContext(), mPrompt);
-        cmt.start();
+        // Delete nag dialog.  To launch another activity inside a listener, we save off the main activity.
+        final Activity holdAct = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Prompt")
+                .setMessage("Confirm you wish to delete the Prompt.")
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Push possible network (and database) actions off the main thread.
+                        CancelMessageThread cmt = new CancelMessageThread(getApplicationContext(), mPrompt);
+                        cmt.start();
 
-        // Return to the History, it will reflect the deleted data after a short interval.
-        Intent intent = new Intent(this, History.class);
-        startActivity(intent);
+                        // Return to the History, it will reflect the deleted data after a short interval.
+                        Intent intent = new Intent(holdAct, History.class);
+                        holdAct.startActivity(intent);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     /*
-     *  This allows navigation to the Entry screen, with some data populated,
-     *  specifically, who gets the message, and sometimes the message itself (copy).
-     */
+         *  This allows navigation to the Entry screen, with some data populated,
+         *  specifically, who gets the message, and sometimes the message itself (copy).
+         */
     public void CopyPrompt(View view) {
 
         try {
@@ -181,11 +203,7 @@ public class Detail extends AppCompatActivity {
 
         // The recurring label includes the end date, if applicable.
         if(mPrompt.IsRecurring()){
-            if(mPrompt.recurEnd.length() > 0) {
-                holdFormatted = getResources().getString(R.string.is_recurring_end) + " " + mPrompt.GetRecurringTime(getApplicationContext());
-            } else {
-                holdFormatted = getResources().getString(R.string.is_recurring);
-            }
+            holdFormatted = "*" + mPrompt.GetRecurringVerb(getApplicationContext());
         } else {
             holdFormatted = "";
         }
@@ -222,6 +240,22 @@ public class Detail extends AppCompatActivity {
             holdText = (TextView) findViewById(R.id.dtlStatus);
             if (holdText != null) holdText.setText(holdFormatted);
         }
+
+        // Simple time message
+        if(mPrompt.targetTimeNameId == 0){
+            holdFormatted = getString(R.string.scheduled) + ": " + mPrompt.GetPromptTime(getApplicationContext());
+        }else {
+            holdFormatted = getString(R.string.scheduled) + ": " + Arrays.asList(getResources().getStringArray(R.array.time_name)).get(mPrompt.targetTimeNameId - 1);
+            holdFormatted += ", " + Arrays.asList(getResources().getStringArray(R.array.time_adj)).get(mPrompt.targetTimeAdjId);
+        }
+        if(mPrompt.snoozeId > 0) { holdFormatted += " -" + getString(R.string.img_snooze); }
+        holdText = (TextView) findViewById(R.id.dtlSimpleTime);
+        if (holdText != null) holdText.setText(holdFormatted);
+
+        // Sleep cycle
+        holdFormatted = getString(R.string.prf_SleepCycle) + ": " + Arrays.asList(getResources().getStringArray(R.array.sleepcycle)).get(mPrompt.sleepCycle);
+        holdText = (TextView) findViewById(R.id.dtlSleepCycle);
+        if (holdText != null) holdText.setText(holdFormatted);
 
         if(!mPrompt.IsPast() || mPrompt.IsRecurring()) {
             holdFormatted = getString(R.string.cancel);
@@ -260,6 +294,8 @@ public class Detail extends AppCompatActivity {
                 local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
                 local.targetTimeNameId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMENAME));
                 local.targetTimeAdjId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEADJ));
+                local.sleepCycle = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_SLEEP));
+                local.timezone = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEZONE));
                 local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
                 local.recurPeriod = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_PERIOD));
                 local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
@@ -267,6 +303,7 @@ public class Detail extends AppCompatActivity {
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
                 local.processed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED)) == MessageDB.SQLITE_TRUE;
                 local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
+                local.snoozeId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_SNOOZE_ID));
                 local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
                 local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
                 local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
@@ -301,6 +338,8 @@ public class Detail extends AppCompatActivity {
         values.put(MessageDB.MESSAGE_TIME, msg.targetTime);
         values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimeNameId);
         values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeAdjId);
+        values.put(MessageDB.MESSAGE_SLEEP, msg.target.sleepcycle);
+        values.put(MessageDB.MESSAGE_TIMEZONE, msg.target.timezone);
         values.put(MessageDB.MESSAGE_R_UNIT, msg.recurUnit);
         values.put(MessageDB.MESSAGE_R_PERIOD, msg.recurPeriod);
         values.put(MessageDB.MESSAGE_R_NUMBER, msg.recurNumber);
@@ -308,6 +347,7 @@ public class Detail extends AppCompatActivity {
         values.put(MessageDB.MESSAGE_MSG, msg.message);
         values.put(MessageDB.MESSAGE_SRVR_ID, msg.serverId);
         values.put(MessageDB.MESSAGE_STATUS, 0);
+        values.put(MessageDB.MESSAGE_SNOOZE_ID, 0);
         values.put(MessageDB.MESSAGE_CREATE, KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString());
         values.put(MessageDB.MESSAGE_PROCESSED, MessageDB.SQLITE_TRUE);
 

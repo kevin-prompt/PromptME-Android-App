@@ -1,7 +1,6 @@
 package com.coolftc.prompt;
 
 import static com.coolftc.prompt.Constants.*;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -25,9 +24,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,8 +48,8 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
     // The "reminder" collection of all the possible messages.
     private List<Reminder> mReminders = new ArrayList< >();
     // This is the mapping of the detail map to each specific message.
-    private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_LAST_15, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
-    private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhNew, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
+    private String[] StatusMapFROM = {HS_REM_ID, HS_TIME, HS_RECURS, HS_SNOOZE, HS_LAST_15, HS_WHO_FROM, HS_WHO_TO, HS_MSG};
+    private int[] StatusMapTO = {R.id.rowh_Id, R.id.rowhTargetTime, R.id.rowhRecur, R.id.rowhSnooze, R.id.rowhNew, R.id.rowhTargetFrom, R.id.rowhTargetTo, R.id.rowhMessage};
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -201,6 +197,12 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
             } else {
                 hold.put(HS_RECURS, "");
             }
+            // Check if this note was ever snoozed.
+            if(msg.snoozeId > 0) {
+                hold.put(HS_SNOOZE, "X");
+            } else {
+                hold.put(HS_SNOOZE, "");
+            }
             // Check if new (created in last x minutes)
             hold.put(HS_LAST_15, "");
             try {
@@ -245,6 +247,8 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 local.targetTime = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIME));
                 local.targetTimeNameId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMENAME));
                 local.targetTimeAdjId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEADJ));
+                local.sleepCycle = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_SLEEP));
+                local.timezone = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_TIMEZONE));
                 local.recurUnit = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_UNIT));
                 local.recurPeriod = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_PERIOD));
                 local.recurNumber = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_R_NUMBER));
@@ -252,6 +256,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                 local.message = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_MSG));
                 local.processed = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_PROCESSED))==MessageDB.SQLITE_TRUE;
                 local.status = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_STATUS));
+                local.snoozeId = cursor.getInt(cursor.getColumnIndex(MessageDB.MESSAGE_SNOOZE_ID));
                 local.created = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_CREATE));
                 local.from.unique = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_SOURCE));
                 local.from.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_FROM));
@@ -337,18 +342,27 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
                     case TYPE_ITEM:
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetTime);
                         holdView.setText(holdData.get(HS_TIME));
-                        if(holdData.get(HS_TIME_PAST).length() == 0) // not in the past, so bold
-                            holdView.setTypeface(null, Typeface.BOLD);
+                        if(holdData.get(HS_TIME_PAST).length() == 0) {
+                            holdView.setTypeface(null, Typeface.BOLD);  // not in the past, so bold
+                        } else { // Always need to reset these, since they are reused.
+                            holdView.setTypeface(null, Typeface.NORMAL);
+                        }
                         holdImage = (ImageView) convertView.findViewById(R.id.rowhRecur);
                         if(holdData.get(HS_RECURS) != null && holdData.get(HS_RECURS).length() > 0) {
                             holdImage.setVisibility(View.VISIBLE);
-                        } else {
+                        } else { // Always need to reset these, since they are reused.
+                            holdImage.setVisibility(View.INVISIBLE);
+                        }
+                        holdImage = (ImageView) convertView.findViewById(R.id.rowhSnooze);
+                        if(holdData.get(HS_SNOOZE) != null && holdData.get(HS_SNOOZE).length() > 0) {
+                            holdImage.setVisibility(View.VISIBLE);
+                        } else { // Always need to reset these, since they are reused.
                             holdImage.setVisibility(View.INVISIBLE);
                         }
                         holdView = (TextView) convertView.findViewById(R.id.rowhNew);
                         if(holdData.get(HS_LAST_15) != null && holdData.get(HS_LAST_15).length() > 0) {
                             holdView.setVisibility(View.VISIBLE);
-                        }else{
+                        }else{ // Always need to reset these, since they are reused.
                             holdView.setVisibility(View.INVISIBLE);
                         }
                         holdView = (TextView) convertView.findViewById(R.id.rowhTargetFrom);
@@ -374,7 +388,7 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
 
             String holdSearch = mHistorySearch.getText().toString();
             hRefreshCntr += UPD_SCREEN_TQ;
-            if(hRefreshCntr < UPD_SCREEN_TQ*7){
+            if(hRefreshCntr < UPD_SCREEN_TQ*10){
                 ShowDetails(holdSearch);
                 hRefresh.postDelayed(this, UPD_SCREEN_TQ);
             } else {

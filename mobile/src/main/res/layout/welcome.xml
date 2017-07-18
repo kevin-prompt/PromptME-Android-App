@@ -30,19 +30,16 @@
         android:layout_marginBottom="72dp" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/fabWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="JumpEntry"
-        android:clickable="true"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_create_white_24dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_above="@+id/welPending"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_margin="@dimen/fab_margin" />
 
     <TextView
         android:id="@+id/welPending"

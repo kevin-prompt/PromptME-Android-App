@@ -94,6 +94,8 @@ public class SendMessageThread extends Thread {
         values.put(MessageDB.MESSAGE_TIME, msg.targetTime);
         values.put(MessageDB.MESSAGE_TIMENAME, msg.targetTimeNameId);
         values.put(MessageDB.MESSAGE_TIMEADJ, msg.targetTimeAdjId);
+        values.put(MessageDB.MESSAGE_SLEEP, msg.target.sleepcycle);
+        values.put(MessageDB.MESSAGE_TIMEZONE, msg.target.timezone);
         values.put(MessageDB.MESSAGE_R_UNIT, msg.recurUnit);
         values.put(MessageDB.MESSAGE_R_PERIOD, msg.recurPeriod);
         values.put(MessageDB.MESSAGE_R_NUMBER, msg.recurNumber);
@@ -101,6 +103,7 @@ public class SendMessageThread extends Thread {
         values.put(MessageDB.MESSAGE_MSG, msg.message);
         values.put(MessageDB.MESSAGE_SRVR_ID, 0);   // No server id yet.
         values.put(MessageDB.MESSAGE_STATUS, 0);    // No status yet.
+        values.put(MessageDB.MESSAGE_SNOOZE_ID, 0);
         values.put(MessageDB.MESSAGE_CREATE, KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString());
         values.put(MessageDB.MESSAGE_PROCESSED, (processed?MessageDB.SQLITE_TRUE:MessageDB.SQLITE_FALSE));
 

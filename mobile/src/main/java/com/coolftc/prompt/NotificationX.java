@@ -16,8 +16,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Map;
 
 /**
- *  This class manages the incoming prompts.  It creates a notification that the
-    user sees and interacts with.  TThe incoming prompt contains the following data:
+ *  This class manages the incoming prompts (push notifications).  It creates a notification
+    that the user sees and interacts with.  The incoming prompt contains the following data:
      IN_NOTE_TYPE      - The type of notification. Possible names are: NOTE – for a prompt, INVITE – for an invitation or confirmation of friendship
      IN_NOTE_KEY       - The original server id of the prompt.
      IN_NOTE_FROM      - The unique name of the sender of the message.
@@ -32,7 +32,6 @@ import java.util.Map;
  */
 public class NotificationX extends FirebaseMessagingService {
 
-    public static final int NOTIFICATION_ID = 1;
     private static final int TYPE_NOTE = 1;
     private static final int TYPE_INVITE = 2;
 
@@ -86,6 +85,7 @@ public class NotificationX extends FirebaseMessagingService {
 
     /*
      *  Use this method for prompts.
+     *  This method creates a local notification that can be interacted with by user.
      */
     private void promptNotification(Reminder msg) {
 
@@ -97,19 +97,47 @@ public class NotificationX extends FirebaseMessagingService {
 
         // Pass along what information we have
         Intent intentX = new Intent(this, Detail.class);
-        Bundle mBundle = new Bundle();
-        mBundle.putSerializable(IN_MESSAGE, msg);
-        intentX.putExtras(mBundle);
-        // Using FLAG_UPDATE_CURRENT as each new notification will likely refer to a new Prompt.
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentX, PendingIntent.FLAG_UPDATE_CURRENT);
+        Bundle xBundle = new Bundle();
+        xBundle.putSerializable(IN_MESSAGE, msg);
+        intentX.putExtras(xBundle);
+        intentX.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // Putting in the server id here to make sure unique intents are created.
+        PendingIntent contentIntent = PendingIntent.getActivity(this, (int)msg.serverId, intentX, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        // Support a snooze
+        Intent intentS = new Intent(this, Snooze.class);
+        Bundle sBundle = new Bundle();
+        sBundle.putSerializable(IN_MESSAGE, msg);
+        intentS.putExtras(sBundle);
+        // Putting in the server id here to make sure unique intents are created.
+        PendingIntent snoozeIntent = PendingIntent.getService(this, (int)msg.serverId, intentS, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        /*
+         *  The settings for local notifications and why.  Note that if targeting v26+ a
+         *  NotificationChannel will need to be created (somewhere else) and then added to
+         *  to the notification (either in the constructor or .SetChannelId())
+         *  .addAction          Places buttons for snooze/dismiss on
+         *  .setAutoCancel      Have notification dismiss after use.
+         *  .setContentIntent   Used to navigate to the App when notification touched.
+         *  .setContentText     The second row of a notification.
+         *  .setContentTitle    The first row of a notification.
+         *  .setSmallIcon       The icon that shows up in the notification.
+         *  .setStyle           Rich notification style to display more text.
+         *  .setWhen            The time of the Prompt, supports ordering of notifications.
+         *  The sound and vibration are a little trickier.
+         *  .setSound           Sound to play, specify a stream if vibration is on.
+         *  .setDefaults        Needed to make the device vibrate (DEFAULT_VIBRATE).
+         *  When sending a notification, add a unique number to have each posted separately.
+         */
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getResources().getString(R.string.app_name))
+                .addAction(R.drawable.ic_snooze_black_18dp, getString(R.string.snooze), snoozeIntent)
                 .setAutoCancel(true)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(msg.message))
+                .setContentIntent(contentIntent)
                 .setContentText(msg.message)
-                .setContentIntent(contentIntent);
+                .setContentTitle(getResources().getString(R.string.app_name))
+                .setSmallIcon(R.drawable.prompt_notify)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(msg.message))
+                .setWhen(msg.GetPromptMSec());
 
         if (vibrateon && toneUri != null) {
             mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
@@ -120,7 +148,8 @@ public class NotificationX extends FirebaseMessagingService {
             mBuilder.setSound(toneUri);
         }
 
-        notificationMgr.notify(NOTIFICATION_ID, mBuilder.build());
+        // User the serverId to so it is easy to dismiss later.
+        notificationMgr.notify((int)msg.serverId, mBuilder.build());
 
         /*
          *  Trigger Refresh service to bring the application up to date.

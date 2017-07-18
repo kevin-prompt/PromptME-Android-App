@@ -34,7 +34,7 @@ public class WebServices {
         This can be used to check the status of the service, e.g. is it working. If the
         ticket is passed in, it will also check the authentication.
         Note: The Web Service version is a different concept than the build version.
-     */
+    */
     public PingResponse GetVersion(String ticket){
         HttpURLConnection webC = null;
         PingResponse rtn = new PingResponse();
@@ -79,7 +79,7 @@ public class WebServices {
 
     /*
         Create a new account. Resource = /v1/user (POST)
-     */
+    */
     public RegisterResponse Registration(RegisterRequest user){
         HttpURLConnection webC = null;
         Gson gson = new Gson();
@@ -131,7 +131,7 @@ public class WebServices {
 
     /*
         Update an account. Resource = /v1/user/<id>?ticket=<ticket> (POST)
-     */
+    */
     public UserResponse ChgUser(String ticket, String id, UserRequest user){
         HttpURLConnection webC = null;
         Gson gson = new Gson();
@@ -184,7 +184,7 @@ public class WebServices {
 
     /*
         Retrieve an account. Resource = /v1/user/<id>?ticket=<ticket> (GET)
-     */
+    */
     public UserResponse GetUser(String ticket, String id){
         HttpURLConnection webC = null;
         UserResponse rtn = new UserResponse();
@@ -228,7 +228,7 @@ public class WebServices {
 
     /*
         Verify a new account. Resource = /v1/user/<id>?ticket=<ticket> (PUT)
-     */
+    */
     public int Verify(String ticket, String id, VerifyRequest confirm){
         HttpURLConnection webC = null;
         Gson gson = new Gson();
@@ -268,7 +268,7 @@ public class WebServices {
 
     /*
         Retrieve connections by status. Resource = /v1/user/<id>/friend?ticket=<ticket> (GET)
-     */
+    */
     public Invitations GetFriends(String ticket, String id){
         HttpURLConnection webC = null;
         Invitations rtn = new Invitations();
@@ -312,7 +312,7 @@ public class WebServices {
 
     /*
         Create a Prompt message. Resource = /v1/user/<id>/note?ticket=<ticket> (POST)
-     */
+    */
     public PromptResponse NewPrompt(String ticket, String id, PromptRequest prompt){
         HttpURLConnection webC = null;
         Gson gson = new Gson();
@@ -361,7 +361,59 @@ public class WebServices {
                 catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewReminder"); }
             }
         }
+    }
 
+    /*
+        Snooze a Prompt message. Resource = v1/user/<id>/note?ticket=<ticket> (PUT)
+    */
+    public PromptResponse SnoozePrompt(String ticket, String id, SnoozeRequest prompt){
+        HttpURLConnection webC = null;
+        Gson gson = new Gson();
+        PromptResponse rtn = new PromptResponse();
+
+        try {
+            String realPath = FTI_Message.replace(SUB_ZZZ, id);
+            URL web = new URL(FTI_BaseURL + realPath + FTI_Ticket + ticket);
+            webC = (HttpURLConnection) web.openConnection();
+            webC.setRequestMethod("PUT");
+            webC.setRequestProperty("Accept", "application/json");
+            webC.setRequestProperty("Content-type", "application/json");
+            webC.setDoOutput(true);
+            webC.setUseCaches(false);
+            webC.setAllowUserInteraction(false);
+            webC.setConnectTimeout(FTI_TIMEOUT);
+            webC.setReadTimeout(FTI_TIMEOUT);
+            webC.connect();
+            // Create the payload
+            final OutputStream body = new BufferedOutputStream(webC.getOutputStream());
+            final JsonWriter jwrite = new JsonWriter(new OutputStreamWriter(body, "UTF-8"));
+            gson.toJson(prompt, SnoozeRequest.class, jwrite);
+            jwrite.flush();
+            jwrite.close();
+            // Processed the response
+            int status = webC.getResponseCode();
+            if (status >= 200 && status < 300) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(webC.getInputStream(), "UTF8"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                br.close();
+                rtn = new Gson().fromJson(sb.toString(), PromptResponse.class);
+            }
+            rtn.response = status;  // manually add status
+            return rtn;
+        }
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".SnoozeReminder"); rtn.response = 0; return rtn;}
+        finally {
+            if (webC != null) {
+                try {
+                    webC.disconnect();
+                }
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewReminder"); }
+            }
+        }
     }
 
     /*
@@ -382,8 +434,7 @@ public class WebServices {
             webC.setReadTimeout(FTI_TIMEOUT);
             webC.connect();
 
-            int status = webC.getResponseCode();
-            return status;
+            return webC.getResponseCode();
         }
         catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); return 0;}
         finally {
@@ -391,7 +442,7 @@ public class WebServices {
                 try {
                     webC.disconnect();
                 }
-                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); return 0;}
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); }
             }
         }
     }

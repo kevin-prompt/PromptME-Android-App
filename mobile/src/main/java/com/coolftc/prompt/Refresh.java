@@ -468,9 +468,9 @@ public class Refresh extends IntentService {
         String[] filler = {};
         String holdNowUTC = KTime.ParseNow(KT_fmtDate3339fk, UTC_TIMEZONE).toString();
         Cursor cursor = db.rawQuery(DB_PendingCnt.replace(SUB_ZZZ, holdNowUTC), filler);
-        int count;
-        cursor.moveToFirst();
-        count = cursor.getInt(0);
+        int count = 0;
+        // If empty, cursor returns false.
+        if(cursor.moveToFirst()) { count = cursor.getInt(0); }
         cursor.close();
         return count;
     }
