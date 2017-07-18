@@ -122,6 +122,7 @@ public class Constants {
     public static final String HS_MSG = "history.message";
     public static final String HS_WHO_TO = "history.target";
     public static final String HS_RECURS = "history.recurs";
+    public static final String HS_SNOOZE = "hostory.snooze";
     public static final String HS_LAST_15 = "history.new";
     public static final String HS_TIME_PAST = "history.past";
     /* Recurrence. */
@@ -164,13 +165,15 @@ public class Constants {
     public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = " + SUB_ZZZ;
     public static final String DB_FriendByName = "select * from friend where " + FriendDB.FRIEND_UNIQUE + " = " + SUB_ZZZ;
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
+    public static final String DB_Table_ServerID = MessageDB.MESSAGE_SRVR_ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
     public static final String DB_PendingCnt = "select count(" + MessageDB.MESSAGE_ID + ") from message where " + MessageDB.MESSAGE_TIME + " >= '" + SUB_ZZZ + "'";
     public static final String DB_MessagesAll = "select * from message";
     public static final String DB_MessageByLocal = "select * from message where " + MessageDB.MESSAGE_ID + " = '" + SUB_ZZZ + "'";
     public static final String DB_MessageByServer = "select * from message where " + MessageDB.MESSAGE_SRVR_ID + " = '" + SUB_ZZZ + "'";
-    public static final int UPD_SCREEN_TM = 60000;                 // How often in msec to update the screen from data base
-    public static final int UPD_SCREEN_TQ = 7000;                  // How often in msec to update the screen from data base (first minute)
 
+    /* Screen update rates */
+    public static final int UPD_SCREEN_TQ = 3000;       // How often in msec to update the screen from data base to start
+    public static final int UPD_SCREEN_TM = 60000;      // How often in msec to update the screen from data base normally
 
 }

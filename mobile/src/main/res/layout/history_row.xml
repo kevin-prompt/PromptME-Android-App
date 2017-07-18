@@ -31,6 +31,17 @@
         android:layout_toRightOf="@id/rowhTargetTime"
         android:layout_toEndOf="@id/rowhTargetTime">
     </ImageView>
+    <ImageView android:id="@+id/rowhSnooze"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:contentDescription="@string/img_snooze"
+        android:src="@drawable/ic_snooze_black_18dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:visibility="invisible"
+        android:layout_toRightOf="@id/rowhRecur"
+        android:layout_toEndOf="@id/rowhRecur">
+    </ImageView>
     <TextView android:id="@+id/rowhNew"
         android:text="@string/newWord"
         android:textSize="@dimen/lbl_med_size"
@@ -41,8 +52,9 @@
         android:layout_height="24dp"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_toRightOf="@+id/rowhRecur"
-        android:layout_toEndOf="@+id/rowhRecur"/>
+        android:layout_toRightOf="@+id/rowhSnooze"
+        android:layout_toEndOf="@+id/rowhSnooze">
+    </TextView>
     <TextView android:id="@+id/rowhTargetFrom"
         android:layout_width="wrap_content"
         android:layout_height="24dp"

@@ -76,6 +76,7 @@ public class KTime {
     public static final String KT_fmtDate822k = "EEE, dd MMM yyyy kk:mm:ss z";
     public static final String KT_fmtDate3339k = "yyyy-MM-ddTkk:mm:ssz";
     public static final String KT_fmtDate3339fk = "yyyy-MM-ddTkk:mm:ss.SSSz";
+    public static final String KT_fmtDate3339fk_xS = "yyyy-MM-ddTkk:mm:ss.000z";// Android does not support fractions, so just force zeros
     public static final String KT_fmtDate8601k = "yyyy-MM-dd kk:mm:ss.SSSz";
     // Standard formats
     public static final String KT_fmtDate822 = "EEE, dd MMM yyyy HH:mm:ss Z";

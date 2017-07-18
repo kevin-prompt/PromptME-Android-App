@@ -37,9 +37,14 @@ public class CancelMessageThread extends Thread {
 
             // For Recurring notes, we want to always try to remove from the server but still
             // delete them locally if there is a failure to do so (since they might not be there).
+            // It is possible to snooze a recurring message, so also try to delete that, which
+            // also might not exist any longer.
             if (mData.IsRecurring()) {
                 if (ws.IsNetwork(mContext)) {
                     ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
+                    if(mData.snoozeId > 0) {
+                        ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.SnoozeIdStr());
+                    }
                     DelMessage(mData.id);
                 } else {
                     updFailure(mData.id, NETWORK_DOWN);
@@ -49,10 +54,12 @@ public class CancelMessageThread extends Thread {
                 if (mData.IsPast()) {
                     DelMessage(mData.id);
                 } else {
-                    // If the call fails for some reason, we will leave the record but update
-                    // the status so they can try again.
+                    // Check if this is snoozed, as we will need to use the snooze id.  If the call
+                    // fails for some reason, we will leave the record but update the status so they
+                    // can try again.
                     if (ws.IsNetwork(mContext)) {
-                        int actual = ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
+                        String realID = mData.snoozeId > 0 ? mData.SnoozeIdStr() : mData.ServerIdStr();
+                        int actual = ws.DelPrompt(sender.ticket, sender.acctIdStr(), realID);
                         if (actual >= 200 && actual < 300) {
                             DelMessage(mData.id);
                         } else {

@@ -334,22 +334,11 @@ public class Recurrence extends AppCompatActivity {
 
         // The date picker returns in onActivityResult().
         Intent timestamp = new Intent(this, ExactTime.class);
-        if(mRecurEnd.equalsIgnoreCase(RECUR_END_DEFAULT) || IsForever())
+        if(mRecurEnd.equalsIgnoreCase(RECUR_END_DEFAULT) || Reminder.IsForever(mRecurEnd))
             timestamp.putExtra(IN_TIMESTAMP, KTime.ParseNow(KTime.KT_fmtDate3339fk));
         else
             timestamp.putExtra(IN_TIMESTAMP, mRecurEnd);
         startActivityForResult(timestamp, KY_DATETIME);
-    }
-
-    /*
-     *  Calculate if the date is effectively "forever".
-     */
-    private boolean IsForever(){
-        try {
-            return KTime.CalcDateDifference(mRecurEnd, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString(), KTime.KT_fmtDate3339fk, KTime.KT_YEARS) > FOREVER_LESS;
-        } catch (ExpParseToCalendar ex) {
-            return false;
-        }
     }
 
     /*

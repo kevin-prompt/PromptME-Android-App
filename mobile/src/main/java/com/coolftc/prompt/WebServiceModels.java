@@ -105,4 +105,14 @@ public interface  WebServiceModels {
         String noteTime;
         int response;   // This is added locally to aid in processing
     }
+
+    class SnoozeRequest
+    {
+        public String when;
+        public String timezone;
+        public long snoozeId;
+        public long senderId;
+        public String message;
+    }
+
 }

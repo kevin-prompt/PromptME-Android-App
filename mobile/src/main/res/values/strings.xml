@@ -1,6 +1,6 @@
 <resources>
     <string name="ver_nbr">2.0.0.0</string>
-    <string name="ver_build">2017 - Jun 18</string>
+    <string name="ver_build">2017 - Jul 18</string>
     <string name="app_name">Prompt</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
@@ -55,6 +55,9 @@
     <string name="prf_VibrateOnSum">Vibrate on incoming Prompts.</string>
     <string name="prf_Sounds">Prompt Sound</string>
     <string name="prf_SoundsSum">Sound of incoming Prompts.</string>
+    <string name="prf_Snooze">Snooze</string>
+    <string name="prf_SnoozeSum">Prompt notification snooze time: %s minutes.</string>
+    <string name="prf_SnoozeDefault">60</string>
     <string name="prf_About">About</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
@@ -69,6 +72,7 @@
     <string name="btnResendCode">Resend Code</string>
     <string name="img_contactpic">Contact Picture</string>
     <string name="img_recurring">Recurring Prompt</string>
+    <string name="img_snooze">Snoozed Prompt</string>
     <string name="contact_pri">Prompt Connections</string>
     <string name="contact_inv">Pending Invitations</string>
     <string name="contact_all">Full Contacts</string>
@@ -101,6 +105,7 @@
     <string name="finish">Finish</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="snooze">Snooze</string>
     <string name="copy">Copy</string>
     <string name="newWord">New</string>
     <string name="reply">Reply</string>

@@ -39,6 +39,7 @@ public class Entry extends AppCompatActivity {
 
     // Data needed to create a message
     private Account mTarget;                     // Who is getting this message
+    private Reminder mPrompt;                    // Working copy of the message
     private Spinner mTimename;                   // Simple time - name
     private List<String> mTimeadjData;           // Holds the raw data for mTimeadj
     private SeekBar mTimeadj;                    // Simple time - adjustment
@@ -47,14 +48,7 @@ public class Entry extends AppCompatActivity {
     private int mDefaultTimeName = 0;
     private int mDefaultTimeAdj = 47;
     private String mDefaultMessage = "";
-    private static final int SEEK_MARK = 16;     // The seek bar has a range of 0 - 95, includes 5 marks
-
-    // This data needs explicit persistence
-    private String mTargetTime;                  // If Simple time is exact, this is the real time.
-    private int mRecurUnit = RECUR_INVALID;      // The units used for recurrence.
-    private int mRecurPeriod = RECUR_INVALID;    // The period used for recurrence.
-    private int mRecurNumber = RECUR_INVALID;    // The number of times to recur (has priority over mRecurEnd).
-    private String mRecurEnd;                    // The end date used for recurrence.
+    private static final int SEEK_MARK = 16;    // The seek bar has a range of 0 - 95, includes 5 marks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,24 +59,26 @@ public class Entry extends AppCompatActivity {
         // When saved data is also passed in normally, it needs to be restored here.
         if (savedInstanceState != null) {
             mTarget = (Account) savedInstanceState.getSerializable(IN_USER_ACCT);
+            mPrompt = (Reminder) savedInstanceState.getSerializable(IN_MESSAGE);
         }else {
+            firstRun = true;
             if (extras != null) {
-                firstRun = true;
                 mTarget = (Account) extras.getSerializable(IN_USER_ACCT);
-                Reminder pre = (Reminder) extras.getSerializable(IN_MESSAGE);
-                if(pre != null){
-                    mDefaultTimeName = pre.targetTimeNameId;
-                    mDefaultTimeAdj = pre.targetTimeAdjId * SEEK_MARK;
-                    mDefaultMessage = pre.message;
-                    mRecurEnd = pre.recurEnd;
-                    mRecurNumber = pre.recurNumber;
-                    mRecurPeriod = pre.recurPeriod;
-                    mRecurUnit = pre.recurUnit;
+                if(mTarget == null) {
+                    mTarget = new Actor(this);  // Default to self-message.
                 }
-
+                mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
+                if(mPrompt != null){
+                    mDefaultTimeName = mPrompt.targetTimeNameId;
+                    mDefaultTimeAdj = mPrompt.targetTimeAdjId * SEEK_MARK;
+                    mDefaultMessage = mPrompt.message;
+                } else {
+                    mPrompt = new Reminder();
+                }
             } else {
-                // if nothing passed in, just default self-message.
+                // if nothing passed in, just make self-message with defaults.
                 mTarget = new Actor(this);
+                mPrompt = new Reminder();
             }
         }
 
@@ -97,7 +93,7 @@ public class Entry extends AppCompatActivity {
                 holdText.setText(mDefaultMessage);
             }
             CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
-            if (holdChkBox != null && mRecurUnit != RECUR_INVALID) {
+            if (holdChkBox != null && mPrompt.recurUnit != RECUR_INVALID) {
                 holdChkBox.setChecked(true);
             }
         }
@@ -141,27 +137,18 @@ public class Entry extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mTargetTime == null) mTargetTime = "";
-        outState.putString(IN_TIMESTAMP, mTargetTime);
-        outState.putInt(IN_UNIT, mRecurUnit);
-        outState.putInt(IN_PERIOD, mRecurPeriod);
-        outState.putInt(IN_ENDNBR, mRecurNumber);
-        if (mRecurEnd == null) mRecurEnd = "";
-        outState.putString(IN_ENDTIME, mRecurEnd);
         outState.putSerializable(IN_USER_ACCT, mTarget);
+        outState.putSerializable(IN_MESSAGE, mPrompt);
         super.onSaveInstanceState(outState);
     }
     /*
-     *  Restore the state.  See onSaveInstanceState().
+     *  Restore the state, compliments of onSaveInstanceState().
+     *  NOTE: If you do not see something here, often we need to
+     *  restore data in the OnCreate().
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mTargetTime = savedInstanceState.getString(IN_TIMESTAMP);
-        mRecurUnit = savedInstanceState.getInt(IN_UNIT);
-        mRecurPeriod = savedInstanceState.getInt(IN_PERIOD);
-        mRecurNumber = savedInstanceState.getInt(IN_ENDNBR);
-        mRecurEnd = savedInstanceState.getString(IN_ENDTIME);
     }
 
     /*
@@ -191,7 +178,7 @@ public class Entry extends AppCompatActivity {
             String dTime;
             String dateTimeFmt = Settings.getDateDisplayFormat(getApplicationContext(), DATE_TIME_FMT_SHORT);
             try {
-                Calendar delivery = KTime.ParseToCalendar(mTargetTime, KTime.KT_fmtDate3339fk);
+                Calendar delivery = KTime.ParseToCalendar(mPrompt.targetTime, KTime.KT_fmtDate3339fk);
                 dTime = DateFormat.format(dateTimeFmt, delivery).toString();
             } catch (ExpParseToCalendar expParseToCalendar) {
                 dTime = KTime.ParseNow(dateTimeFmt).toString();
@@ -215,7 +202,7 @@ public class Entry extends AppCompatActivity {
         }else{
             holdText = (TextView) findViewById(R.id.sendRecurTime);
             if (holdText != null) {
-                holdText.setText(GetRecurringVerb());
+                holdText.setText(mPrompt.GetRecurringVerb(getApplicationContext()));
                 holdText.setVisibility(View.VISIBLE);
             }
         }
@@ -236,112 +223,6 @@ public class Entry extends AppCompatActivity {
     }
 
     /*
-     *  Generate the natural language terms for the recurring period.
-     */
-    private String GetRecurringVerb() {
-        int holdResource = 0;
-        String weekdays = "";
-
-        // Day
-        if(mRecurUnit == UNIT_TYPE_DAY){
-            // Daily
-            if(mRecurPeriod == 1){
-                // Ending
-                if(mRecurNumber > 0){
-                    holdResource = R.string.recur_daily_nbr;
-                }else{
-                    if(IsForever()){
-                        holdResource = R.string.recur_daily_end;
-                    } else {
-                        holdResource = R.string.recur_daily_day;
-                    }
-                }
-            } else { // More than 1 day
-                // Ending
-                if(mRecurNumber > 0){
-                    holdResource = R.string.recur_day_nbr;
-                }else{
-                    if(IsForever()){
-                        holdResource = R.string.recur_day_end;
-                    } else {
-                        holdResource = R.string.recur_day_day;
-                    }
-                }
-            }
-        }
-
-        // Week
-        if(mRecurUnit == UNIT_TYPE_WEEKDAY){
-            if(mRecurNumber > 0){
-                holdResource = R.string.recur_wek_nbr;
-            }else{
-                if(IsForever()){
-                    holdResource = R.string.recur_wek_end;
-                } else {
-                    holdResource = R.string.recur_wek_day;
-                }
-            }
-
-            // Build out the weekday string, shorted if too many days choosen.
-            if((mRecurPeriod & SUN_FLAG) == SUN_FLAG) { weekdays += getResources().getText(R.string.sunday_abbr) + ", "; }
-            if((mRecurPeriod & MON_FLAG) == MON_FLAG) { weekdays += getResources().getText(R.string.monday_abbr) + ", "; }
-            if((mRecurPeriod & TUE_FLAG) == TUE_FLAG) { weekdays += getResources().getText(R.string.tuesday_abbr) + ", "; }
-            if((mRecurPeriod & WED_FLAG) == WED_FLAG) { weekdays += getResources().getText(R.string.wednsday_abbr) + ", "; }
-            if((mRecurPeriod & THU_FLAG) == THU_FLAG) { weekdays += getResources().getText(R.string.thursday_abbr) + ", "; }
-            if((mRecurPeriod & FRI_FLAG) == FRI_FLAG) { weekdays += getResources().getText(R.string.friday_abbr) + ", "; }
-            if((mRecurPeriod & SAT_FLAG) == SAT_FLAG) { weekdays += getResources().getText(R.string.saturday_abbr) + ", "; }
-            weekdays = weekdays.substring(0, weekdays.length()-2); // trim off the trailing comma.
-            if(weekdays.length() > 13){
-                weekdays = weekdays.substring(0, 13) + "...";
-            }
-
-        }
-
-        // Month
-        if(mRecurUnit == UNIT_TYPE_MONTH){
-            if(mRecurPeriod == 1){
-                if(mRecurNumber > 0){
-                    holdResource = R.string.recur_monthly_nbr;
-                }else{
-                    if(IsForever()){
-                        holdResource = R.string.recur_monthly_end;
-                    } else {
-                        holdResource = R.string.recur_monthly_day;
-                    }
-                }
-            } else {
-                if (mRecurNumber > 0) {
-                    holdResource = R.string.recur_mon_nbr;
-                } else {
-                    if (IsForever()) {
-                        holdResource = R.string.recur_mon_end;
-                    } else {
-                        holdResource = R.string.recur_mon_day;
-                    }
-                }
-            }
-        }
-
-        if(holdResource == 0) return "";
-        String template = getResources().getText(holdResource).toString();
-        Reminder msg = new Reminder();  // Just going to use the date formatting in this class.
-        msg.recurEnd = mRecurEnd;
-        String formattedDate = IsForever() ? getResources().getString(R.string.forever) : msg.GetRecurringTime(getApplicationContext());
-        return String.format(template, mRecurPeriod, mRecurNumber, formattedDate, weekdays);
-    }
-
-    /*
-     *  Calculate if the date is effectively "forever".
-     */
-    private boolean IsForever(){
-        try {
-            return KTime.CalcDateDifference(mRecurEnd, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString(), KTime.KT_fmtDate3339fk, KTime.KT_YEARS) > FOREVER_LESS;
-        } catch (ExpParseToCalendar ex) {
-            return false;
-        }
-    }
-
-    /*
      *  This brings up the recurring prompt dialog, feeding in default values if needed.
      *  See onActivityResult for the reply.
      */
@@ -350,21 +231,21 @@ public class Entry extends AppCompatActivity {
         if(holdChk != null) {
             if (holdChk.isChecked()) {
                 Intent recurring = new Intent(this, Recurrence.class);
-                if (mRecurUnit == RECUR_INVALID) {
-                    mRecurUnit = RECUR_UNIT_DEFAULT;
+                if (mPrompt.recurUnit == RECUR_INVALID) {
+                    mPrompt.recurUnit = RECUR_UNIT_DEFAULT;
                 }
-               if (mRecurEnd == null) {
-                    mRecurEnd = RECUR_END_DEFAULT;
+               if (mPrompt.recurEnd == null) {
+                   mPrompt.recurEnd = RECUR_END_DEFAULT;
                 }
                 String displayTime = "";
                 TextView holdText = (TextView) findViewById(R.id.sendTargeTime);
                 if (holdText != null) {
                     displayTime = holdText.getText().toString();
                 }
-                recurring.putExtra(IN_UNIT, mRecurUnit);
-                recurring.putExtra(IN_PERIOD, mRecurPeriod);
-                recurring.putExtra(IN_ENDTIME, mRecurEnd);
-                recurring.putExtra(IN_ENDNBR, mRecurNumber);
+                recurring.putExtra(IN_UNIT, mPrompt.recurUnit);
+                recurring.putExtra(IN_PERIOD, mPrompt.recurPeriod);
+                recurring.putExtra(IN_ENDTIME, mPrompt.recurEnd);
+                recurring.putExtra(IN_ENDNBR, mPrompt.recurNumber);
                 recurring.putExtra(IN_DISP_TIME, displayTime);
                 startActivityForResult(recurring, KY_RECURE);
             }else{ // unchecked
@@ -384,14 +265,14 @@ public class Entry extends AppCompatActivity {
         if(holdChkBox != null){
             if(holdChkBox.isChecked()) {
                 try {
-                    if (KTime.IsPast(mTargetTime, KTime.KT_fmtDate3339fk)) {
-                        mTargetTime = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
+                    if (KTime.IsPast(mPrompt.targetTime, KTime.KT_fmtDate3339fk)) {
+                        mPrompt.targetTime = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
                     }
                 } catch (ExpParseToCalendar expParseToCalendar) {
-                    mTargetTime = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
+                    mPrompt.targetTime = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
                 }
                 Intent timestamp = new Intent(this, ExactTime.class);
-                timestamp.putExtra(IN_TIMESTAMP, mTargetTime);
+                timestamp.putExtra(IN_TIMESTAMP, mPrompt.targetTime);
                 startActivityForResult(timestamp, KY_DATETIME);
             }else { // unchecked
                 mTimename.setEnabled(true);
@@ -410,7 +291,7 @@ public class Entry extends AppCompatActivity {
         switch (requestCode) {
             case KY_DATETIME:     // Returning from the datetime picker.
                 if (resultCode == RESULT_OK) {
-                    mTargetTime = data.getExtras().getString(IN_TIMESTAMP);
+                    mPrompt.targetTime = data.getExtras().getString(IN_TIMESTAMP);
                     ShowDetails();
                 }else{
                     CheckBox holdChkbox = (CheckBox) findViewById(R.id.sendExactTime);
@@ -419,18 +300,18 @@ public class Entry extends AppCompatActivity {
                 break;
             case KY_RECURE:     // Returning from recurrence picker.
                 if (resultCode == RESULT_OK) {
-                    mRecurUnit = data.getExtras().getInt(IN_UNIT);
-                    mRecurPeriod = data.getExtras().getInt(IN_PERIOD);
-                    mRecurEnd = data.getExtras().getString(IN_ENDTIME);
-                    mRecurNumber = data.getExtras().getInt(IN_ENDNBR);
+                    mPrompt.recurUnit = data.getExtras().getInt(IN_UNIT);
+                    mPrompt.recurPeriod = data.getExtras().getInt(IN_PERIOD);
+                    mPrompt.recurNumber = data.getExtras().getInt(IN_ENDNBR);
+                    mPrompt.recurEnd = data.getExtras().getString(IN_ENDTIME);
                     ShowDetails();
                 } else {        // Not OK, set check box to false and reset local data
                     CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
                     if(holdChkBox!=null) { holdChkBox.setChecked(false); }
-                    mRecurUnit = RECUR_INVALID;
-                    mRecurPeriod = RECUR_INVALID;
-                    mRecurNumber = RECUR_INVALID;
-                    mRecurEnd = "";
+                    mPrompt.recurUnit = RECUR_INVALID;
+                    mPrompt.recurPeriod = RECUR_INVALID;
+                    mPrompt.recurNumber = RECUR_INVALID;
+                    mPrompt.recurEnd = "";
                 }
         }
     }
@@ -457,14 +338,12 @@ public class Entry extends AppCompatActivity {
             return;
         }
 
-
-
         ali.target = mTarget;
         ali.from = new Actor(this);
         holdText = (TextView) findViewById(R.id.sendMessage);
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
-        ali.targetTime = mTargetTime;
+        ali.targetTime = mPrompt.targetTime;
         // Listbox index is one less that the value we need for the time name.
         CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
@@ -472,12 +351,12 @@ public class Entry extends AppCompatActivity {
         } else {
             ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
         }
-        // Want a number from 0 to 5, so do an integer division to truncate fraction.
-        ali.targetTimeAdjId = mTimeadj.getProgress() / SEEK_MARK;
-        ali.recurUnit = mRecurUnit;
-        ali.recurPeriod = mRecurPeriod;
-        ali.recurNumber = mRecurNumber;
-        ali.recurEnd = mRecurEnd;
+        // Want a number from 1 to 6, so do an integer division to truncate fraction and add 1.
+        ali.targetTimeAdjId = (mTimeadj.getProgress() / SEEK_MARK) + 1;
+        ali.recurUnit = mPrompt.recurUnit;
+        ali.recurPeriod = mPrompt.recurPeriod;
+        ali.recurNumber = mPrompt.recurNumber;
+        ali.recurEnd = mPrompt.recurEnd;
 
         SendMessageThread smt = new SendMessageThread(getApplicationContext(), ali);
         smt.start();

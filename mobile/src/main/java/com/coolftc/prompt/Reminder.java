@@ -19,6 +19,7 @@ public class Reminder  implements Serializable {
     public Account target;              // The person getting the message.
     public long id = 0;                 // Prompt Key stored locally.
     public long serverId = 0;           // Prompt Key on the server.
+    public long snoozeId = 0;           // Prompt Key on the server for a snoozed message (need to use this to cancel).
     public int type = 0;                // 1 = NOTE, 2 = INVITE
 
     // When a message is sent, the server provides the exact time that it will ultimately be sent.
@@ -29,6 +30,8 @@ public class Reminder  implements Serializable {
     // Simplified time.
     public int targetTimeNameId = 0;        // Time name code.
     public int targetTimeAdjId = 0;         // Time adjustment code.
+    public int sleepCycle = -1;             // The sleep cycle used for the Prompt.
+    public String timezone = "";            // The time zone used for the Prompt.
 
     // Recurrence
     public int recurUnit = RECUR_INVALID;   // If set to RECUR_INVALID then no recurrence.
@@ -51,6 +54,7 @@ public class Reminder  implements Serializable {
     // Some simple formatting methods.
     public String IdStr() { return Long.toString(id); }
     public String ServerIdStr() { return Long.toString(serverId); }
+    public String SnoozeIdStr() { return Long.toString(snoozeId); }
     public boolean IsSelfie() { return target.unique.equalsIgnoreCase(from.unique); }
     public boolean IsRecurring() { return recurUnit != RECUR_INVALID; }
     public String GetPromptTime(Context context) { return GetFormattedTime(context,  PROMPT); }
@@ -110,7 +114,19 @@ public class Reminder  implements Serializable {
     }
 
     /*
-     *  Helper to indicate if the prompt is past or future.
+     *  Return the Prompt time as an epoch number.
+     */
+    public long GetPromptMSec() {
+        try {
+            Calendar ali = KTime.ParseToCalendar(targetTime, KTime.KT_fmtDate3339fk);
+            return KTime.ConvertTimezone(ali, TimeZone.getDefault().getID()).getTimeInMillis();
+        } catch (ExpParseToCalendar expParseToCalendar) {
+            return Calendar.getInstance().getTimeInMillis();
+        }
+    }
+
+    /*
+     *  Helper to indicate if the prompt time is past or future.
      *  Generally the assumption will be the prompt is not in the past.
      */
     public boolean IsPast() {
@@ -126,7 +142,112 @@ public class Reminder  implements Serializable {
         } catch (ExpParseToCalendar expParseToCalendar) {
             return false;
         }
+    }
 
+    /*
+     *  Calculate if the recurring end date is effectively "forever".
+     */
+    private boolean IsForever(){ return IsForever(recurEnd); }
+
+    public static boolean IsForever(String when){
+        try {
+            return  (when.length() != 0) &&
+                    (KTime.CalcDateDifference(when, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString(), KTime.KT_fmtDate3339fk, KTime.KT_YEARS) > FOREVER_LESS);
+        } catch (ExpParseToCalendar ex) {
+            return false;
+        }
+    }
+
+    /*
+     *  Generate the natural language terms for the recurring period.
+     */
+    public String GetRecurringVerb(Context context) {
+        int holdResource = 0;
+        String weekdays = "";
+
+        // Day
+        if(recurUnit == UNIT_TYPE_DAY){
+            // Daily
+            if(recurPeriod == 1){
+                // Ending
+                if(recurNumber > 0){
+                    holdResource = R.string.recur_daily_nbr;
+                }else{
+                    if(IsForever()){
+                        holdResource = R.string.recur_daily_end;
+                    } else {
+                        holdResource = R.string.recur_daily_day;
+                    }
+                }
+            } else { // More than 1 day
+                // Ending
+                if(recurNumber > 0){
+                    holdResource = R.string.recur_day_nbr;
+                }else{
+                    if(IsForever()){
+                        holdResource = R.string.recur_day_end;
+                    } else {
+                        holdResource = R.string.recur_day_day;
+                    }
+                }
+            }
+        }
+
+        // Week
+        if(recurUnit == UNIT_TYPE_WEEKDAY){
+            if(recurNumber > 0){
+                holdResource = R.string.recur_wek_nbr;
+            }else{
+                if(IsForever()){
+                    holdResource = R.string.recur_wek_end;
+                } else {
+                    holdResource = R.string.recur_wek_day;
+                }
+            }
+
+            // Build out the weekday string, shorted if too many days choosen.
+            if((recurPeriod & SUN_FLAG) == SUN_FLAG) { weekdays += context.getResources().getText(R.string.sunday_abbr) + ", "; }
+            if((recurPeriod & MON_FLAG) == MON_FLAG) { weekdays += context.getResources().getText(R.string.monday_abbr) + ", "; }
+            if((recurPeriod & TUE_FLAG) == TUE_FLAG) { weekdays += context.getResources().getText(R.string.tuesday_abbr) + ", "; }
+            if((recurPeriod & WED_FLAG) == WED_FLAG) { weekdays += context.getResources().getText(R.string.wednsday_abbr) + ", "; }
+            if((recurPeriod & THU_FLAG) == THU_FLAG) { weekdays += context.getResources().getText(R.string.thursday_abbr) + ", "; }
+            if((recurPeriod & FRI_FLAG) == FRI_FLAG) { weekdays += context.getResources().getText(R.string.friday_abbr) + ", "; }
+            if((recurPeriod & SAT_FLAG) == SAT_FLAG) { weekdays += context.getResources().getText(R.string.saturday_abbr) + ", "; }
+            weekdays = weekdays.substring(0, weekdays.length()-2); // trim off the trailing comma.
+            if(weekdays.length() > 13){
+                weekdays = weekdays.substring(0, 13) + "...";
+            }
+        }
+
+        // Month
+        if(recurUnit == UNIT_TYPE_MONTH){
+            if(recurPeriod == 1){
+                if(recurNumber > 0){
+                    holdResource = R.string.recur_monthly_nbr;
+                }else{
+                    if(IsForever()){
+                        holdResource = R.string.recur_monthly_end;
+                    } else {
+                        holdResource = R.string.recur_monthly_day;
+                    }
+                }
+            } else {
+                if (recurNumber > 0) {
+                    holdResource = R.string.recur_mon_nbr;
+                } else {
+                    if (IsForever()) {
+                        holdResource = R.string.recur_mon_end;
+                    } else {
+                        holdResource = R.string.recur_mon_day;
+                    }
+                }
+            }
+        }
+
+        if(holdResource == 0) return "";
+        String template = context.getResources().getText(holdResource).toString();
+        String formattedDate = IsForever() ? context.getResources().getString(R.string.forever) : GetRecurringTime(context);
+        return String.format(template, recurPeriod, recurNumber, formattedDate, weekdays);
     }
 
     // Helps sort by prompt create Date

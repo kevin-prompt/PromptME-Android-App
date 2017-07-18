@@ -19,6 +19,7 @@ import static com.coolftc.prompt.Settings.PREF_DISPNAME;
 import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
 import static com.coolftc.prompt.Settings.PREF_SCYCLE;
 import static com.coolftc.prompt.Settings.PREF_SETTINGS;
+import static com.coolftc.prompt.Settings.PREF_SNOOZE;
 import static com.coolftc.prompt.Settings.PREF_SOUND;
 import static com.coolftc.prompt.Settings.PREF_SYSTEM;
 import static com.coolftc.prompt.Settings.PREF_VIBRATEON;
@@ -36,6 +37,7 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
     private Preference mSleepCycle;
     private RingtonePreference mSound;
     private Preference mShortDate;
+    private Preference mSnooze;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,9 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mSleepCycle = findPreference(PREF_SCYCLE);
         mSound = (RingtonePreference)findPreference(PREF_SOUND);
         mShortDate = findPreference(PREF_PICKSHORTDATEFMT);
+        mSnooze = findPreference(PREF_SNOOZE);
 
-        // Do not bother showing the showing the selection if the device does not support it.
+        // Do not bother showing the selection if the device does not support it.
         // Note: To modify the structure of the page, need to use the category.
         final Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         if (!v.hasVibrator()) {
@@ -69,7 +72,7 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mSleepCycle.setSummary(getSleepCycleSummary());
         mSound.setSummary(getRingtoneSummary());
         mShortDate.setSummary(getShortDate());
-
+        mSnooze.setSummary(getSnoozeSummary());
     }
 
     @Override
@@ -109,6 +112,9 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         if (key.equals(PREF_PICKSHORTDATEFMT)){
             mShortDate.setSummary(getShortDate());
         }
+        if (key.equals(PREF_SNOOZE)){
+            mSnooze.setSummary(getSnoozeSummary());
+        }
     }
 
     private String getSleepCycleSummary(){
@@ -118,6 +124,12 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
 
         String [] cycles = getResources().getStringArray(R.array.sleepcycle);
         return cycles[sc];
+    }
+
+    private String getSnoozeSummary(){
+        String sd = mPrefDB.getString(PREF_SNOOZE, "60");
+        String summary = getResources().getString(R.string.prf_SnoozeSum);
+        return String.format(summary, sd);
     }
 
     private String getShortDate(){

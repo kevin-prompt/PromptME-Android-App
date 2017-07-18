@@ -10,27 +10,32 @@ import static com.coolftc.prompt.Constants.*;
 
 /**
  *  The Settings provide a UI to allow for the maintenance of certain locally
- *  stored data.  This does not represent all the data stored in Preferences.
- *  Since it is an efficient storage area for small amounts of data, the
- *  personal data collected is also keep in a Preferences store for ease of
- *  access by using the Account class.  Just not the default Preference
- *  store like Settings uses.
- *  Initially, 2 of the personal items, Display Name and Sleep Cycle, will
- *  be editable directly in the Settings screen.  Just seemed overkill to
- *  create a new screen to support those 2 things.
- *  For the rest of the Settings, this class provides a simple wrapper to
- *  read them from the Preferences.  That also alleviates any worries about
- *  initialization.
+    stored data in a system defined Preference table. This is not the only
+    data stored in Preferences, see the Actor class.
+    In Settings there are some personal items stored, but mostly it is
+    general App data like how to format the date. Initially, 2 personal
+    items, Display Name and Sleep Cycle, will are editable directly in
+    the Settings screen. For the rest of the Settings, this class provides
+    a simple wrapper to read them from the Preferences. It also alleviates
+    any worries about initialization.
+
  *  This activity uses a fragment to do all the screen work, including the
- *  listener that can sync the 2 personal items back to the Account and
- *  eventually to the server.
+    listener that can sync the personal items back to the Account and
+    eventually to the server.
+
+ *  To Add New Settings:
+    1) Create a node in the settings.xml layout to define the UI.
+        Use prf_Title/prf_TitleSum/prf_TitleDefault for resource string names.
+    2) Create an id (PREF_*) constant below that matches the settings.xml.
+    3) Create a "get" access method.  Add any special formatting is necessary.
+    4) Add any code to dynamically adjust the summary (in SettingsBasic) if necessary.
  */
 public class Settings extends AppCompatActivity {
 
     public static final String PREF_SETTINGS = "prompt.settings";
     public static final String PREF_SYSTEM = "prompt.system";
     public static final String PREF_DISPNAME = SP_REG_DISPLAY;
-    public static final String PREF_SCYCLE = "prompt.sleepcycle";
+    public static final String PREF_SCYCLE = SP_REG_SCYCLE;
     public static final String PREF_SOUND = "1000";
     public static final String PREF_VIBRATEON = "1001";
     public static final boolean DEFAULT_VIBRATEON = false;
@@ -38,6 +43,7 @@ public class Settings extends AppCompatActivity {
     public static final boolean DEFAULT_USE24CLOCK = false;
     public static final String PREF_PICKSHORTDATEFMT = "1003";
     public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
+    public static final String PREF_SNOOZE = "1004";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
     public static final int DEFAULT_SORT_ORDER = 0; // This means to sort by prompt time (not create date)
 
@@ -87,6 +93,13 @@ public class Settings extends AppCompatActivity {
         boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_VIBRATEON, DEFAULT_VIBRATEON);
         context = null;
         return holdAnswer;
+    }
+
+    // What sleep cycle is stored in preferences.
+    public static int getSnooze(Context context) {
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SNOOZE, "60");
+        context = null;
+        return Integer.parseInt(holdAnswer);
     }
 
     // When true, display time in a 24 hour format.
