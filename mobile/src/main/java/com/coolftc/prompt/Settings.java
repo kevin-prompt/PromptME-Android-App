@@ -27,7 +27,7 @@ import static com.coolftc.prompt.Constants.*;
     1) Create a node in the settings.xml layout to define the UI.
         Use prf_Title/prf_TitleSum/prf_TitleDefault for resource string names.
     2) Create an id (PREF_*) constant below that matches the settings.xml.
-    3) Create a "get" access method.  Add any special formatting is necessary.
+    3) Create a "get" access method.  Add any special formatting as necessary.
     4) Add any code to dynamically adjust the summary (in SettingsBasic) if necessary.
  */
 public class Settings extends AppCompatActivity {
@@ -44,8 +44,9 @@ public class Settings extends AppCompatActivity {
     public static final String PREF_PICKSHORTDATEFMT = "1003";
     public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
     public static final String PREF_SNOOZE = "1004";
+    public static final String PREF_NAMESORT = "1005";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
-    public static final int DEFAULT_SORT_ORDER = 0; // This means to sort by prompt time (not create date)
+    public static final int DEFAULT_SORT_ORDER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,18 @@ public class Settings extends AppCompatActivity {
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SCYCLE, "2");
         context = null;
         return Integer.parseInt(holdAnswer);
+    }
+
+    // How names should be sorted as stored in preferences.
+    public static int getNameSortOrder(Context context) {
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAMESORT, "0");
+        context = null;
+        return Integer.parseInt(holdAnswer);
+    }
+
+    // Shortcut to see if sorting by last name, which is not the default.
+    public static boolean isSortByLastName(Context context){
+        return getNameSortOrder(context) != DEFAULT_SORT_ORDER;
     }
 
     // The ringtone to be used upon notifications.

@@ -19,12 +19,13 @@ import java.util.Map;
  *  This class manages the incoming prompts (push notifications).  It creates a notification
     that the user sees and interacts with.  The incoming prompt contains the following data:
      IN_NOTE_TYPE      - The type of notification. Possible names are: NOTE – for a prompt, INVITE – for an invitation or confirmation of friendship
-     IN_NOTE_KEY       - The original server id of the prompt.
+     IN_NOTE_KEY       - The original server id of the prompt/invite.
      IN_NOTE_FROM      - The unique name of the sender of the message.
      IN_NOTE_FROMID    - The server id of the sender of the message.
      IN_NOTE_FROMNICE  - The display name of the sender of the message.
      IN_NOTE_PEND      - The scheduled time of delivery for the message.
-     IN_NOTE_RECUR     - Set to -1 if not recurring, otherwise it is the recurring Unit.
+     IN_NOTE_RECUR     - Set to -1 if not recurring, otherwise it is the recurring Unit. (Only NOTE)
+     IN_NOTE_COMPLETE  - Set to 1 if friendship is complete, otherwise zero (0).  (Only INVITE)
      IN_NOTE_MSG       - The message.
 
  *  This data can be used to find the full prompt on the local data store

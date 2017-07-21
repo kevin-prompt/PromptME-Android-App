@@ -78,10 +78,13 @@ public class Constants {
     public static final String IN_ENDNBR = "endnumber";
     public static final String IN_DISP_TIME = "displaytime";
     public static final String IN_MESSAGE = "message";
+    public static final String IN_ADDRESSES = "addresses";
+    public static final String IN_ADDRESSES_TRUE = "addresses.select";
     public static final int SEC_READ_CONTACTS = 10003;
     public static final int FR_POS_EXDATE = 0;
     public static final int FR_POS_EXTIME = 1;
     public static final String KY_HIST_FRAG = "history.fragment";
+    public static final String KY_ADDR_FRAG = "contactpicker.fragment";
 
     /* Constants used in dealing with the FutureTell API and other web sites */
     public static final String SUB_ZZZ = "ZZZ";

@@ -18,7 +18,7 @@ public class Actor extends Account {
     public String ticket = "";      // The key used to access web services.
     public String token = "";       // The push token (GCM).
     public String device = "";      // The unique device identifier.
-    public int pending = 0;         // The number of expected future prompts (cached here)
+    public int notesWaiting = 0;    // The number of expected future prompts (cached here)
     public boolean force = false;   // When true the data duplicated on server has changed
     // These are also stored on the server.
     public String custom = "";      // The custom, third party identifier.
@@ -59,7 +59,7 @@ public class Actor extends Account {
         contactName = registered.getString(SP_REG_CTNAME, "");
         contactPic = registered.getString(SP_REG_CTFACE, "");
         localId = registered.getString(SP_REG_DBID, "");
-        pending = registered.getInt(SP_REG_PEND, 0);
+        notesWaiting = registered.getInt(SP_REG_PEND, 0);
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
         force = registered.getBoolean(SP_REG_FORCE, false);
 
@@ -104,7 +104,7 @@ public class Actor extends Account {
         editor.putString(SP_REG_CTNAME, contactName);
         editor.putString(SP_REG_CTFACE, contactPicUri());
         editor.putString(SP_REG_DBID, localId);
-        editor.putInt(SP_REG_PEND, pending);
+        editor.putInt(SP_REG_PEND, notesWaiting);
         editor.putBoolean(SP_REG_CONFIRM, confirmed);
         editor.putBoolean(SP_REG_FORCE, force);
         editor.apply();

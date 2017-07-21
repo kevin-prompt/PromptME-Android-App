@@ -48,6 +48,14 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string-array name="namesort">
+        <item>First Name</item>
+        <item>Last Name</item>
+    </string-array>
+    <string-array name="namesort_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
     <string-array name="sortOldFirst">
         <item>Oldest First (Ascending)</item>
     </string-array>

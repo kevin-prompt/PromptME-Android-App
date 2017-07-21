@@ -39,7 +39,7 @@ import java.util.TreeMap;
     parent navigation or to the contact list with the floating people button. To
     see details of the prompt, tapping on the prompt navigates to detail.
  */
-public class History extends AppCompatActivity  implements FragmentTalkBack{
+public class History extends AppCompatActivity implements FragmentTalkBack{
 
     // The message list.
     private ListView mListView;
@@ -277,6 +277,11 @@ public class History extends AppCompatActivity  implements FragmentTalkBack{
 
     @Override
     public void setTime(String time) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void newInvite() {
         throw new UnsupportedOperationException();
     }
 

@@ -15,7 +15,9 @@ import android.preference.RingtonePreference;
 
 
 import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.Settings.DEFAULT_SORT_ORDER;
 import static com.coolftc.prompt.Settings.PREF_DISPNAME;
+import static com.coolftc.prompt.Settings.PREF_NAMESORT;
 import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
 import static com.coolftc.prompt.Settings.PREF_SCYCLE;
 import static com.coolftc.prompt.Settings.PREF_SETTINGS;
@@ -38,6 +40,8 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
     private RingtonePreference mSound;
     private Preference mShortDate;
     private Preference mSnooze;
+    private Preference mNameSort;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mSound = (RingtonePreference)findPreference(PREF_SOUND);
         mShortDate = findPreference(PREF_PICKSHORTDATEFMT);
         mSnooze = findPreference(PREF_SNOOZE);
+        mNameSort = findPreference(PREF_NAMESORT);
 
         // Do not bother showing the selection if the device does not support it.
         // Note: To modify the structure of the page, need to use the category.
@@ -73,6 +78,7 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mSound.setSummary(getRingtoneSummary());
         mShortDate.setSummary(getShortDate());
         mSnooze.setSummary(getSnoozeSummary());
+        mNameSort.setSummary(getNameSortSummary());
     }
 
     @Override
@@ -115,6 +121,9 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         if (key.equals(PREF_SNOOZE)){
             mSnooze.setSummary(getSnoozeSummary());
         }
+        if (key.equals(PREF_NAMESORT)){
+            mNameSort.setSummary(getNameSortSummary());
+        }
     }
 
     private String getSleepCycleSummary(){
@@ -124,6 +133,16 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
 
         String [] cycles = getResources().getStringArray(R.array.sleepcycle);
         return cycles[sc];
+    }
+
+    private String getNameSortSummary(){
+        int ns = DEFAULT_SORT_ORDER;
+        try { ns = Integer.parseInt(mPrefDB.getString(PREF_NAMESORT, "0")); }
+        catch (NumberFormatException ex){ /*skip it*/}
+
+        String [] sorts = getResources().getStringArray(R.array.namesort);
+        String summary = getResources().getString(R.string.prf_NameSortSum);
+        return String.format(summary,  sorts[ns]);
     }
 
     private String getSnoozeSummary(){

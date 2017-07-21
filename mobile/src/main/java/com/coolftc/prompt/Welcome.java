@@ -21,6 +21,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,7 +176,7 @@ public class Welcome extends AppCompatActivity {
         // Just having this check should be good enough, as Refresh is called
         // upon incoming notifications as well as entry into this screen.
         TextView holdView = (TextView)findViewById(R.id.welPending);
-        if(holdView != null) { holdView.setText(String.format(getResources().getString(R.string.wel_Pending), actor.pending)); }
+        if(holdView != null) { holdView.setText(String.format(getResources().getString(R.string.wel_Pending), actor.notesWaiting)); }
     }
 
     // Used by floating action button to directly enter a prompt for the user.
@@ -350,7 +351,8 @@ public class Welcome extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             int type = getItemViewType(position);
             TextView holdView;
-            ImageView holdPic;
+            // See https://github.com/lopspower/CircularImageView for information about CircularImageView
+            CircularImageView holdPic;
             // ***May want to try "parent, false" instead of "null" to remove lint warning***
             try {
                 if (convertView == null) {
@@ -380,10 +382,10 @@ public class Welcome extends AppCompatActivity {
                             holdView = (TextView) convertView.findViewById(R.id.rowpContactExtra);
                             holdView.setText(holdData.get(CP_EXTRA));
                             if (holdData.get(CP_FACE).length() > 0) {
-                                holdPic = (ImageView) convertView.findViewById(R.id.rowpFacePic);
+                                holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);
                                 holdPic.setImageURI(Uri.parse(holdData.get(CP_FACE)));
                             } else {
-                                holdPic = (ImageView) convertView.findViewById(R.id.rowpFacePic);
+                                holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);
                                 holdPic.setImageResource(R.drawable.contactdoe_26);
                             }
                             break;

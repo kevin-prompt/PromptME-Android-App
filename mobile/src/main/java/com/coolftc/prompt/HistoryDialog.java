@@ -7,6 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+/**
+ *  This provides a simple popup that allows the user to select the order of display for Prompts
+    in the History screen.  The sort order is actually a setting, but it seemed better to offer
+    maintenance closer to the actual list.
+ */
 public class HistoryDialog extends DialogFragment {
     private FragmentTalkBack mActivity;
     private int mSortBy = 0;

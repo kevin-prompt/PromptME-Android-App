@@ -51,6 +51,9 @@
     <string name="prf_SleepCycle">Sleep Cycle</string>
     <string name="prf_SleepCycleSum">Help Prompt know when you are awake.</string>
     <string name="prf_SleepCycleDefault">2</string>
+    <string name="prf_NameSort">Sort Contacts</string>
+    <string name="prf_NameSortSum">Sort by %s.</string>
+    <string name="prf_NameSortDefault">0</string>
     <string name="prf_VibrateOn">Prompt Vibrate</string>
     <string name="prf_VibrateOnSum">Vibrate on incoming Prompts.</string>
     <string name="prf_Sounds">Prompt Sound</string>
@@ -64,7 +67,9 @@
     <string name="wel_Pending">Pending (%d)</string>
     <string name="ent_DefaulMsg">No Message - Just an alert.</string>
     <string name="his_SortOrder">Sort Order</string>
+    <string name="ctp_Addresses">Select Addresses and press Invite</string>
     <string name="ctp_edit_hint">Search</string>
+    <string name="ctp_no_addresses">The selected contact does not have any phone numbers or email addresses.</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>
@@ -75,7 +80,7 @@
     <string name="img_snooze">Snoozed Prompt</string>
     <string name="contact_pri">Prompt Connections</string>
     <string name="contact_inv">Pending Invitations</string>
-    <string name="contact_all">Full Contacts</string>
+    <string name="contact_all">Full Contacts - Tap on a contact to invite.</string>
     <string name="contact_more">++ Add More Connections ++</string>
     <string name="deliver">Deliver</string>
     <string name="version">Version</string>
@@ -106,6 +111,8 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="snooze">Snooze</string>
+    <string name="invite">Invite</string>
+    <string name="dismiss">Dismiss</string>
     <string name="copy">Copy</string>
     <string name="newWord">New</string>
     <string name="reply">Reply</string>
@@ -162,6 +169,7 @@
     <string name="www_domain">www.coolftc.com</string>
     <string name="message">Message</string>
     <string name="send">Send</string>
+    <string name="zzzzz">zzzzz</string>
     <string name="ver_copyright">© 2017 zalicon enterprises, inc.</string>
     <string name="pickdate">&lt;&lt; Pick Date</string>
     <string name="picktime">Pick Time &gt;&gt;</string>
@@ -171,6 +179,9 @@
     <string name="err_bad_server">Server issue, try later (%d)</string>
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>
     <string name="err_no_message">There is a problem finding the details of that message.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
 

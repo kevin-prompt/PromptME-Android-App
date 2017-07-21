@@ -10,6 +10,7 @@
     <dimen name="lbl_med_size">16sp</dimen>
     <dimen name="lbl_big_size">24sp</dimen>
     <dimen name="lbl_sup_size">40sp</dimen>
+    <dimen name="img_face_size">42dp</dimen>
     <dimen name="fab_margin">32dp</dimen>
     <dimen name="fin_margin">16dp</dimen>
     <dimen name="abt_center_margin">16dp</dimen>

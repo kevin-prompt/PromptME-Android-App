@@ -86,6 +86,11 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     }
 
     @Override
+    public void newInvite() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void newSort() { throw new UnsupportedOperationException(); }
 
     /*

@@ -118,8 +118,8 @@ public class Refresh extends IntentService {
             mMessage = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
             if (ghost.ticket.length() > 0) {
                 int holdPend = getPendPromptCnt();
-                if (ghost.pending != holdPend){
-                    ghost.pending = holdPend;
+                if (ghost.notesWaiting != holdPend){
+                    ghost.notesWaiting = holdPend;
                     ghost.SyncPrime(false,this);
                 }
             }
@@ -251,13 +251,17 @@ public class Refresh extends IntentService {
     }
 
     /*
-     *  This gives us a contact picture.
+     *  This applies the contact name and picture to the user (if available).
      */
     private void CheckForUserDate(Actor user, Account[] local){
         for(Account acct : local){
             if(user.acctId == acct.acctId){
                 if(!user.contactPic.equalsIgnoreCase(acct.contactPic)){
                     user.contactPic = acct.contactPic;
+                    user.SyncPrime(false, getApplicationContext());
+                }
+                if(!user.contactName.equalsIgnoreCase(acct.contactName)){
+                    user.contactName = acct.contactName;
                     user.SyncPrime(false, getApplicationContext());
                 }
             }
@@ -354,7 +358,7 @@ public class Refresh extends IntentService {
         Account holdContact = new Account();
         Cursor contact = null;
         Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Email.CONTENT_FILTER_URI, Uri.encode(email));
-        String[] selection = {ContactsContract.Data.CONTACT_ID, ContactsContract.Data.DISPLAY_NAME, ContactsContract.Data.PHOTO_THUMBNAIL_URI};
+        String[] selection = {ContactsContract.Data.CONTACT_ID, ContactsContract.Data.DISPLAY_NAME_PRIMARY, ContactsContract.Data.PHOTO_THUMBNAIL_URI};
 
         try {
             contact = getContentResolver().query(uri, selection, null, null, null);
@@ -362,7 +366,7 @@ public class Refresh extends IntentService {
             while (contact.moveToNext()) {
                 Long id = contact.getLong(contact.getColumnIndex(ContactsContract.Data.CONTACT_ID));
                 holdContact.contactId = id.toString();
-                holdContact.contactName = contact.getString(contact.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+                holdContact.contactName = contact.getString(contact.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
                 holdContact.contactPic = contact.getString(contact.getColumnIndex(ContactsContract.Data.PHOTO_THUMBNAIL_URI));
             }
             contact.close();

@@ -356,7 +356,7 @@ public class Detail extends AppCompatActivity {
 
     /*
      *  Get a filled out Account for the Entry screen.  The Message DB only has the
-     *  unique and display names for the accounts, so this is used to suppliment it.
+     *  unique and display names for the mAccounts, so this is used to suppliment it.
      */
     private Account GetAccountByName(String uname){
         FriendDB social = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.

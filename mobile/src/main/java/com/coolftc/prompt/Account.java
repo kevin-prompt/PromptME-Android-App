@@ -3,6 +3,7 @@ package com.coolftc.prompt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.TimeZone;
 import static com.coolftc.prompt.Constants.*;
 import static com.coolftc.prompt.WebServiceModels.*;
@@ -33,6 +34,7 @@ public class Account implements Serializable {
     public String contactId = "";   // The local contact id of the user.
     public String contactName = ""; // The local contact name of the user.
     public String contactPic = "";  // The local contact thumbnail uri.
+    public String contactSur = "";  // The local contact last (sur) name.
     public String tag = "";         // Area to store temporary identifier
     public boolean mirror = false;  // The friend is a special mirror type
     public boolean pending = false; // When true, it means pending confirmation from local user
@@ -44,7 +46,8 @@ public class Account implements Serializable {
     // Helper methods
     public String acctIdStr(){ return Long.toString(acctId); }
     public String contactPicUri(){ return contactPic!=null ? contactPic : ""; }
-    public String bestName(){ return contactName.length()>0 ? contactName : display; }
+    public String bestName(){ return display.length()>0 ? display : contactName; }
+    public String bestNameAlt(){ return confirmed && contactName.length() > 0 ? contactName : unique; }
     public String bestId(){ return localId.length()>0 ? localId : contactId; }
     public boolean isEmail(){ return unique.contains("@"); }
     public String sleepcycleStr(){ return Integer.toString(sleepcycle);}
@@ -61,4 +64,22 @@ public class Account implements Serializable {
         return (term.length() == 0 || unique.toLowerCase().contains(lowterm) || display.toLowerCase().contains(lowterm) || contactName.toLowerCase().contains(lowterm));
     }
 
+    /*
+     *  Helps sort by sur name.
+     *  The comparison returns a 1 if r1 is earlier in the alphabet (A to Z value),
+     *  and -1 if r1 is later. By convention, a sur name that starts with a digit
+     *  is sorted to the end.
+     */
+    public static Comparator<Account> ByLastFirstName = new Comparator<Account>() {
+        public int compare(Account r1, Account r2) {
+            if (r1 == null || r2 == null) return 0;
+            if (r1.contactName != null && r1.contactSur != null && r2.contactName != null && r2.contactSur != null) {
+                if (r2.contactSur.length() == 0 || Character.isDigit(r2.contactSur.charAt(0))) return -1;
+                //if (r1.contactSur.length() == 0 || Character.isDigit(r1.contactSur.charAt(0))) return -1;
+                //ascending order
+                return (r1.contactSur+r1.contactName).compareTo(r2.contactSur+r2.contactName);
+            }
+            return 0;  // indeterminate
+        }
+    };
 }
