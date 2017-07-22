@@ -138,7 +138,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
                 if (frag != null) {
                     mgr.beginTransaction().remove(frag).commit();
                 }
-                HistoryDialog sorter = new HistoryDialog();
+                HistorySortDialog sorter = new HistorySortDialog();
                 sorter.show(mgr, KY_HIST_FRAG);
                 return true;
             default:

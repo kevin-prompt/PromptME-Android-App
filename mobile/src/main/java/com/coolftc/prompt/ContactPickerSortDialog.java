@@ -12,17 +12,17 @@ import android.os.Bundle;
     in the History screen.  The sort order is actually a setting, but it seemed better to offer
     maintenance closer to the actual list.
  */
-public class HistoryDialog extends DialogFragment {
+public class ContactPickerSortDialog extends DialogFragment {
     private FragmentTalkBack mActivity;
     private int mSortBy = 0;
     private boolean mCompromised = false;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mSortBy = Settings.getPromptSortOrder(getActivity().getApplicationContext());
+        mSortBy = Settings.getNameSortOrder(getActivity().getApplicationContext());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.his_SortOrder)
-                .setSingleChoiceItems(R.array.sortByTime, mSortBy, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(R.array.namesort, mSortBy, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mSortBy = which;
@@ -33,7 +33,7 @@ public class HistoryDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // Save the new configuration if it changed, and let Activity know.
                         if(mCompromised) {
-                            Settings.setPromptSortOrder(getActivity().getApplicationContext(), mSortBy);
+                            Settings.setNameSortOrder(getActivity().getApplicationContext(), mSortBy);
                             mActivity.newSort();
                         }
                         dismiss();

@@ -19,10 +19,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -53,7 +55,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     // The contact list.
     ListView mListView;
     // The search box.
-    EditText contactSearch;
+    EditText mContactSearch;
     // The contact permission is stored to reduce management overhead.
     int contactPermissionCheck;
     // The "mAccounts" collect all the possible people to display.
@@ -70,13 +72,13 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         // Set up the UI
         setContentView(R.layout.contactpicker);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        contactSearch = (EditText) findViewById(R.id.txtSearch_CP);
+        mContactSearch = (EditText) findViewById(R.id.txtSearch_CP);
         mListView = (ListView) findViewById(R.id.listContacts_CP);
         contactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
         ShowDetails("");
 
         // As a user types in characters, trim the contact list.
-        contactSearch.addTextChangedListener(new TextWatcher() {
+        mContactSearch.addTextChangedListener(new TextWatcher() {
             // The "filter" contains all that has been typed into search.  Might want a debounce on this, too.
             // For example, ignore this event if 1 second has not elapsed since the last time it was fired.
             @Override
@@ -359,6 +361,35 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         }
     }
 
+
+    /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar
+     * while hiding less used ones on the traditional menu.  The xml configuration determines how they
+     * are shown. The system will call the onCreate when the user presses the menu button.
+     * Note: Android refuses to show icon+text on the ActionBar in portrait, so deal with it. */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.contactpicker_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mnuSort:
+                // Create a dialog to allow changes to sorting.
+                FragmentManager mgr = getFragmentManager();
+                Fragment frag = mgr.findFragmentByTag(KY_CNTC_FRAG);
+                if (frag != null) {
+                    mgr.beginTransaction().remove(frag).commit();
+                }
+                ContactPickerSortDialog sorter = new ContactPickerSortDialog();
+                sorter.show(mgr, KY_CNTC_FRAG);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     public void setDate(String date)  {
         throw new UnsupportedOperationException();
@@ -369,13 +400,18 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         throw new UnsupportedOperationException();
     }
 
+    /*
+     *  The dialog has adjusted the sort parameters, resort and redisplay the data.
+     */
     @Override
-    public void newSort()  {
-        throw new UnsupportedOperationException();
+    public void newSort() {
+        if(mContactSearch != null) mContactSearch.setText("");
+        ShowDetails("");
     }
 
     @Override
     public void newInvite() {
+        if(mContactSearch != null) mContactSearch.setText("");
         ShowDetails("");
     }
 

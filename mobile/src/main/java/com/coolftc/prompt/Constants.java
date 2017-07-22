@@ -83,7 +83,8 @@ public class Constants {
     public static final int SEC_READ_CONTACTS = 10003;
     public static final int FR_POS_EXDATE = 0;
     public static final int FR_POS_EXTIME = 1;
-    public static final String KY_HIST_FRAG = "history.fragment";
+    public static final String KY_HIST_FRAG = "history.sort";
+    public static final String KY_CNTC_FRAG = "contactpicker.sort";
     public static final String KY_ADDR_FRAG = "contactpicker.fragment";
 
     /* Constants used in dealing with the FutureTell API and other web sites */
