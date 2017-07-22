@@ -44,7 +44,7 @@ public class Settings extends AppCompatActivity {
     public static final String PREF_PICKSHORTDATEFMT = "1003";
     public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
     public static final String PREF_SNOOZE = "1004";
-    public static final String PREF_NAMESORT = "1005";
+    public static final String PREF_NAMESORT = "name.sortorder";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
     public static final int DEFAULT_SORT_ORDER = 0;
 
@@ -84,14 +84,22 @@ public class Settings extends AppCompatActivity {
 
     // How names should be sorted as stored in preferences.
     public static int getNameSortOrder(Context context) {
-        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAMESORT, "0");
+        int holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_NAMESORT, DEFAULT_SORT_ORDER);
         context = null;
-        return Integer.parseInt(holdAnswer);
+        return holdAnswer;
     }
 
     // Shortcut to see if sorting by last name, which is not the default.
     public static boolean isSortByLastName(Context context){
         return getNameSortOrder(context) != DEFAULT_SORT_ORDER;
+    }
+
+    // Allow non-settings screen to update this value.
+    public static void setNameSortOrder(Context context, int sort){
+        SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        ali.putInt(PREF_NAMESORT, sort);
+        ali.apply();
+        context = null;
     }
 
     // The ringtone to be used upon notifications.

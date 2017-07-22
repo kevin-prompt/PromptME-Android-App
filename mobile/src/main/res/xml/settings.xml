@@ -50,14 +50,6 @@
             android:entryValues="@array/dateorder_values"
             android:defaultValue="@string/prf_PickDateFormatDefault">
         </ListPreference>
-        <ListPreference android:key="1005"
-            android:title="@string/prf_NameSort"
-            android:dialogTitle="@string/prf_NameSort"
-            android:summary="@string/prf_NameSortSum"
-            android:entries="@array/namesort"
-            android:entryValues="@array/namesort_values"
-            android:defaultValue="@string/prf_NameSortDefault">
-        </ListPreference>
         <PreferenceScreen android:title="@string/prf_About"
             android:summary="@string/blank">
             <intent android:action="android.intent.action.MAIN"
