@@ -1,12 +1,15 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.utility;
 
 import android.provider.BaseColumns;
+
+import com.coolftc.prompt.source.FriendDB;
+import com.coolftc.prompt.source.MessageDB;
 
 public class Constants {
 
     /*
      *  No one is suppose to actually use this class.  To access the values
-     *  use a import static com.coolftc.prompt.Constants.*;
+     *  use a import static com.coolftc.prompt.utility.Constants.*;
      */
     private Constants(){}
 
@@ -96,6 +99,7 @@ public class Constants {
     public static final String FTI_RegisterExtra = "/v1/user/"+SUB_ZZZ;
     public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/note";
     public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/note/";
+    public static final String FTI_Invite = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Friends = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;

@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,6 +14,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
+
+import com.coolftc.prompt.utility.ExpParseToCalendar;
+import com.coolftc.prompt.utility.KTime;
 
 import java.util.Calendar;
 
@@ -86,9 +89,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     }
 
     @Override
-    public void newInvite() {
-        throw new UnsupportedOperationException();
-    }
+    public void newInvite(String [] addresses, boolean mirror) { throw new UnsupportedOperationException(); }
 
     @Override
     public void newSort() { throw new UnsupportedOperationException(); }

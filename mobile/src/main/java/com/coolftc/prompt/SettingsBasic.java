@@ -13,7 +13,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.Settings.PREF_DISPNAME;
 import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
 import static com.coolftc.prompt.Settings.PREF_SCYCLE;

@@ -10,6 +10,7 @@
     <string name="his_name">History</string>
     <string name="rec_name">Recurring</string>
     <string name="det_name">Detail</string>
+    <string name="inv_name">Invite</string>
     <string name="isRegistered">Registered? </string>
     <string name="msgNoNet">Network Connection not found.</string>
     <string name="blank"></string>
@@ -70,6 +71,11 @@
     <string name="ctp_Addresses">Select Addresses and press Invite</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="ctp_no_addresses">The selected contact does not have any phone numbers or email addresses.</string>
+    <string name="inv_title">Make a Connection</string>
+    <string name="inv_invitation">Invite someone you know to connect.</string>
+    <string name="inv_unique">Phone number or Email address</string>
+    <string name="inv_mirror_box">Make this connection a Mirror.*</string>
+    <string name="inv_mirror_help">*Mirror connections receive all your Prompts. This allows a Prompt created with your phone to also show up on another device, like a tablet that you own.  Recommended to only select Mirror if this invite is to another device of yours.</string>
     <string name="btnEmailSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>

@@ -1,4 +1,4 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.utility;
 
 import android.util.Log;
 

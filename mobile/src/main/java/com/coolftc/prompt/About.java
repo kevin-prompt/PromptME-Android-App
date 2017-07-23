@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.coolftc.prompt.source.WebServiceModels;
+import com.coolftc.prompt.source.WebServices;
+
 public class About extends AppCompatActivity {
 
     @Override

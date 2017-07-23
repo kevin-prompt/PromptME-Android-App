@@ -1,10 +1,19 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.service;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import static com.coolftc.prompt.Constants.*;
+
+import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.KTime;
+import com.coolftc.prompt.source.MessageDB;
+import com.coolftc.prompt.Reminder;
+import com.coolftc.prompt.source.WebServiceModels;
+import com.coolftc.prompt.source.WebServices;
+
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  This thread is used to:
@@ -18,7 +27,7 @@ public class SendMessageThread extends Thread {
     private MessageDB mMessage;
     private Context mContext;
 
-    SendMessageThread(Context activity, Reminder msg) {
+    public SendMessageThread(Context activity, Reminder msg) {
         mData = msg;
         mContext = activity;
     }

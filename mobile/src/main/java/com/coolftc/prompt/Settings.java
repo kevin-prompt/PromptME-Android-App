@@ -6,7 +6,10 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import static com.coolftc.prompt.Constants.*;
+
+import com.coolftc.prompt.utility.ExpClass;
+
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  The Settings provide a UI to allow for the maintenance of certain locally
