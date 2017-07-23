@@ -1,6 +1,6 @@
 package com.coolftc.prompt;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +14,10 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.coolftc.prompt.source.WebServiceModels;
+import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpClass;
 import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.Digits;
 import com.digits.sdk.android.DigitsAuthButton;

@@ -1,6 +1,6 @@
 package com.coolftc.prompt;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +14,12 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.coolftc.prompt.service.SendMessageThread;
+import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpParseToCalendar;
+import com.coolftc.prompt.utility.KTime;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;

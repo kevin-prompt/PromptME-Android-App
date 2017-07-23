@@ -25,5 +25,5 @@ public interface FragmentTalkBack {
     void setDate(String date);
     void setTime(String time);
     void newSort();
-    void newInvite();
+    void newInvite(String [] addresses, boolean mirror);
 }

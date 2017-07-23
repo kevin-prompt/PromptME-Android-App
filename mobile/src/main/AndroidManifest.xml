@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/ActivityTheme"
-        tools:replace="allowBackup" >
+        tools:replace="allowBackup">
         <activity android:name=".Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,6 +48,9 @@
             android:name=".ContactPicker"
             android:parentActivityName=".Welcome"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".Invite"
+            android:label="@string/inv_name"
+            android:parentActivityName=".ContactPicker"/>
         <activity
             android:name=".Settings"
             android:label="@string/set_name"
@@ -85,11 +88,14 @@
             android:theme="@style/SignupTheme" />
 
         <service
-            android:name=".Refresh"
+            android:name=".service.Refresh"
             android:exported="false"
             android:label="@string/srv_name" />
         <service
-            android:name=".RefreshInstance"
+            android:name=".service.Snooze"
+            android:exported="false" />
+        <service
+            android:name=".service.RefreshInstance"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -97,7 +103,7 @@
             />
         </service>
         <service
-            android:name=".NotificationX"
+            android:name=".service.NotificationX"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -114,9 +120,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service
-            android:name=".Snooze"
-            android:exported="false"></service>
     </application>
 
 </manifest>

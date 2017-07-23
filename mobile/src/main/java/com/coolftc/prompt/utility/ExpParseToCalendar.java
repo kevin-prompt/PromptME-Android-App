@@ -1,4 +1,6 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.utility;
+
+import com.coolftc.prompt.utility.ExpClass;
 
 public class ExpParseToCalendar extends ExpClass {
 

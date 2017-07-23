@@ -1,4 +1,4 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.service;
 
 import android.app.IntentService;
 import android.content.ContentValues;
@@ -7,12 +7,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import static com.coolftc.prompt.Constants.*;
-import static com.coolftc.prompt.KTime.KT_fmtDate3339fk;
-import static com.coolftc.prompt.KTime.UTC_TIMEZONE;
+import static com.coolftc.prompt.utility.Constants.*;
+import static com.coolftc.prompt.utility.KTime.KT_fmtDate3339fk;
+import static com.coolftc.prompt.utility.KTime.UTC_TIMEZONE;
 
+import com.coolftc.prompt.Account;
+import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.source.FriendDB;
+import com.coolftc.prompt.utility.KTime;
+import com.coolftc.prompt.source.MessageDB;
+import com.coolftc.prompt.source.WebServices;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.coolftc.prompt.WebServiceModels.*;
+import com.coolftc.prompt.source.WebServiceModels.*;
 import java.util.ArrayList;
 import java.util.List;
 

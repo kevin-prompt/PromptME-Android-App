@@ -1,4 +1,4 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.source;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

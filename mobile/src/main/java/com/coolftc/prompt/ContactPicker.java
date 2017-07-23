@@ -1,6 +1,6 @@
 package com.coolftc.prompt;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -30,6 +30,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coolftc.prompt.service.SendInviteThread;
+import com.coolftc.prompt.source.FriendDB;
+import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpClass;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -200,6 +204,14 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     }
 
     /*
+     *  If the user want to invite someone that is not in contacts, this is the manual way.
+     */
+    public void JumpInvite(View view){
+        Intent intent = new Intent(this, Invite.class);
+        startActivity(intent);
+    }
+
+    /*
      *  This is where the action is.  For existing friends, go to the Entry screen.  For waiting
      *  friends, send the acceptance.  For potential friends, send the invitation.
      */
@@ -240,6 +252,13 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                         }else{ // Send an invitation or something.
                             String [] addresses = GetContactAddresses(holdAcct.bestName());
                             if (addresses.length > 0) {
+                                // This will require the network, so check it
+                                WebServices ws = new WebServices();
+                                if(!ws.IsNetwork(this)) {
+                                    Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+                                    break;
+                                }
+
                                 // Create a dialog to allow selection of address.
                                 FragmentManager mgr = getFragmentManager();
                                 Fragment frag = mgr.findFragmentByTag(KY_ADDR_FRAG);
@@ -409,10 +428,13 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         ShowDetails("");
     }
 
+    /*
+     *  The invites have been selected, but better to call the thread from here.
+     */
     @Override
-    public void newInvite() {
-        if(mContactSearch != null) mContactSearch.setText("");
-        ShowDetails("");
+    public void newInvite(String [] addresses, boolean mirror) {
+        SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, mirror);
+        smt.start();
     }
 
     /*

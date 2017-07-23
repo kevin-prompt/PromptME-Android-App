@@ -2,11 +2,15 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.text.format.DateFormat;
+
+import com.coolftc.prompt.utility.ExpParseToCalendar;
+import com.coolftc.prompt.utility.KTime;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.TimeZone;
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  Representation of the message, including who, when and what. This is useful for passing

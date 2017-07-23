@@ -1,6 +1,6 @@
 package com.coolftc.prompt;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +13,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.coolftc.prompt.source.WebServiceModels;
+import com.coolftc.prompt.source.WebServices;
 
 /**
  *  The Signup process is a minimal account setup to establish a unique

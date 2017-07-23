@@ -1,6 +1,6 @@
 package com.coolftc.prompt;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -24,6 +24,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.coolftc.prompt.source.MessageDB;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.ExpParseToCalendar;
+import com.coolftc.prompt.utility.KTime;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -281,9 +287,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
     }
 
     @Override
-    public void newInvite() {
-        throw new UnsupportedOperationException();
-    }
+    public void newInvite(String [] addresses, boolean mirror) { throw new UnsupportedOperationException(); }
 
     /*
      *  The dialog has adjusted the sort parameters, resort and redisplay the data.

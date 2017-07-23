@@ -1,12 +1,14 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.source;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.coolftc.prompt.utility.ExpClass;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
-import static com.coolftc.prompt.Constants.*;
-import static com.coolftc.prompt.WebServiceModels.*;
+import static com.coolftc.prompt.utility.Constants.*;
+import static com.coolftc.prompt.source.WebServiceModels.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -267,6 +269,60 @@ public class WebServices {
     }
 
     /*
+        Invite others to be a friend. Resource = v1/user/<id>/friend?ticket=<ticket> (POST)
+     */
+    public InviteResponse NewInvite(String ticket, String id, InviteRequest friend){
+        HttpURLConnection webC = null;
+        Gson gson = new Gson();
+        InviteResponse rtn = new InviteResponse();
+
+        try {
+            String realPath = FTI_Invite.replace(SUB_ZZZ, id);
+            URL web = new URL(FTI_BaseURL + realPath + FTI_Ticket + ticket);
+            webC = (HttpURLConnection) web.openConnection();
+            webC.setRequestMethod("POST");
+            webC.setRequestProperty("Accept", "application/json");
+            webC.setRequestProperty("Content-type", "application/json");
+            webC.setDoOutput(true);
+            webC.setUseCaches(false);
+            webC.setAllowUserInteraction(false);
+            webC.setConnectTimeout(FTI_TIMEOUT);
+            webC.setReadTimeout(FTI_TIMEOUT);
+            webC.connect();
+            // Create the payload
+            final OutputStream body = new BufferedOutputStream(webC.getOutputStream());
+            final JsonWriter jwrite = new JsonWriter(new OutputStreamWriter(body, "UTF-8"));
+            gson.toJson(friend, InviteRequest.class, jwrite);
+            jwrite.flush();
+            jwrite.close();
+            // Processed the response
+            int status = webC.getResponseCode();
+            if (status >= 200 && status < 300) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(webC.getInputStream(), "UTF8"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                br.close();
+                rtn = new Gson().fromJson(sb.toString(), InviteResponse.class);
+            }
+            rtn.response = status;  // manually add status
+            return rtn;
+        }
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewInvite"); rtn.response = 0; return rtn;}
+        finally {
+            if (webC != null) {
+                try {
+                    webC.disconnect();
+                }
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewInvite"); }
+            }
+        }
+
+    }
+
+    /*
         Retrieve connections by status. Resource = /v1/user/<id>/friend?ticket=<ticket> (GET)
     */
     public Invitations GetFriends(String ticket, String id){
@@ -352,13 +408,13 @@ public class WebServices {
             rtn.response = status;  // manually add status
             return rtn;
         }
-        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewReminder"); rtn.response = 0; return rtn;}
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewPrompt"); rtn.response = 0; return rtn;}
         finally {
             if (webC != null) {
                 try {
                     webC.disconnect();
                 }
-                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewReminder"); }
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".NewPrompt"); }
             }
         }
     }

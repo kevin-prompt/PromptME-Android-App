@@ -1,6 +1,9 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.utility;
 
 import android.text.format.DateFormat;
+
+import com.coolftc.prompt.utility.ExpParseToCalendar;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -155,7 +158,7 @@ public class KTime {
      *  The formatting strings are expected to be in the same timezone.
      *  Given the available output formats are not granular, truncation can occur.
      */
-    public static long CalcDateDifference(String tndxOne, String tndxTwo, String inFormat, int outFormat) throws ExpParseToCalendar{
+    public static long CalcDateDifference(String tndxOne, String tndxTwo, String inFormat, int outFormat) throws ExpParseToCalendar {
         Calendar time1 = ParseToCalendar(tndxOne, inFormat);
         Calendar time2 = ParseToCalendar(tndxTwo, inFormat);
         long holdDiff = Math.abs(time1.getTimeInMillis() - time2.getTimeInMillis());

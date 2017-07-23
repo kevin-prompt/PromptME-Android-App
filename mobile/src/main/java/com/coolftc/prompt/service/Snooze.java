@@ -1,4 +1,4 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.service;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -9,9 +9,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 
+import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.KTime;
+import com.coolftc.prompt.source.MessageDB;
+import com.coolftc.prompt.Reminder;
+import com.coolftc.prompt.Settings;
+import com.coolftc.prompt.source.WebServiceModels;
+import com.coolftc.prompt.source.WebServices;
+
 import java.util.Calendar;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  The Snooze service is used by the Notification snooze buttons to push the Prompt

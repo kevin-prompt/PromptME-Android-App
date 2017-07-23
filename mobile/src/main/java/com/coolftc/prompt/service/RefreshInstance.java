@@ -1,6 +1,9 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.service;
 
 import android.content.Intent;
+
+import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.service.Refresh;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 public class RefreshInstance extends FirebaseInstanceIdService {

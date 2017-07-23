@@ -6,12 +6,14 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import static com.coolftc.prompt.Constants.*;
+
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  This provides a simple popup that allows the user to select the phone numbers and/or
-    emails to which they wish to send invites.  Since a person might sign up on either
+    email addresses to which they wish to send invites.  Since a person might sign up on either
     email or phone number, it is safest to send invites to all (which will be the default).
+    NOTE: The Mirror is a complicated, little used option, so it has been excluded from here.
  */
 public class ContactPickerDialog extends DialogFragment {
     private FragmentTalkBack mActivity;
@@ -42,7 +44,9 @@ public class ContactPickerDialog extends DialogFragment {
                 })
                 .setPositiveButton(R.string.invite, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mActivity.newInvite();
+                        // Blank out any addresses that are not selected.
+                        for(int i = 0; i < mSelected.length; ++i) { if (!mSelected[i]) { mAddresses[i] = ""; } }
+                        mActivity.newInvite(mAddresses, false);
                         dismiss();
                     }
                 })

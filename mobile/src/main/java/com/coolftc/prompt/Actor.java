@@ -2,9 +2,13 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpClass;
+
 import java.util.TimeZone;
-import static com.coolftc.prompt.Constants.*;
-import static com.coolftc.prompt.WebServiceModels.*;
+import static com.coolftc.prompt.utility.Constants.*;
+import static com.coolftc.prompt.source.WebServiceModels.*;
 
 /**
  * The Actor is the person using the app.  They have many of the same

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.DialogPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,9 +14,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coolftc.prompt.service.CancelMessageThread;
+import com.coolftc.prompt.source.FriendDB;
+import com.coolftc.prompt.source.MessageDB;
+import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.KTime;
+
 import java.util.Arrays;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  The Detail screen shows a little bit more information that the history

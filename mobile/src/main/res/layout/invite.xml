@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.coolftc.prompt.Invite">
+
+    <TextView android:id="@+id/lblInviteTitle"
+        android:text="@string/inv_title"
+        android:textSize="@dimen/lbl_big_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp" />
+
+    <TextView android:id="@+id/lblInstruct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/inv_invitation"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblInviteTitle"
+        app:layout_constraintHorizontal_bias="0.50" />
+
+    <EditText android:id="@+id/contactUnique"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/txt_edit_size"
+        android:inputType="text"
+        android:maxLines="1"
+        android:hint="@string/inv_unique"
+        android:layout_marginTop="24dp"
+        android:minWidth="200dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblInstruct"
+        app:layout_constraintHorizontal_bias="0.50">
+        <requestFocus />
+    </EditText>
+
+    <CheckBox android:id="@+id/chkMirror"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/inv_mirror_box"
+        app:layout_constraintLeft_toLeftOf="@id/contactUnique"
+        app:layout_constraintTop_toBottomOf="@id/contactUnique"/>
+
+    <TextView android:id="@+id/lblMirror"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/inv_mirror_help"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="32dp"
+        android:paddingEnd="32dp"
+        android:paddingRight="32dp"
+        android:paddingStart="32dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chkMirror"
+        app:layout_constraintHorizontal_bias="0.50">
+     </TextView>
+
+    <Button android:id="@+id/invCancel" android:text="@string/cancel"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:onClick="PickCancelInvite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/invInvite"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button android:id="@+id/invInvite" android:text="@string/invite"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:onClick="PickSendInvite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="@dimen/fin_margin"
+        android:layout_marginEnd="@dimen/fin_margin"/>
+
+</android.support.constraint.ConstraintLayout>

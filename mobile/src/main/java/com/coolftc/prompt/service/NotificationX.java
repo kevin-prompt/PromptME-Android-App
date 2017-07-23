@@ -1,6 +1,6 @@
-package com.coolftc.prompt;
+package com.coolftc.prompt.service;
 
-import static com.coolftc.prompt.Constants.*;
+import static com.coolftc.prompt.utility.Constants.*;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +10,14 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+
+import com.coolftc.prompt.Account;
+import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.Detail;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.R;
+import com.coolftc.prompt.Reminder;
+import com.coolftc.prompt.Settings;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

@@ -1,12 +1,7 @@
 package com.coolftc.prompt;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.TimeZone;
-import static com.coolftc.prompt.Constants.*;
-import static com.coolftc.prompt.WebServiceModels.*;
 
 /**
  * Represents information about any people in the application.  Not all fields
