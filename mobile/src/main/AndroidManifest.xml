@@ -95,6 +95,9 @@
             android:name=".service.Snooze"
             android:exported="false" />
         <service
+            android:name=".service.AcceptInvite"
+            android:exported="false" />
+        <service
             android:name=".service.RefreshInstance"
             android:exported="false">
             <intent-filter>

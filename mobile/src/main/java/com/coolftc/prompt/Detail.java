@@ -119,9 +119,9 @@ public class Detail extends AppCompatActivity {
     }
 
     /*
-         *  This allows navigation to the Entry screen, with some data populated,
-         *  specifically, who gets the message, and sometimes the message itself (copy).
-         */
+     *  This allows navigation to the Entry screen, with some data populated,
+     *  specifically, who gets the message, and sometimes the message itself (copy).
+     */
     public void CopyPrompt(View view) {
 
         try {

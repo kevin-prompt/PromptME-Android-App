@@ -51,6 +51,13 @@ public class Snooze extends IntentService {
         // Just in case.
         if(mPrompt == null) return;
 
+        // Clear the notification.
+        // While this risks not doing the snooze, the annoyance of not dismissing the notification
+        // when touching snooze if far more of a problem.  Once Prompts (and snoozes) can be queued,
+        // dismissing prior to success will be even less of an issue.
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel((int) mPrompt.serverId);
+
         try {
             mMessage = new MessageDB(getApplicationContext());  // Be sure to close this before leaving the thread.
 
@@ -60,10 +67,6 @@ public class Snooze extends IntentService {
             // Update the local record with future time or status, and mark as processed.
             if(actual.response >= 200 && actual.response < 300) {
                 updSnooze(mPrompt.serverId, actual.noteTime, actual.noteId);
-
-                // Clear the notification.
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.cancel((int) mPrompt.serverId);
             }
 
         } catch (Exception ex) {

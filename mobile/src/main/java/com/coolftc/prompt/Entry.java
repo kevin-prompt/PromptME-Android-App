@@ -73,9 +73,13 @@ public class Entry extends AppCompatActivity {
                 if(mTarget == null) {
                     mTarget = new Actor(this);  // Default to self-message.
                 }
+                // This passed in message data is used when making a copy.
+                // The stored time name is 1 larger than the display array, so it is reduced by 1.
+                // Since zero (0), which is exact time, is not really useful for a copy, using 0
+                // for either 0 or 1 is fine.
                 mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
                 if(mPrompt != null){
-                    mDefaultTimeName = mPrompt.targetTimeNameId;
+                    mDefaultTimeName = mPrompt.targetTimeNameId > 0 ? mPrompt.targetTimeNameId - 1 : 0;
                     mDefaultTimeAdj = mPrompt.targetTimeAdjId * SEEK_MARK;
                     mDefaultMessage = mPrompt.message;
                 } else {
@@ -194,7 +198,6 @@ public class Entry extends AppCompatActivity {
             mTimeadj.setEnabled(false);
         } else {
             holdRaw += mTimename.getSelectedItem().toString();
-            //holdRaw += ", " + mTimeadjData.get(mTimeadj.getProgress()/ SEEK_MARK);  // want a number 0 - 5\
             holdRaw += ", " + GetTimeAdjustment(mTimename.getSelectedItemPosition());
         }
         holdText = (TextView) findViewById(R.id.sendTargeTime);
