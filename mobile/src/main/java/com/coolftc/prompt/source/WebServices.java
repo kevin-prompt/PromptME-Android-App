@@ -270,7 +270,7 @@ public class WebServices {
 
     /*
         Invite others to be a friend. Resource = v1/user/<id>/friend?ticket=<ticket> (POST)
-     */
+    */
     public InviteResponse NewInvite(String ticket, String id, InviteRequest friend){
         HttpURLConnection webC = null;
         Gson gson = new Gson();
@@ -320,6 +320,37 @@ public class WebServices {
             }
         }
 
+    }
+
+    /*
+        Reject an invitation / Cancel a connection. Resource = v1/user/<id>/friend/<friendId>?ticket=<ticket> (DELETE)
+    */
+    public int DelInvite(String ticket, String id, String friend){
+        HttpURLConnection webC = null;
+
+        try {
+            String realPath = FTI_Invite_Del.replace(SUB_ZZZ, id) + friend;
+            URL web = new URL(FTI_BaseURL + realPath + FTI_Ticket + ticket);
+            webC = (HttpURLConnection) web.openConnection();
+            webC.setRequestMethod("DELETE");
+            webC.setRequestProperty("Accept", "application/json");
+            webC.setUseCaches(false);
+            webC.setAllowUserInteraction(false);
+            webC.setConnectTimeout(FTI_TIMEOUT);
+            webC.setReadTimeout(FTI_TIMEOUT);
+            webC.connect();
+
+            return webC.getResponseCode();
+        }
+        catch (IOException ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); return 0;}
+        finally {
+            if (webC != null) {
+                try {
+                    webC.disconnect();
+                }
+                catch (Exception ex) { ExpClass.LogEX(ex, this.getClass().getName() + ".DelPrompt"); }
+            }
+        }
     }
 
     /*
@@ -502,9 +533,6 @@ public class WebServices {
             }
         }
     }
-
-
-
 }
 
 

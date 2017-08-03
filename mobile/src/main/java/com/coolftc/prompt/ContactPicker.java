@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -68,6 +69,9 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_FACE};
     int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpFacePic};
 
+    // Handler used as a timer to trigger updates.
+    private Handler hRefresh = new Handler();
+    private Integer hRefreshCntr = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         mListView = (ListView) findViewById(R.id.listContacts_CP);
         contactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
         ShowDetails("");
+        hRefresh.postDelayed(rRefresh, UPD_SCREEN_TQ);
 
         // As a user types in characters, trim the contact list.
         mContactSearch.addTextChangedListener(new TextWatcher() {
@@ -163,8 +168,14 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             details.add(hold);
         }
 
+        // Try to keep the listbox from scrolling on its own.
+        // See https://stackoverflow.com/questions/3014089/maintain-save-restore-scroll-position-when-returning-to-a-listview/5688490#5688490
+        int index = mListView.getFirstVisiblePosition();
+        View v = mListView.getChildAt(0);
+        int top = (v == null) ? 0 : (v.getTop() - mListView.getPaddingTop());
         ContactAdapter adapter = new ContactAdapter(this, details, R.layout.contactpicker_row, StatusMapFROM, StatusMapTO);
         mListView.setAdapter(adapter);
+        mListView.setSelectionFromTop(index, top);
     }
 
     /*
@@ -245,9 +256,12 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
 
                     // Accept invitation request or send out an invitation.
                     if(!holdAcct.confirmed){
-                        if(holdAcct.pending){
-                            // This means you need to accept them as connection
-
+                        if(holdAcct.pending){  // This means you need to accept them as connection
+                            Intent intentI = new Intent(this, Invite.class);
+                            Bundle xBundle = new Bundle();
+                            xBundle.putSerializable(IN_DSPL_TGT, holdAcct);
+                            intentI.putExtras(xBundle);
+                            startActivity(intentI);
 
                         }else{ // Send an invitation or something.
                             String [] addresses = GetContactAddresses(holdAcct.bestName());
@@ -534,4 +548,25 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             }
         }
     }
+
+    // Non-Thread Timer used to periodically refresh the display list. Refresh updates
+    // the DB with the latest contacts, typically after the their status might change.
+    // For the first minute we want to use the faster refresh rate of TQ and do a full reload of the
+    // screen.  This should cover the time a person would actually be looking at the screen,
+    // then back off and don't reload the messages to save battery.
+    private Runnable rRefresh = new Runnable() {
+        public void run() {
+
+            String holdSearch = mContactSearch.getText().toString();
+            hRefreshCntr += UPD_SCREEN_TQ;
+            if(hRefreshCntr < UPD_SCREEN_TQ*10){
+                ShowDetails(holdSearch);
+                hRefresh.postDelayed(this, UPD_SCREEN_TQ);
+            } else {
+                ShowDetailsCache(holdSearch);
+                hRefresh.postDelayed(this, UPD_SCREEN_TM);
+            }
+        }
+
+    };
 }

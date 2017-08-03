@@ -100,6 +100,7 @@ public class Constants {
     public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/note";
     public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/note/";
     public static final String FTI_Invite = "/v1/user/"+SUB_ZZZ+"/friend";
+    public static final String FTI_Invite_Del = "v1/user/"+SUB_ZZZ+"/friend/";
     public static final String FTI_Friends = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;
@@ -160,8 +161,10 @@ public class Constants {
     public static final String IN_NOTE_PEND = "time";
     public static final String IN_NOTE_RECUR = "recurUnit";
     public static final String IN_NOTE_MSG = "message";
+    public static final String IN_NOTE_MIRROR = "invitemirror";
     public static final String IN_TYPE_NOTE = "NOTE";
     public static final String IN_TYPE_INVITE = "INVITE";
+    public static final String IN_TYPE_FRIEND = "FRIEND";
     public static final String IN_NOTE_RAW = "line2-notify";
     /* Details */
     public static final int MSG_ID_INVALID = -1;
