@@ -226,10 +226,10 @@ public class Detail extends AppCompatActivity {
             holdFormatted = getString(R.string.personal_prompt);
         } else {
             if(!mUser.unique.equalsIgnoreCase(mPrompt.target.unique)){
-                holdFormatted = getString(R.string.target_prompt) + mPrompt.target.display;
+                holdFormatted = getString(R.string.target_prompt) + " " + mPrompt.target.display;
             }
             if(!mUser.unique.equalsIgnoreCase(mPrompt.from.unique)){
-                holdFormatted = getString(R.string.from_prompt) + mPrompt.from.display;
+                holdFormatted = getString(R.string.from_prompt) + " " + mPrompt.from.display;
             }
         }
         holdText = (TextView) findViewById(R.id.dtlWho);
@@ -259,7 +259,11 @@ public class Detail extends AppCompatActivity {
         if (holdText != null) holdText.setText(holdFormatted);
 
         // Sleep cycle
-        holdFormatted = getString(R.string.prf_SleepCycle) + ": " + Arrays.asList(getResources().getStringArray(R.array.sleepcycle)).get(mPrompt.sleepCycle);
+        if(mPrompt.sleepCycle >= 0) {
+            holdFormatted = getString(R.string.prf_SleepCycle) + ": " + Arrays.asList(getResources().getStringArray(R.array.sleepcycle)).get(mPrompt.sleepCycle);
+        } else {
+            holdFormatted = getString(R.string.prf_SleepCycle) + ": " + getString(R.string.unknown);
+        }
         holdText = (TextView) findViewById(R.id.dtlSleepCycle);
         if (holdText != null) holdText.setText(holdFormatted);
 
@@ -331,7 +335,9 @@ public class Detail extends AppCompatActivity {
 
     /*
      *  Add a new reminder to local DB.  Usually due to a friend generated prompt
-     *  coming in via notification.
+     *  coming in via notification.  Not all the usually information is available
+     *  so some assumptions are made, e.g. sleep cycle and time zone are not part
+     *  of the data included in a Prompt.
      */
     private long AddMessage(Reminder msg) {
         SQLiteDatabase db = mMessage.getWritableDatabase();

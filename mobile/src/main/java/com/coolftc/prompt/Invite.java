@@ -10,6 +10,10 @@ import android.widget.Toast;
 
 import com.coolftc.prompt.service.CancelFriendThread;
 import com.coolftc.prompt.service.SendInviteThread;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+
 import static com.coolftc.prompt.utility.Constants.*;
 
 
@@ -105,6 +109,18 @@ public class Invite extends AppCompatActivity {
         if (holdName != null) addresses[0] = holdName.getText().toString();
         CheckBox holdMirror = (CheckBox) findViewById(R.id.chkMirror);
         if (holdMirror != null) mirror = holdMirror.isChecked();
+
+        // If a phone number, do a little cleanup
+        if(!addresses[0].contains("@")) {
+            PhoneNumberUtil phoneHelper = PhoneNumberUtil.getInstance();
+            try {
+                Phonenumber.PhoneNumber fullNbr = phoneHelper.parse(addresses[0], "US");
+                String holdnbr = phoneHelper.format(fullNbr, PhoneNumberUtil.PhoneNumberFormat.E164);
+                addresses[0] = holdnbr.replace("+", "");
+            } catch (NumberParseException e) {
+                addresses[0] = "";
+            }
+        }
 
         if (addresses[0].length() > 0) {
             SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, mirror);

@@ -17,6 +17,11 @@
         android:layout_height="match_parent"
         android:visibility="gone">
     </TextView>
+    <TextView android:id="@+id/rowpUnique"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+    </TextView>
     <com.mikhaellopez.circularimageview.CircularImageView android:id="@+id/rowpFacePic"
         android:layout_width="@dimen/img_face_size"
         android:layout_height="@dimen/img_face_size"

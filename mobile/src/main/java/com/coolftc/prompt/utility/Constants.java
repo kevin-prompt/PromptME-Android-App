@@ -122,6 +122,7 @@ public class Constants {
     public static final String CP_TYPE = "type";
     public static final String CP_NAME = "name";
     public static final String CP_EXTRA = "extra";
+    public static final String CP_UNIQUE = "unique";
     public static final String CP_FACE = "face";
     public static final String TITLE_ROW = "AliCon2016";
     /* History list. */
@@ -161,7 +162,7 @@ public class Constants {
     public static final String IN_NOTE_PEND = "time";
     public static final String IN_NOTE_RECUR = "recurUnit";
     public static final String IN_NOTE_MSG = "message";
-    public static final String IN_NOTE_MIRROR = "invitemirror";
+    public static final String IN_NOTE_MIRROR = "mirror";
     public static final String IN_TYPE_NOTE = "NOTE";
     public static final String IN_TYPE_INVITE = "INVITE";
     public static final String IN_TYPE_FRIEND = "FRIEND";
