@@ -13,9 +13,10 @@ public class Constants {
      */
     private Constants(){}
 
-    /* Constants used in dealing with the Shared Preference Database.
-    *  This is a different storage area than used by Settings, although
-    *  a couple of the names are reused for there.*/
+    /*  Constants used in dealing with the Shared Preference Database.
+     *  This is a different storage area than used by Settings, although
+     *  a couple of the names are reused there.
+     */
     public static final String SP_REG_STORE = "prompt.registry";
     public static final String SP_REG_ID = "prompt.id";
     public static final String SP_REG_TICKET = "prompt.ticket";
@@ -100,7 +101,7 @@ public class Constants {
     public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/note";
     public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/note/";
     public static final String FTI_Invite = "/v1/user/"+SUB_ZZZ+"/friend";
-    public static final String FTI_Invite_Del = "v1/user/"+SUB_ZZZ+"/friend/";
+    public static final String FTI_Invite_Del = "/v1/user/"+SUB_ZZZ+"/friend/";
     public static final String FTI_Friends = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;
@@ -122,6 +123,8 @@ public class Constants {
     public static final String CP_TYPE = "type";
     public static final String CP_NAME = "name";
     public static final String CP_EXTRA = "extra";
+    public static final String CP_UNIQUE = "unique";
+    public static final String CP_LINKED = "linked";
     public static final String CP_FACE = "face";
     public static final String TITLE_ROW = "AliCon2016";
     /* History list. */
@@ -161,13 +164,15 @@ public class Constants {
     public static final String IN_NOTE_PEND = "time";
     public static final String IN_NOTE_RECUR = "recurUnit";
     public static final String IN_NOTE_MSG = "message";
-    public static final String IN_NOTE_MIRROR = "invitemirror";
+    public static final String IN_NOTE_MIRROR = "mirror";
     public static final String IN_TYPE_NOTE = "NOTE";
     public static final String IN_TYPE_INVITE = "INVITE";
     public static final String IN_TYPE_FRIEND = "FRIEND";
     public static final String IN_NOTE_RAW = "line2-notify";
     /* Details */
     public static final int MSG_ID_INVALID = -1;
+    /* Entry */
+    public static final int MSG_MAX_LENGTH = 1024;
 
     /* Constants used in dealing with the SQLite Database and Shared Preference Database. */
     public static final String Owner_DBID = "-1";

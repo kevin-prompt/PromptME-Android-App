@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -46,8 +47,8 @@ public class Welcome extends AppCompatActivity {
     // The "mAccounts" collect all the possible people to display.
     List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_FACE};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpFacePic};
+    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
 
     @Override
@@ -168,7 +169,9 @@ public class Welcome extends AppCompatActivity {
             // Copy the data to display.
             hold.put(CP_TYPE, acct.localId);
             hold.put(CP_NAME, acct.bestName());
-            hold.put(CP_EXTRA, acct.unique);
+            hold.put(CP_EXTRA, acct.bestNameAlt());
+            hold.put(CP_UNIQUE, acct.unique);
+            hold.put(CP_LINKED, (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
             hold.put(CP_FACE, acct.contactPicUri());
             details.add(hold);
         }
@@ -260,13 +263,47 @@ public class Welcome extends AppCompatActivity {
         }
     }
 
+    /*
+     *  This allow people to break the link that allow them to share Prompts.
+     */
+    public void UnInvite(View view) {
+        try {
+            Button holdView;
+            String uSelect = "";
+
+            // Find the matching Account.
+            holdView = (Button) view.findViewById(R.id.rowpUninvite);
+            if(holdView!=null){ uSelect = holdView.getTag().toString(); }
+            Account holdAcct = null;
+            for(Account acct : mAccounts) {
+                if (acct.unique.equalsIgnoreCase(uSelect)) {
+                    holdAcct = acct;
+                    break;
+                }
+            }
+            if(holdAcct == null) return;
+
+            // Send the account data along to the invite screen
+            Intent intent = new Intent(this, Invite.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(IN_DSPL_TGT, holdAcct);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+        }
+    }
+
     public void pickOnClick(View view) {
         try {
             switch (view.getId()) {
                 case R.id.rowpItem:
                     // Get the important data out of the row.
                     TextView holdView;
-                    holdView = (TextView) view.findViewById(R.id.rowpContactExtra);
+                    holdView = (TextView) view.findViewById(R.id.rowpUnique);
+                    if(holdView==null) break;
+
                     String uSelect = holdView.getText().toString();
 
                     // Find the matching Account.
@@ -354,6 +391,7 @@ public class Welcome extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             int type = getItemViewType(position);
             TextView holdView;
+            Button holdPush;
             // See https://github.com/lopspower/CircularImageView for information about CircularImageView
             CircularImageView holdPic;
             // ***May want to try "parent, false" instead of "null" to remove lint warning***
@@ -375,26 +413,33 @@ public class Welcome extends AppCompatActivity {
                     @SuppressWarnings("unchecked")
                     Map<String, String> holdData = (Map<String, String>) getItem(position);
                     holdView = (TextView) convertView.findViewById(R.id.rowp_Id);
-                    holdView.setText(holdData.get(CP_PER_ID));
+                    if(holdView!=null) holdView.setText(holdData.get(CP_PER_ID));
                     switch (type) {
                         case TYPE_ITEM:
                             holdView = (TextView) convertView.findViewById(R.id.rowpType);
-                            holdView.setText(holdData.get(CP_TYPE));
+                            if(holdView!=null) holdView.setText(holdData.get(CP_TYPE));
                             holdView = (TextView) convertView.findViewById(R.id.rowpContactName);
-                            holdView.setText(holdData.get(CP_NAME));
+                            if(holdView!=null) holdView.setText(holdData.get(CP_NAME));
                             holdView = (TextView) convertView.findViewById(R.id.rowpContactExtra);
-                            holdView.setText(holdData.get(CP_EXTRA));
+                            if(holdView!=null) holdView.setText(holdData.get(CP_EXTRA));
+                            holdView = (TextView) convertView.findViewById(R.id.rowpUnique);
+                            if(holdView!=null) holdView.setText(holdData.get(CP_UNIQUE));
+                            holdPush = (Button) convertView.findViewById(R.id.rowpUninvite);
+                            if(holdPush!=null) {
+                                holdPush.setVisibility(holdData.get(CP_LINKED).length() > 0 ? View.VISIBLE : View.GONE);
+                                holdPush.setTag(holdData.get(CP_LINKED));
+                            }
                             if (holdData.get(CP_FACE).length() > 0) {
                                 holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);
-                                holdPic.setImageURI(Uri.parse(holdData.get(CP_FACE)));
+                                if(holdPic!=null) holdPic.setImageURI(Uri.parse(holdData.get(CP_FACE)));
                             } else {
                                 holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);
-                                holdPic.setImageResource(R.drawable.contactdoe_26);
+                                if(holdPic!=null) holdPic.setImageResource(R.drawable.contactdoe_26);
                             }
                             break;
                         case TYPE_SEPARATOR:
                             holdView = (TextView) convertView.findViewById(R.id.rowpDelimitName);
-                            holdView.setText(holdData.get(CP_NAME));
+                            if(holdView!=null) holdView.setText(holdData.get(CP_NAME));
                             break;
                     }
                 }

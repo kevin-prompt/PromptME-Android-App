@@ -14,7 +14,7 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/prompt_icon"
+        android:icon="@mipmap/promptme_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/ActivityTheme"
@@ -96,6 +96,9 @@
             android:exported="false" />
         <service
             android:name=".service.AcceptInvite"
+            android:exported="false" />
+        <service
+            android:name=".service.IgnoreNotification"
             android:exported="false" />
         <service
             android:name=".service.RefreshInstance"

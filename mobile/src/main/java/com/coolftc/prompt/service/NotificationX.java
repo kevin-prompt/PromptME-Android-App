@@ -53,21 +53,26 @@ public class NotificationX extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage prompt) {
+        try {
 
-        Reminder note = parseNotification(prompt.getData());
+            Reminder note = parseNotification(prompt.getData());
 
-        switch(note.type){
-            case TYPE_NOTE:
-                promptNotification(note);
-                break;
-            case TYPE_INVITE:
-                inviteNotification(note);
-                break;
-            case TYPE_FRIEND:
-                friendNotification(note);
-                break;
-            default:
-                ExpClass.LogIN(KEVIN_SPEAKS, "An unknown notification type came into the Application.");
+            switch (note.type) {
+                case TYPE_NOTE:
+                    promptNotification(note);
+                    break;
+                case TYPE_INVITE:
+                    inviteNotification(note);
+                    break;
+                case TYPE_FRIEND:
+                    friendNotification(note);
+                    break;
+                default:
+                    ExpClass.LogIN(KEVIN_SPEAKS, "An unknown notification type came into the Application.");
+            }
+        } catch (Exception ex) {
+            // This is a general catch to avoid showing a crash screen to the user.
+            ExpClass.LogEX(ex, this.getClass().getName() + ".onMessageReceived");
         }
     }
 
@@ -276,6 +281,13 @@ public class NotificationX extends FirebaseMessagingService {
         intentA.putExtras(aBundle);
         PendingIntent acceptIntent = PendingIntent.getService(this, (int)msg.from.acctId, intentA, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        // Support ignoring of the notification.
+        // Put a server id in pending intent to make sure unique intents are created for each Prompt.
+        Intent intentD = new Intent(this, IgnoreNotification.class);
+        Bundle dBundle = new Bundle();
+        dBundle.putSerializable(IN_DSPL_TGT, msg.from);
+        intentD.putExtras(dBundle);
+        PendingIntent ignoreIntent = PendingIntent.getService(this, (int)msg.from.acctId, intentD, PendingIntent.FLAG_CANCEL_CURRENT);
 
         /*
          *  The settings for local notifications and why.  Note that if targeting v26+ a
@@ -313,12 +325,12 @@ public class NotificationX extends FirebaseMessagingService {
         }
 
         // The accept button has slightly different behavior based on if it is a mirror request.
-        if (msg.status == 1){
+        if (msg.from.mirror){
             mBuilder.addAction(R.drawable.ic_person_add_black_18dp, getString(R.string.accept), inviteIntent)
-                    .addAction(R.drawable.ic_notifications_off_black_18dp, getString(R.string.ignore), null);
+                    .addAction(R.drawable.ic_notifications_off_black_18dp, getString(R.string.ignore), ignoreIntent);
         } else {
             mBuilder.addAction(R.drawable.ic_person_add_black_18dp, getString(R.string.accept), acceptIntent)
-                    .addAction(R.drawable.ic_notifications_off_black_18dp, getString(R.string.ignore), null);
+                    .addAction(R.drawable.ic_notifications_off_black_18dp, getString(R.string.ignore), ignoreIntent);
         }
 
         // User the serverId to so it is easy to dismiss later.
