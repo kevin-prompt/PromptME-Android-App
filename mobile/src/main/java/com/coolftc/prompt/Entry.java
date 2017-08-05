@@ -352,6 +352,7 @@ public class Entry extends AppCompatActivity {
         holdText = (TextView) findViewById(R.id.sendMessage);
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
+        if(ali.message.length() > MSG_MAX_LENGTH) { ali.message = ali.message.substring(0, MSG_MAX_LENGTH); }
         ali.targetTime = mPrompt.targetTime;
         // Listbox index is one less that the value we need for the time name.
         CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);

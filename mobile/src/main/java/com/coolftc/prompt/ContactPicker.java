@@ -25,6 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -66,8 +68,8 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     // The "mAccounts" collect all the possible people to display.
     List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_FACE};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpFacePic};
+    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -172,6 +174,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             hold.put(CP_NAME, acct.bestName());
             hold.put(CP_EXTRA, acct.bestNameAlt());
             hold.put(CP_UNIQUE, acct.unique);
+            hold.put(CP_LINKED, (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
             hold.put(CP_FACE, acct.contactPicUri());
             details.add(hold);
         }
@@ -228,6 +231,38 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     public void JumpInvite(View view){
         Intent intent = new Intent(this, Invite.class);
         startActivity(intent);
+    }
+
+    /*
+     *  This allow people to break the link that allow them to share Prompts.
+     */
+    public void UnInvite(View view) {
+        try {
+            Button holdView;
+            String uSelect = "";
+
+            // Find the matching Account.
+            holdView = (Button) view.findViewById(R.id.rowpUninvite);
+            if(holdView!=null){ uSelect = holdView.getTag().toString(); }
+            Account holdAcct = null;
+            for(Account acct : mAccounts) {
+                if (acct.unique.equalsIgnoreCase(uSelect)) {
+                    holdAcct = acct;
+                    break;
+                }
+            }
+            if(holdAcct == null) return;
+
+            // Send the account data along to the invite screen
+            Intent intent = new Intent(this, Invite.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(IN_DSPL_TGT, holdAcct);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+        }
     }
 
     /*
@@ -506,6 +541,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         public View getView(int position, View convertView, ViewGroup parent) {
             int type = getItemViewType(position);
             TextView holdView;
+            Button holdPush;
             // See https://github.com/lopspower/CircularImageView for information about CircularImageView
             CircularImageView holdPic;
             // ***May want to try "parent, false" instead of "null" to remove lint warning***
@@ -538,6 +574,11 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                             if(holdView!=null) holdView.setText(holdData.get(CP_EXTRA));
                             holdView = (TextView) convertView.findViewById(R.id.rowpUnique);
                             if(holdView!=null) holdView.setText(holdData.get(CP_UNIQUE));
+                            holdPush = (Button) convertView.findViewById(R.id.rowpUninvite);
+                            if(holdPush!=null) {
+                                holdPush.setVisibility(holdData.get(CP_LINKED).length() > 0 ? View.VISIBLE : View.GONE);
+                                holdPush.setTag(holdData.get(CP_LINKED));
+                            }
                             if (holdData.get(CP_FACE).length() > 0) {
                                 holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);
                                 if(holdPic!=null) holdPic.setImageURI(Uri.parse(holdData.get(CP_FACE)));

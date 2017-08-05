@@ -66,6 +66,7 @@ public class Actor extends Account {
         notesWaiting = registered.getInt(SP_REG_PEND, 0);
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
         force = registered.getBoolean(SP_REG_FORCE, false);
+        primary = true;
 
         if(full) {
             // LoadPrime the server data, too.

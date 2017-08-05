@@ -51,14 +51,18 @@ public class Invite extends AppCompatActivity {
 
         setContentView(R.layout.invite);
 
-        // Change the fields around a bit if data is passed in.
-        if(mAccount != null){
+        // Change the fields around a bit if data is passed in.  If an account
+        // is already a friend (confirmed = true) we disable the Accept button.
+        if(mAccount != null) {
             EditText holdName = (EditText) findViewById(R.id.contactUnique);
             if (holdName != null) holdName.setText(mAccount.unique);
             CheckBox holdMirror = (CheckBox) findViewById(R.id.chkMirror);
             if (holdMirror != null) holdMirror.setChecked(mAccount.mirror);
             Button holdAccept = (Button) findViewById(R.id.invInvite);
-            if (holdAccept != null) holdAccept.setText(R.string.accept);
+            if (holdAccept != null) {
+                holdAccept.setText(R.string.accept);
+                holdAccept.setEnabled(!mAccount.confirmed);
+            }
             Button holdReject = (Button) findViewById(R.id.invCancel);
             if (holdReject != null) holdReject.setText(R.string.reject);
         }
@@ -86,7 +90,7 @@ public class Invite extends AppCompatActivity {
 
     /*
      *  If this is an active invitation, we want to cancel it.
-     *  After than we will just simulate a back button press.
+     *  After that we will just simulate a back button press.
      *  While we could just call finish() here, in the case of a program using fragments,
      *  there is more going on, so better to always really just use onBackPressed().
      */

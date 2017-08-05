@@ -55,5 +55,15 @@
         android:paddingStart="16dp"
         android:paddingRight="16dp">
     </TextView>
+    <Button android:id="@+id/rowpUninvite"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/linked"
+        android:onClick="UnInvite"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="4dp">
+    </Button>
 
 </RelativeLayout>

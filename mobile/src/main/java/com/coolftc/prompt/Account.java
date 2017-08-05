@@ -30,10 +30,11 @@ public class Account implements Serializable {
     public String contactName = ""; // The local contact name of the user.
     public String contactPic = "";  // The local contact thumbnail uri.
     public String contactSur = "";  // The local contact last (sur) name.
-    public String tag = "";         // Area to store temporary identifier
-    public boolean mirror = false;  // The friend is a special mirror type
-    public boolean pending = false; // When true, it means pending confirmation from local user
+    public String tag = "";         // Area to store temporary identifier.
+    public boolean mirror = false;  // The friend is a special mirror type.
+    public boolean pending = false; // When true, it means pending confirmation from local user.
     public boolean confirmed = false;  // If confirmed, reminders can be sent.
+    public boolean primary = false; // When true, this account is the primary user.
 
     // Constructors
     public Account(){}
