@@ -70,16 +70,17 @@
         android:textSize="@dimen/lbl_med_size">
     </TextView>
 
-    <com.digits.sdk.android.DigitsAuthButton android:id="@+id/auth_button"
+    <Button android:id="@+id/btnSMSAuth" android:text="@string/btnPhoneNbr"
         style="@style/SignupButton"
         android:layout_below="@+id/lblPathDesc"
         android:layout_marginTop="24dp"
-        />
+        android:onClick="SMSVerification">
+    </Button>
 
     <TextView android:id="@+id/lblOr" android:text="@string/sup_detail_or"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/auth_button"
+        android:layout_below="@+id/btnSMSAuth"
         android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
         android:maxWidth="@dimen/signup_btn_width"

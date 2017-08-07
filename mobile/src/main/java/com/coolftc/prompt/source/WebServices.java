@@ -21,6 +21,10 @@ import java.net.URL;
 /**
  * The WebServices Class holds methods that can be used to communicate with the
  * Reminder API, and other Web Services.
+ *
+ * Important Note:  When using Gson JSON parser, the web service model classes
+ * and some other things need to be excluded from Proguard or they will stop
+ * working in the Release build.
  */
 public class WebServices {
 

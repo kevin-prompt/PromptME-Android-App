@@ -70,6 +70,9 @@ public class Constants {
     public static final int KY_DATETIME = 10004;
     public static final int KY_RECURE = 10005;
     public static final int KY_PLAYSTORE = 10006;
+    public static final String IN_CONFIRM_TYPE = "ConfirmType";
+    public static final String IN_SMS_VCODE = "VerifyCode";
+    public static final String IN_SMS_RESEND = "ResendToken";
     public static final String IN_DSPL_NAME = "DispalyName";
     public static final String IN_DSPL_TGT = "TargetAddr";
     public static final String IN_USER_ACCT = "UserAccount";
@@ -106,14 +109,10 @@ public class Constants {
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;
     public static final int FTI_TYPE_ANDROID = 3;       // 3 = Android GCM
-    public static final String FTI_DIGIT_VERIFY = "2";  // 2 = Digits
+    public static final String FTI_DIGIT_VERIFY = "2";      // 2 = Digits
+    public static final String FTI_FIREBASE_VERIFY = "3";   // 3 = Firebase
     public static final int NETWORK_DOWN = 99;          // Sometimes it is nice to know the issue was a bad network.
 
-    /* Third Party connection information (Obfuscation recommended). */
-    /* Twitter - Fabric - Digits user secrets */
-    /* If the TWITTER_KEY is replaced here, it must also be replaced on the server (since it is used for verification). */
-    public static final String TWITTER_KEY = "IbUE8sGOxs3nDsWAVh537VyH2";
-    public static final String TWITTER_SECRET = "CPktuMWtbgLAIH0GNHUpTz6dgVOs8VT4l8XCdcwaHWNjytFSab";
     /* The Google GCM account (called Project number in console) */
     public static final String SENDER_ID = "800396557293";
 
@@ -173,6 +172,9 @@ public class Constants {
     public static final int MSG_ID_INVALID = -1;
     /* Entry */
     public static final int MSG_MAX_LENGTH = 1024;
+    /* Signup */
+    public static final int EMAIL_SIGNUP = 1;
+    public static final int SMS_SIGNUP = 2;
 
     /* Constants used in dealing with the SQLite Database and Shared Preference Database. */
     public static final String Owner_DBID = "-1";
