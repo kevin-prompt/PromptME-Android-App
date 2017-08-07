@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.LoginFilter;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.ExpClass;
 
 import java.util.TimeZone;
 
@@ -36,16 +39,16 @@ import java.util.TimeZone;
  */
 public class SignupEmail extends AppCompatActivity {
 
-    private String dsplName = "";
+    private String mDsplName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        dsplName = getResources().getString(R.string.mysteryme);
+        mDsplName = getResources().getString(R.string.mysteryme);
         if(extras != null){
-            dsplName = extras.getString(IN_DSPL_NAME, getResources().getString(R.string.mysteryme));
+            mDsplName = extras.getString(IN_DSPL_NAME, getResources().getString(R.string.mysteryme));
         }
 
         setContentView(R.layout.signupemail);
@@ -64,7 +67,7 @@ public class SignupEmail extends AppCompatActivity {
         // Create an account, then move on to verify page
         new AcctCreateTask(SignupEmail.this, getResources().getString(R.string.app_name)).execute(
                 txtEmailAddr,
-                dsplName,
+                mDsplName,
                 getResources().getString(R.string.prf_SleepCycleDefault),
                 "");
     }
@@ -79,16 +82,18 @@ public class SignupEmail extends AppCompatActivity {
                 // Verify Screen - this is the normal path.
                 Intent confirmScreen = new Intent(this, SignupConfirm.class);
                 confirmScreen.putExtra(IN_DSPL_TGT, acct.unique);
+                confirmScreen.putExtra(IN_CONFIRM_TYPE, EMAIL_SIGNUP);
                 startActivity(confirmScreen);
             }
             else {
                 // Already Verified? OK...send to welcome.
+                Settings.setDisplayName(this, acct.display);
                 Intent intent = new Intent(this, Welcome.class);
                 startActivity(intent);
             }
         }
         else {
-            // Problem creating account.  Running the Refresh just in case.
+            // Problem creating account.
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));

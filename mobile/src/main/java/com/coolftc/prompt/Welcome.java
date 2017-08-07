@@ -74,7 +74,7 @@ public class Welcome extends AppCompatActivity {
         startService(sIntent);
 
         // Check if user needs to sign up.
-        if (acct.ticket.length() == 0) {
+        if (!acct.confirmed) {
             Intent intent = new Intent(this, Signup.class);
             startActivity(intent);
         }

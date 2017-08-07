@@ -21,6 +21,7 @@
     <TextView android:id="@+id/lblTargetAddr_SC"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:text="Your email or phone"
         android:layout_below="@+id/lblConfirmCode_SC"
         android:textColor="@color/promptblueex"
         android:textSize="@dimen/lbl_med_size">

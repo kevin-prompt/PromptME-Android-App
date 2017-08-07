@@ -33,9 +33,13 @@
     <string name="sup_detail_or">- or -</string>
     <string name="sup_edit_hint">Your Name</string>
     <string name="eml_detail_addr">Enter your email address</string>
-    <string name="eml_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an email to confirm your email address.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new email. </string>
+    <string name="eml_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an email to confirm your email address.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new email.</string>
     <string name="eml_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid email address.</string>
     <string name="eml_edit_hint">Your Email</string>
+    <string name="sms_detail_addr">Enter your phone number</string>
+    <string name="sms_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an SMS to confirm your phone number.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new text.  Standard messaging rates apply to any SMS verification codes received.</string>
+    <string name="sms_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid phone number.</string>
+    <string name="sms_edit_hint">Your Phone</string>
     <string name="vrf_detail_code">Enter the code we sent to</string>
     <string name="vrf_edit_hint">Confirmation Code</string>
     <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Prompt can discover you by email address.</string>
@@ -76,7 +80,7 @@
     <string name="inv_unique">Phone number or Email address</string>
     <string name="inv_mirror_box">Make this connection a Mirror.*</string>
     <string name="inv_mirror_help">*Mirror connections receive all your Prompts. This allows a Prompt created with your phone to also show up on another device, like a tablet that you own.  Recommended to only select Mirror if this invite is to another device of yours.</string>
-    <string name="btnEmailSend">Send confirmation</string>
+    <string name="btnConfirmSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>
     <string name="btnConfirmCode">Create Account</string>
