@@ -176,6 +176,16 @@ public class SignupConfirm extends AppCompatActivity {
     }
 
     /*
+        If there is a problem with the resend, show the problem display.
+     */
+    private void ResendComplete(boolean success) {
+
+        if(!success) {
+            DisplayProblem();
+        }
+    }
+
+    /*
         The error copy pushes the Resend button down when it is made visible.
         To make sure the button stays visible, hide the input device.
      */
@@ -335,7 +345,7 @@ public class SignupConfirm extends AppCompatActivity {
      * 4) If possible prevent the most common Activity killer by locking into portrait.
      * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
-    private class AcctResendTask extends AsyncTask<Void, Boolean, Actor> {
+    private class AcctResendTask extends AsyncTask<Void, Boolean, Boolean> {
         private ProgressDialog progressDialog;
         private Context context;
         private String title;
@@ -350,8 +360,8 @@ public class SignupConfirm extends AppCompatActivity {
             progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) { cancel(true); } });
         }
 
-        protected void onPostExecute(Actor result) {
-            SignupComplete(result);
+        protected void onPostExecute(Boolean success) {
+            ResendComplete(success);
             progressDialog.dismiss();
         }
 
@@ -368,10 +378,11 @@ public class SignupConfirm extends AppCompatActivity {
          * here. If the account is created, we also sync the local account data.
          * Input criteria: This gets all input data from existing Account data.
          */
-        protected Actor doInBackground(Void... criteria) {
+        protected Boolean doInBackground(Void... criteria) {
 
             Actor acct = new Actor(context);
             WebServices ws = new WebServices();
+            boolean success = false;
             if(ws.IsNetwork(context)) {
                 WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
                 regData.uname = acct.unique;
@@ -386,12 +397,14 @@ public class SignupConfirm extends AppCompatActivity {
                 WebServiceModels.RegisterResponse user = ws.Registration(regData);
                 if(user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
+                    acct.acctId = user.id;
                     acct.SyncPrime(false, context);
+                    success = true;
                 }
             } else {
                 publishProgress(false);
             }
-            return acct;
+            return success;
         }
     }
 
