@@ -85,7 +85,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         mContactSearch = (EditText) findViewById(R.id.txtSearch_CP);
         mListView = (ListView) findViewById(R.id.listContacts_CP);
         contactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
-        ShowDetails("");
+        ShowDetails("", false);
         hRefresh.postDelayed(rRefresh, UPD_SCREEN_TQ);
 
         // As a user types in characters, trim the contact list.
@@ -115,7 +115,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
      *  a search term is supplied, that is applied as well (although for
      *  search it is better to use ShowDetailsCache).
      */
-    private void ShowDetails(String search) {
+    private void ShowDetails(String search, boolean skipContact) {
         // This is a new list from scratch.  This is a global list (for this class), so
         // it can be used later by other methods.
         mAccounts = new ArrayList<>();
@@ -134,8 +134,11 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             AddDelimitRow(R.string.contact_all);
             LoadContacts();
         } else {
-            // If permission has not been granted, ask for it.  Continue to display what you have.
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, SEC_READ_CONTACTS);
+            // If permission has not been granted, ask for it, unless the user has explicitly said not to.
+            // The skipContact is used by the refresh handler, to prevent annoying the user.
+            if(!skipContact && Settings.getContactsOk(getApplicationContext())) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, SEC_READ_CONTACTS);
+            }
         }
 
         // Once the mAccounts are populated, go ahead and use the cache processor.
@@ -209,7 +212,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     contactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
-                    ShowDetails("");
+                    ShowDetails("", false);
                 }
             }
         }
@@ -483,7 +486,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     @Override
     public void newSort() {
         if(mContactSearch != null) mContactSearch.setText("");
-        ShowDetails("");
+        ShowDetails("", false);
     }
 
     /*
@@ -612,7 +615,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             String holdSearch = mContactSearch.getText().toString();
             hRefreshCntr += UPD_SCREEN_TQ;
             if(hRefreshCntr < UPD_SCREEN_TQ*10){
-                ShowDetails(holdSearch);
+                ShowDetails(holdSearch, true);
                 hRefresh.postDelayed(this, UPD_SCREEN_TQ);
             } else {
                 ShowDetailsCache(holdSearch);

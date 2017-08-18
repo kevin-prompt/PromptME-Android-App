@@ -31,6 +31,11 @@
             android:summary="@string/prf_VibrateOnSum"
             android:defaultValue="false">
         </CheckBoxPreference>
+        <CheckBoxPreference android:key="1005"
+            android:title="@string/prf_ContactsOk"
+            android:summary="@string/prf_ContactsOkSum"
+            android:defaultValue="true">
+        </CheckBoxPreference>
         <EditTextPreference android:key="1004"
             android:title="@string/prf_Snooze"
             android:summary="@string/prf_SnoozeSum"

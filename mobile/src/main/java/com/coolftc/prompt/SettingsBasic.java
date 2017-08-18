@@ -2,6 +2,7 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,7 +13,9 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v4.content.ContextCompat;
 
+import static com.coolftc.prompt.Settings.PREF_CONTACTS;
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.Settings.PREF_DISPNAME;
 import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
@@ -55,13 +58,20 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mShortDate = findPreference(PREF_PICKSHORTDATEFMT);
         mSnooze = findPreference(PREF_SNOOZE);
 
-        // Do not bother showing the selection if the device does not support it.
+        // Do not bother showing these selections if the device does not support it
+        // or it is no longer meaningful.
         // Note: To modify the structure of the page, need to use the category.
         final Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         if (!v.hasVibrator()) {
             PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
             Preference mVibrate = findPreference(PREF_VIBRATEON);
             cat.removePreference(mVibrate);
+        }
+
+        if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
+            Preference mContacts = findPreference(PREF_CONTACTS);
+            cat.removePreference(mContacts);
         }
 
         // Apply any initialization (mostly summaries)
