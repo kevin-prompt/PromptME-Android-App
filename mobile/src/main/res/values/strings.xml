@@ -61,6 +61,8 @@
     <string name="prf_NameSortDefault">0</string>
     <string name="prf_VibrateOn">Prompt Vibrate</string>
     <string name="prf_VibrateOnSum">Vibrate on incoming Prompts.</string>
+    <string name="prf_ContactsOk">Use Contacts</string>
+    <string name="prf_ContactsOkSum">Ask to use local contacts if not yet allowed.</string>
     <string name="prf_Sounds">Prompt Sound</string>
     <string name="prf_SoundsSum">Sound of incoming Prompts.</string>
     <string name="prf_Snooze">Snooze</string>
