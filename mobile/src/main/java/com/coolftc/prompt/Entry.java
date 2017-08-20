@@ -73,14 +73,12 @@ public class Entry extends AppCompatActivity {
                 if(mTarget == null) {
                     mTarget = new Actor(this);  // Default to self-message.
                 }
-                // This passed in message data is used when making a copy.
-                // The stored time name is 1 larger than the display array, so it is reduced by 1.
-                // Since zero (0), which is exact time, is not really useful for a copy, using 0
-                // for either 0 or 1 is fine.
-                mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
+                // This passed-in message data is used when making a copy.
+                // Since exact time is not useful, just default to Today.
+               mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
                 if(mPrompt != null){
-                    mDefaultTimeName = mPrompt.targetTimeNameId > 0 ? mPrompt.targetTimeNameId - 1 : 0;
-                    mDefaultTimeAdj = mPrompt.targetTimeAdjId * SEEK_MARK;
+                    mDefaultTimeName = mPrompt.GetTargetTimeNameIdDsply();
+                    mDefaultTimeAdj = mPrompt.GetTargetTimeAdjIdDsply() * SEEK_MARK;
                     mDefaultMessage = mPrompt.message;
                 } else {
                     mPrompt = new Reminder();
@@ -359,10 +357,10 @@ public class Entry extends AppCompatActivity {
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
             ali.targetTimeNameId = 0;
         } else {
-            ali.targetTimeNameId = mTimename.getSelectedItemPosition() + 1;
+            ali.SetTargetTimeNameIdDsply(mTimename.getSelectedItemPosition());
         }
-        // Want a number from 1 to 6, so do an integer division to truncate fraction and add 1.
-        ali.targetTimeAdjId = (mTimeadj.getProgress() / SEEK_MARK) + 1;
+        // Want a number from 0 to 5, so do an integer division to truncate fraction.
+        ali.SetTargetTimeAdjIdDsply(mTimeadj.getProgress() / SEEK_MARK);
         ali.recurUnit = mPrompt.recurUnit;
         ali.recurPeriod = mPrompt.recurPeriod;
         ali.recurNumber = mPrompt.recurNumber;

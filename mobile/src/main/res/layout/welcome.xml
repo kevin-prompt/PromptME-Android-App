@@ -45,6 +45,7 @@
         android:id="@+id/welPending"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="JumpHistory"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"

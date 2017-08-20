@@ -1,6 +1,6 @@
 <resources>
-    <string name="ver_nbr">2.0.0.1</string>
-    <string name="ver_build">2017 - Aug 04</string>
+    <string name="ver_nbr">2.0.0.2</string>
+    <string name="ver_build">2017 - Aug 20</string>
     <string name="app_name">Prompt</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
@@ -190,7 +190,7 @@
     <string name="ver_copyright">© 2017 zalicon enterprises, inc.</string>
     <string name="pickdate">&lt;&lt; Pick Date</string>
     <string name="picktime">Pick Time &gt;&gt;</string>
-    <string name="err_cannot_connect">Unable to connect to servers.</string>
+    <string name="err_cannot_connect">Unable to connect.</string>
     <string name="err_bad_request">Problem making request (%d)</string>
     <string name="err_bad_auth">Not a valid account (%d)</string>
     <string name="err_bad_server">Server issue, try later (%d)</string>

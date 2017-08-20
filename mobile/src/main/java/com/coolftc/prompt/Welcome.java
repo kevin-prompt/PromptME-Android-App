@@ -191,6 +191,16 @@ public class Welcome extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Used to navigate to History if there are pending prompts.
+    public void JumpHistory(View view) {
+        Actor user = new Actor(getApplicationContext());
+        if(user.notesWaiting > 0) {
+            Intent intent = new Intent(this, History.class);
+            startActivity(intent);
+        }
+
+    }
+
     /*
         The notification functionality relies upon the Google Play Services, which
         on some implementations of Android might might not be present, just letting
