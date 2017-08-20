@@ -248,11 +248,11 @@ public class Detail extends AppCompatActivity {
         }
 
         // Simple time message
-        if(mPrompt.targetTimeNameId == 0){
+        if(mPrompt.IsExactTime()){
             holdFormatted = getString(R.string.scheduled) + ": " + mPrompt.GetPromptTime(getApplicationContext());
         }else {
-            holdFormatted = getString(R.string.scheduled) + ": " + Arrays.asList(getResources().getStringArray(R.array.time_name)).get(mPrompt.targetTimeNameId - 1);
-            holdFormatted += ", " + Arrays.asList(getResources().getStringArray(R.array.time_adj)).get(mPrompt.targetTimeAdjId);
+            holdFormatted = getString(R.string.scheduled) + ": " + Arrays.asList(getResources().getStringArray(R.array.time_name)).get(mPrompt.GetTargetTimeNameIdDsply());
+            holdFormatted += ", " + Arrays.asList(getResources().getStringArray(R.array.time_adj)).get(mPrompt.GetTargetTimeAdjIdDsply());
         }
         if(mPrompt.snoozeId > 0) { holdFormatted += " -" + getString(R.string.img_snooze); }
         holdText = (TextView) findViewById(R.id.dtlSimpleTime);
