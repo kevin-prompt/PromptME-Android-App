@@ -68,7 +68,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     // The "mAccounts" collect all the possible people to display.
     List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE, CP_BUTTON};
     int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     // Handler used as a timer to trigger updates.
@@ -177,7 +177,8 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             hold.put(CP_NAME, acct.bestName());
             hold.put(CP_EXTRA, acct.bestNameAlt());
             hold.put(CP_UNIQUE, acct.unique);
-            hold.put(CP_LINKED, (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
+            hold.put(CP_LINKED, (acct.confirmed || acct.isFriend) && !acct.primary ? acct.unique : "");
+            hold.put(CP_BUTTON,  !acct.confirmed ? (acct.pending ? getString(R.string.accept) : getString(R.string.waiting)) : "");
             hold.put(CP_FACE, acct.contactPicUri());
             details.add(hold);
         }
@@ -203,7 +204,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     }
 
     /*
-     * Reload the Contacts, now that we can use all of them, since used agreed to permission.
+     * Reload the Contacts, now that we can use all of them, since user agreed to permission.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -327,7 +328,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                                     mgr.beginTransaction().remove(frag).commit();
                                 }
                                 ContactPickerDialog invited = new ContactPickerDialog();
-                                invited.setInvites(addresses);
+                                invited.setInvites(holdAcct.bestName(), addresses);
                                 invited.show(mgr, KY_ADDR_FRAG);
                             } else {
                                 Toast.makeText(this, R.string.ctp_no_addresses, Toast.LENGTH_LONG).show();
@@ -359,6 +360,8 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
      */
     private void LoadFriends(Integer friendType){
         FriendDB social = new FriendDB(this);  // Be sure to close this before leaving the thread.
+        List<Account> contacts = new ArrayList< >();
+        String sortEnd = getString(R.string.zzzzz); // Used to sort numbers to end
         SQLiteDatabase db = social.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_FriendsWhere.replace(SUB_ZZZ, friendType.toString()), filler);
@@ -369,6 +372,8 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 local.acctId = cursor.getLong(cursor.getColumnIndex(FriendDB.FRIEND_ACCT_ID));
                 local.unique = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_UNIQUE));
                 local.display = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_DISPLAY));
+                local.contactSur = local.LastWord(local.display);
+                if (local.contactSur.length() > 0 && Character.isDigit(local.contactSur.charAt(0))) local.contactSur = sortEnd; // sort these to the end
                 local.timezone = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_TIMEZONE));
                 local.sleepcycle = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_SCYCLE));
                 local.contactId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_ID));
@@ -377,8 +382,18 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
                 local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
                 local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
-                mAccounts.add(local);
+                local.isFriend = true;
+                contacts.add(local);
             }
+
+            // The friends are sorted by first name already, so only sort if need to switch to last word sorting.
+            if(Settings.isSortByLastName(getApplicationContext())){
+                Collections.sort(contacts, Account.ByLastFirstName);
+            }
+            for (Account ali : contacts) {
+                mAccounts.add(ali);
+            }
+
             cursor.close();
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
@@ -493,8 +508,8 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
      *  The invites have been selected, but better to call the thread from here.
      */
     @Override
-    public void newInvite(String [] addresses, boolean mirror) {
-        SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, mirror);
+    public void newInvite(String [] addresses, String display, boolean mirror) {
+        SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, display, mirror);
         smt.start();
     }
 
@@ -581,6 +596,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                             if(holdPush!=null) {
                                 holdPush.setVisibility(holdData.get(CP_LINKED).length() > 0 ? View.VISIBLE : View.GONE);
                                 holdPush.setTag(holdData.get(CP_LINKED));
+                                if(holdData.get(CP_BUTTON).length() > 0){ holdPush.setText(holdData.get(CP_BUTTON)); }
                             }
                             if (holdData.get(CP_FACE).length() > 0) {
                                 holdPic = (CircularImageView) convertView.findViewById(R.id.rowpFacePic);

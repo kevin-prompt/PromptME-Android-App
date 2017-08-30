@@ -183,15 +183,7 @@ public class Entry extends AppCompatActivity {
         // Special processing if an exact time is in use
         holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
-            String dTime;
-            String dateTimeFmt = Settings.getDateDisplayFormat(getApplicationContext(), DATE_TIME_FMT_SHORT);
-            try {
-                Calendar delivery = KTime.ParseToCalendar(mPrompt.targetTime, KTime.KT_fmtDate3339fk);
-                dTime = DateFormat.format(dateTimeFmt, delivery).toString();
-            } catch (ExpParseToCalendar expParseToCalendar) {
-                dTime = KTime.ParseNow(dateTimeFmt).toString();
-            }
-            holdRaw += dTime;
+            holdRaw += mPrompt.GetPromptTime(getApplicationContext());
             mTimename.setEnabled(false);  // Blank out the time name
             mTimeadj.setEnabled(false);
         } else {

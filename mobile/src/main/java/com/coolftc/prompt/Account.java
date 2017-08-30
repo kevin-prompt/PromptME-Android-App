@@ -34,6 +34,7 @@ public class Account implements Serializable {
     public boolean mirror = false;  // The friend is a special mirror type.
     public boolean pending = false; // When true, it means pending confirmation from local user.
     public boolean confirmed = false;  // If confirmed, reminders can be sent.
+    public boolean isFriend = false;// Is a friend or a potential friend (not just a contact).
     public boolean primary = false; // When true, this account is the primary user.
 
     // Constructors
@@ -58,6 +59,21 @@ public class Account implements Serializable {
     public boolean Found(String term){
         String lowterm = term.toLowerCase();
         return (term.length() == 0 || unique.toLowerCase().contains(lowterm) || display.toLowerCase().contains(lowterm) || contactName.toLowerCase().contains(lowterm));
+    }
+
+    /*
+     *  Returns the last word of the display name, to provided a semblance of sur name sorting
+     *  for the list of users one is connected too.  While real names are expected to have sur
+     *  names (although not all do), the display names enter for the app are not to follow that
+     *  paradigm so often.  For example, many people will just have one word names.
+     */
+    public String LastWord(String words) {
+        words = words.trim();
+        if(words.length() < 2) return words; // 0 or 1 letters => max of one word
+        int ndx = words.lastIndexOf(" ");    // delimiter is space
+        if(ndx == -1) return words;          // no delimiters
+        if(ndx < words.length()) ndx += 1;   // ignore the delimiter
+        return words.substring(ndx);         // the last word
     }
 
     /*

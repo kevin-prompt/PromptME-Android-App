@@ -1,6 +1,6 @@
 <resources>
-    <string name="ver_nbr">2.0.0.2</string>
-    <string name="ver_build">2017 - Aug 20</string>
+    <string name="ver_nbr">1.1.0.0</string>
+    <string name="ver_build">2017 - Aug 31</string>
     <string name="app_name">Prompt</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
@@ -69,6 +69,7 @@
     <string name="prf_SnoozeSum">Prompt notification snooze time: %s minutes.</string>
     <string name="prf_SnoozeDefault">60</string>
     <string name="prf_About">About</string>
+    <string name="prf_NotificationTone">Prompt Notification</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
     <string name="wel_Pending">Pending (%d)</string>
@@ -77,7 +78,10 @@
     <string name="ctp_Addresses">Select Addresses and press Invite</string>
     <string name="ctp_edit_hint">Search</string>
     <string name="ctp_no_addresses">The selected contact does not have any phone numbers or email addresses.</string>
-    <string name="inv_title">Make a Connection</string>
+    <string name="inv_title_make">Make a Connection</string>
+    <string name="inv_title_reject">Reject a Connection</string>
+    <string name="inv_title_cancel">Cancel a Connection</string>
+    <string name="inv_title_accept">Accept a Connection</string>
     <string name="inv_invitation">Invite someone you know to connect.</string>
     <string name="inv_unique">Phone number or Email address</string>
     <string name="inv_mirror_box">Make this connection a Mirror.*</string>
@@ -125,10 +129,12 @@
     <string name="snooze">Snooze</string>
     <string name="ignore">Ignore</string>
     <string name="accept">Accept</string>
+    <string name="waiting">Waiting</string>
     <string name="reject">Reject</string>
     <string name="invite">Invite</string>
     <string name="dismiss">Dismiss</string>
     <string name="linked">Linked</string>
+    <string name="delink">Delink</string>
     <string name="copy">Copy</string>
     <string name="newWord">New</string>
     <string name="reply">Reply</string>
@@ -197,9 +203,6 @@
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>
     <string name="err_no_message">There is a problem finding the details of that message.</string>
     <string name="err_no_contact">Please enter a valid phone number or email address and then press Send.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
 

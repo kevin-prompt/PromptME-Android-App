@@ -45,7 +45,7 @@ public class AcceptInvite extends IntentService {
             // By sending an invitation back, the connection is consummated.  Mirrors are not handled in this service.
             String [] addresses = new String[1];
             addresses[0] = mAccount.unique;
-            SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, false);
+            SendInviteThread smt = new SendInviteThread(getApplicationContext(), addresses, mAccount.display, false);
             smt.start();
 
         } catch (Exception ex) {

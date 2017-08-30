@@ -28,6 +28,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,8 @@ public class Welcome extends AppCompatActivity {
      */
     private void LoadFriends(Integer friendType){
         FriendDB social = new FriendDB(this);  // Be sure to close this before leaving the thread.
+        List<Account> contacts = new ArrayList< >();
+        String sortEnd = getString(R.string.zzzzz); // Used to sort numbers to end
         SQLiteDatabase db = social.getReadableDatabase();
         String[] filler = {};
         Cursor cursor = db.rawQuery(DB_FriendsWhere.replace(SUB_ZZZ, friendType.toString()), filler);
@@ -244,6 +247,8 @@ public class Welcome extends AppCompatActivity {
                 local.acctId = cursor.getLong(cursor.getColumnIndex(FriendDB.FRIEND_ACCT_ID));
                 local.unique = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_UNIQUE));
                 local.display = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_DISPLAY));
+                local.contactSur = local.LastWord(local.display);
+                if (local.contactSur.length() > 0 && Character.isDigit(local.contactSur.charAt(0))) local.contactSur = sortEnd; // sort these to the end
                 local.timezone = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_TIMEZONE));
                 local.sleepcycle = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_SCYCLE));
                 local.contactId = cursor.getString(cursor.getColumnIndex(FriendDB.FRIEND_CONTACT_ID));
@@ -252,9 +257,19 @@ public class Welcome extends AppCompatActivity {
                 local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
                 local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
                 local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
-                mAccounts.add(local);
+                local.isFriend = true;
+                contacts.add(local);
             }
             cursor.close();
+
+            // The friends are sorted by first name already, so only sort if need to switch to last word sorting.
+            if(Settings.isSortByLastName(getApplicationContext())){
+                Collections.sort(contacts, Account.ByLastFirstName);
+            }
+            for (Account ali : contacts) {
+                mAccounts.add(ali);
+            }
+
         } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
     }

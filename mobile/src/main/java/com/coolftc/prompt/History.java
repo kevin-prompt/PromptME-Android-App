@@ -287,7 +287,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
     }
 
     @Override
-    public void newInvite(String [] addresses, boolean mirror) { throw new UnsupportedOperationException(); }
+    public void newInvite(String [] addresses, String display, boolean mirror) { throw new UnsupportedOperationException(); }
 
     /*
      *  The dialog has adjusted the sort parameters, resort and redisplay the data.

@@ -11,7 +11,7 @@
     tools:context="com.coolftc.prompt.Invite">
 
     <TextView android:id="@+id/lblInviteTitle"
-        android:text="@string/inv_title"
+        android:text="@string/inv_title_make"
         android:textSize="@dimen/lbl_big_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

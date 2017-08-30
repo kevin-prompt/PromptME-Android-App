@@ -88,9 +88,12 @@ public class Reminder  implements Serializable {
     }
 
     /*
-     *  This provides a human readable timestamp based on date / time
-     *  formatting selected in Settings.  It assumes caller wants to
-     *  see the date in the local timezone.
+     *  This provides a human readable timestamp based on date / time formatting
+     *  selected in Settings.  The API likes to provide dates in UTC, while the
+     *  app will generally be generating dates in the local time zone.  As long
+     *  as it is only 2 options, we can treat a time with a zero offset as UTC
+     *  and convert those to display in the local time zone.  If the time has a
+     *  non-zero offset, we will just format it as is.
      */
     private String GetFormattedTime(Context context, int ts){
         String holdTimeStamp;
@@ -117,8 +120,13 @@ public class Reminder  implements Serializable {
         }
         Calendar delivery;
         String dateTimeFmt = Settings.getDateDisplayFormat(context, holdFormat);
+        boolean isUTC = KTime.ParseOffset(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.KT_SECONDS) == 0;
         try {
-            delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
+            if(isUTC) {
+                delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
+            } else {
+                delivery = KTime.ParseToCalendar(holdTimeStamp, KTime.KT_fmtDate3339fk);
+            }
             return DateFormat.format(dateTimeFmt, delivery).toString();
         } catch (ExpParseToCalendar expParseToCalendar) {
             return context.getResources().getString(R.string.unknown);

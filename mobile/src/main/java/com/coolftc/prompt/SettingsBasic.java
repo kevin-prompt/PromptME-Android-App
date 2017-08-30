@@ -1,6 +1,8 @@
 package com.coolftc.prompt;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.Ringtone;
@@ -13,9 +15,13 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.coolftc.prompt.service.Refresh;
+
 import static com.coolftc.prompt.Settings.PREF_CONTACTS;
+import static com.coolftc.prompt.Settings.PREF_SOUND_AVAILABLE;
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.Settings.PREF_DISPNAME;
 import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
@@ -80,6 +86,16 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mSound.setSummary(getRingtoneSummary());
         mShortDate.setSummary(getShortDate());
         mSnooze.setSummary(getSnoozeSummary());
+
+        // Check if the user will let us write (the ringtone) to external storage. We will trigger a Refresh
+        // to do the write in either case, no harm and less work than implementing a callback in the Activity.
+        int storagePermissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (storagePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // If permission has not been granted, ask for it, unless the user has explicitly said not to.
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SEC_WRITE_STORAGE);
+            Intent sIntent = new Intent(getActivity(), Refresh.class);
+            getActivity().startService(sIntent);
+        }
     }
 
     @Override
@@ -115,6 +131,9 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         }
         if (key.equals(PREF_SOUND)) {
             mSound.setSummary(getRingtoneSummary());
+            // Sometimes the sound thinks it is copied but is not, this gives it another try.
+            if (!mSound.getSummary().toString().equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone)))
+                mPrefDB.edit().putBoolean(PREF_SOUND_AVAILABLE, false).apply();
         }
         if (key.equals(PREF_PICKSHORTDATEFMT)){
             mShortDate.setSummary(getShortDate());
@@ -155,13 +174,18 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         return String.format(summary, dtypes[sdNdx].substring(0, 12));
     }
 
+
     private String getRingtoneSummary() {
-        final String path = mPrefDB.getString(PREF_SOUND, "");
-        if (!path.isEmpty()) {
+        final String path = mPrefDB.getString(PREF_SOUND, getResources().getString(R.string.prf_NotificationTone));
+
+        if (!path.isEmpty() && !path.equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone))) {
             final Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse(path));
             return ringtone.getTitle(getActivity().getApplicationContext());
         }
-        return getResources().getString(R.string.silent);
+        if (path.isEmpty()) {
+            return getResources().getString(R.string.silent);
+        }
+        return getResources().getString(R.string.prf_NotificationTone);
     }
 
 }

@@ -230,6 +230,43 @@ public class KTime {
     }
 
     /*
+     *  Returns specific parts of the UTC offset, or the total number of seconds.
+     */
+    public static int ParseOffset(String inTime, String inFormat, int section) {
+        // The parts available
+        int tmzHours = 0;       // This is an integer representation of the hour offset.
+        int tmzMinutes = 0;     // This is an integer representation of the minute offset.
+        int fullSeconds = 0;    // This is the total offset in seconds (hours + minutes)
+
+        int ndx=inFormat.indexOf(DAY_Z);
+        if(ndx == MISSING) ndx=inFormat.indexOf(DAY_z);
+        if(ndx != MISSING){
+            int tmzoff = 0;
+            int tmzsign = 1;
+            String tmz = inTime.substring(ndx).trim(); // time zone is the final element in these formats
+            if(!(tmz.equalsIgnoreCase("Z") || tmz.equalsIgnoreCase("GMT") || tmz.equalsIgnoreCase("UTC"))){
+                tmz = tmz.replace(":", "");
+                if(tmz.contains("-")) tmzsign = -1;
+                tmz = tmz.replace("-", ""); tmz = tmz.replace("+", "");
+                tmzHours = Integer.parseInt(tmz.substring(0, 2)) * tmzsign;
+                tmzMinutes = Integer.parseInt(tmz.substring(2)) * tmzsign;
+                fullSeconds = (tmzHours * 60 * 60) + (tmzMinutes * 60) * tmzsign;
+            }
+        }
+
+        switch (section){
+            case KT_HOURS:
+                return tmzHours;
+            case KT_MINUTES:
+                return tmzMinutes;
+            case KT_SECONDS:
+                return fullSeconds;
+            default:
+                return 0;
+        }
+    }
+
+    /*
      *  Take a string based time and its format description, then generate a
      *  Calendar object.  If a timezone is not supplied the local one is used.
      */

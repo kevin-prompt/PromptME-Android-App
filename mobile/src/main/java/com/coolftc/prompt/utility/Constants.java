@@ -87,7 +87,8 @@ public class Constants {
     public static final String IN_MESSAGE = "message";
     public static final String IN_ADDRESSES = "addresses";
     public static final String IN_ADDRESSES_TRUE = "addresses.select";
-    public static final int SEC_READ_CONTACTS = 10003;
+    public static final int SEC_READ_CONTACTS = 10013;
+    public static final int SEC_WRITE_STORAGE = 10014;
     public static final int FR_POS_EXDATE = 0;
     public static final int FR_POS_EXTIME = 1;
     public static final String KY_HIST_FRAG = "history.sort";
@@ -96,7 +97,7 @@ public class Constants {
 
     /* Constants used in dealing with the FutureTell API and other web sites */
     public static final String SUB_ZZZ = "ZZZ";
-    public static final String FTI_BaseURL = "http://d9f51b5b1b3c412bb637cb5fca495d3e.cloudapp.net";
+    public static final String FTI_BaseURL = "https://promptapi.zalicon.com";
     public static final String FTI_Status = "/v1/status";
     public static final String FTI_Ping = "/v1/status/ping";
     public static final String FTI_Register = "/v1/user";
@@ -125,6 +126,7 @@ public class Constants {
     public static final String CP_UNIQUE = "unique";
     public static final String CP_LINKED = "linked";
     public static final String CP_FACE = "face";
+    public static final String CP_BUTTON = "button";
     public static final String TITLE_ROW = "AliCon2016";
     /* History list. */
     public static final String HS_REM_ID = "history.reminder";
@@ -180,7 +182,7 @@ public class Constants {
     public static final String Owner_DBID = "-1";
     public static final String ISO3166_Default = "US";
     public static final String DB_FriendsAll = "select * from friend";
-    public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = " + SUB_ZZZ;
+    public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = " + SUB_ZZZ + " order by " + FriendDB.FRIEND_DISPLAY + " COLLATE NOCASE";
     public static final String DB_FriendByName = "select * from friend where " + FriendDB.FRIEND_UNIQUE + " = " + SUB_ZZZ;
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_Table_ServerID = MessageDB.MESSAGE_SRVR_ID + " = " + SUB_ZZZ;

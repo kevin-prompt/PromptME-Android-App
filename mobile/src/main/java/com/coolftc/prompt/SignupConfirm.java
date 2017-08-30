@@ -169,6 +169,7 @@ public class SignupConfirm extends AppCompatActivity {
             // All set... onward to welcome.
             Settings.setDisplayName(this, acct.display);
             Intent intent = new Intent(this, Welcome.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }else{
             DisplayProblem();

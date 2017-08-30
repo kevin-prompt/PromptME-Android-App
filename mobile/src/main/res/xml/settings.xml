@@ -24,7 +24,7 @@
             android:ringtoneType="all"
             android:showDefault="true"
             android:showSilent="true"
-            android:defaultValue="@string/blank">
+            android:defaultValue="@string/prf_NotificationTone">
         </RingtonePreference>
         <CheckBoxPreference android:key="1001"
             android:title="@string/prf_VibrateOn"
