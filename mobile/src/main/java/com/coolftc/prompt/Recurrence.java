@@ -442,17 +442,13 @@ public class Recurrence extends AppCompatActivity {
     }
 
     /*
-     *  Formats time in an expected way for this application.
+     *  Formats time in an expected way for this application.  We reuse the formatter in the
+     *  Reminder class.
      */
     private String GetRecurringTime(String inTime) {
-        Calendar delivery;
-        String dateTimeFmt = Settings.getDateDisplayFormat(getApplicationContext(), DATE_TIME_FMT_SHORT);
-        try {
-            delivery = KTime.ConvertTimezone(KTime.ParseToCalendar(inTime, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
-            return DateFormat.format(dateTimeFmt, delivery).toString();
-        } catch (ExpParseToCalendar expParseToCalendar) {
-            return getResources().getString(R.string.unknown);
-        }
+        Reminder holdData = new Reminder();
+        holdData.recurEnd = inTime;
+        return holdData.GetRecurringTime(getApplicationContext());
     }
 
     private int DayOfWeek() {

@@ -80,6 +80,7 @@ public class SendMessageThread extends Thread {
             rData.period = msg.recurPeriod;
             rData.recurs = msg.recurNumber;
             rData.end = msg.recurEnd;
+            rData.groupId = 0;
             rData.message = msg.message;
 
             realTime = ws.NewPrompt(from.ticket, from.acctIdStr(), rData);

@@ -38,7 +38,6 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     private String mTimeStamp;
     private String mDatePicked;
     private String mTimePicked;
-    private PageFragmentMgr mPageFragmentMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
             mTimePicked = mTimeStamp.substring(11);
         }
 
-        mPageFragmentMgr = new PageFragmentMgr(getSupportFragmentManager());
+        PageFragmentMgr mPageFragmentMgr = new PageFragmentMgr(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -72,7 +71,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
         RelativeLayout holdParent = (RelativeLayout) view.getParent();
         if(holdParent == null) return;
         TimePicker timePicker = (TimePicker) holdParent.findViewById(R.id.exactTimePicker);
-        Integer hour = 0; Integer min = 0;
+        Integer hour; Integer min;
         if(timePicker != null) {
             hour = timePicker.getCurrentHour();
             min = timePicker.getCurrentMinute();
@@ -89,7 +88,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     }
 
     @Override
-    public void newInvite(String [] addresses, boolean mirror) { throw new UnsupportedOperationException(); }
+    public void newInvite(String [] addresses, String display, boolean mirror) { throw new UnsupportedOperationException(); }
 
     @Override
     public void newSort() { throw new UnsupportedOperationException(); }

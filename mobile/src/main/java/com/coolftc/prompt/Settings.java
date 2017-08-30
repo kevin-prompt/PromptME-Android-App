@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import com.coolftc.prompt.utility.ExpClass;
 
+import java.util.Locale;
+
 import static com.coolftc.prompt.utility.Constants.*;
 
 /**
@@ -50,6 +52,8 @@ public class Settings extends AppCompatActivity {
     public static final String PREF_SNOOZE = "1004";
     public static final String PREF_CONTACTS = "1005";
     public static final boolean DEFAULT_CONTACTS = true;
+    public static final String PREF_SOUND_AVAILABLE = "1006";
+    public static final boolean DEFAULT_SOUND_AVAILABLE = false;
     public static final String PREF_NAMESORT = "name.sortorder";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
     public static final int DEFAULT_SORT_ORDER = 0;
@@ -108,9 +112,14 @@ public class Settings extends AppCompatActivity {
         context = null;
     }
 
-    // The ringtone to be used upon notifications.
+    // The ringtone to be used for notifications.  There are times when we want to use the
+    // sound included with the app, that is the defaultRingtone value.
     public static Uri getRingtone(Context context){
-        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SOUND, "");
+        String defaultRingtone = String.format(Locale.getDefault(), "android.resource://%s/%d",context.getPackageName(),R.raw.promptbeep);
+        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SOUND, defaultRingtone);
+        if (holdAnswer.equalsIgnoreCase(context.getResources().getString(R.string.prf_NotificationTone))) {
+            holdAnswer = defaultRingtone;
+        }
         context = null;
         return Uri.parse(holdAnswer);
     }
@@ -161,6 +170,21 @@ public class Settings extends AppCompatActivity {
     public static void setPromptSortOrder(Context context, int sort){
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putInt(PREF_SORT_ORDER, sort);
+        ali.apply();
+        context = null;
+    }
+
+    // Check if the default notification sound has been copied locally to the device.
+    public static boolean isSoundCopied(Context context) {
+        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_SOUND_AVAILABLE, DEFAULT_SOUND_AVAILABLE);
+        context = null;
+        return holdAnswer;
+    }
+
+    // Called after a successful copy of the notification sound, so we do not bother with it again.
+    public static void setSoundCopied(Context context, boolean done){
+        SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        ali.putBoolean(PREF_SOUND_AVAILABLE, done);
         ali.apply();
         context = null;
     }

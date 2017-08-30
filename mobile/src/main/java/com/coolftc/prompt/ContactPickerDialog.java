@@ -6,7 +6,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
 import static com.coolftc.prompt.utility.Constants.*;
 
 /**
@@ -19,9 +18,11 @@ public class ContactPickerDialog extends DialogFragment {
     private FragmentTalkBack mActivity;
     private String [] mAddresses;
     private boolean [] mSelected;
+    private String mDisplayName;
 
     // Use this to initialize the displayed data.
-    public void setInvites(String [] contacts){
+    public void setInvites(String display, String [] contacts){
+        mDisplayName = display;
         mAddresses = contacts;
         mSelected = new boolean[mAddresses.length];
         for(int i = 0; i < mSelected.length; ++i) { mSelected[i] = true; }
@@ -46,7 +47,7 @@ public class ContactPickerDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // Blank out any addresses that are not selected.
                         for(int i = 0; i < mSelected.length; ++i) { if (!mSelected[i]) { mAddresses[i] = ""; } }
-                        mActivity.newInvite(mAddresses, false);
+                        mActivity.newInvite(mAddresses, mDisplayName, false);
                         dismiss();
                     }
                 })

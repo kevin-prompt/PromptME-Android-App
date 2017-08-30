@@ -67,6 +67,7 @@ public interface  WebServiceModels {
     class InviteRequest
     {
         public String fname;
+        public String fdisplay;
         public String message;
         public boolean mirror;
         public int response;   // This is added locally to aid in processing
@@ -104,6 +105,7 @@ public interface  WebServiceModels {
         public int period;
         public String end;
         public int recurs;
+        public int groupId;
         public String message;
     }
 

@@ -72,6 +72,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/dtlCreated"/>
 
     <TextView android:id="@+id/dtlSimpleTime"
+        android:visibility="gone"
         tools:text="Scheduled: Today, Afternoon."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,6 +81,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/dtlStatus"/>
 
     <TextView android:id="@+id/dtlSleepCycle"
+        android:visibility="gone"
         tools:text="Sleep Cycle: 9 to 5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

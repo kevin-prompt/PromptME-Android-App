@@ -3,16 +3,24 @@ package com.coolftc.prompt.service;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.utility.KTime.KT_fmtDate3339fk;
 import static com.coolftc.prompt.utility.KTime.UTC_TIMEZONE;
 
 import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.R;
+import com.coolftc.prompt.Settings;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.KTime;
@@ -20,6 +28,12 @@ import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.source.WebServices;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.coolftc.prompt.source.WebServiceModels.*;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,9 +80,9 @@ public class Refresh extends IntentService {
                 ghost.device = FirebaseInstanceId.getInstance().getId();
             }
 
-            // This is to make sure we stay in sync with the server.  At one point Azure had a 90 life for
-            // token storage, so the date based cycle was to be a keep-alive, but now that is not the case.
-            // Now just do this if the server data needs updating.
+            // This is to make sure we stay in sync with the server.  At one point Azure had a 90 day
+            // life for token storage, so the date based cycle was to be a keep-alive, but that is no
+            // longer the case. Now do this if the server data needs updating.
             if (ghost.token.length() == 0 || ghost.force) {
                 // Get the latest token and save it locally (probably has not changed).
                 String holdToken = FirebaseInstanceId.getInstance().getToken();
@@ -79,6 +93,18 @@ public class Refresh extends IntentService {
                     ghost.SyncPrime(true, this);
                 }
             }
+
+            // If possible, we want to copy the default notification sound.  While we cannot ask
+            // for the permission here, we do ask if the user goes to settings.  Until then the
+            // default sound will be the local version of the Prompt Notification sound.
+            if(!Settings.isSoundCopied(getApplicationContext())
+                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Settings.setSoundCopied(
+                            getApplicationContext(),
+                            InstallNotificationSound(R.raw.promptbeep, Environment.DIRECTORY_NOTIFICATIONS)
+                    );
+            }
+
         } catch (Exception ex) {
             ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentA");
         }
@@ -182,6 +208,7 @@ public class Refresh extends IntentService {
         hold.mirror = invite.mirror;
         hold.pending = sent;
         hold.confirmed = confirm;
+        hold.isFriend = true;
         return hold;
     }
 
@@ -212,6 +239,7 @@ public class Refresh extends IntentService {
                     acct.mirror = invite.mirror;
                     acct.confirmed = true;
                     acct.pending = false;
+                    acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
@@ -231,6 +259,7 @@ public class Refresh extends IntentService {
                     acct.mirror = invite.mirror;
                     acct.confirmed = false;
                     acct.pending = true;
+                    acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
@@ -250,6 +279,7 @@ public class Refresh extends IntentService {
                     acct.mirror = invite.mirror;
                     acct.confirmed = false;
                     acct.pending = false;
+                    acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
@@ -406,6 +436,7 @@ public class Refresh extends IntentService {
                 local.pending = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_PENDING)) == FriendDB.SQLITE_TRUE;
                 local.mirror = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_MIRROR)) == FriendDB.SQLITE_TRUE;
                 local.confirmed = cursor.getInt(cursor.getColumnIndex(FriendDB.FRIEND_CONFIRM)) == FriendDB.SQLITE_TRUE;
+                local.isFriend = true;
                 dataPoints[i++] = local;
             }
             cursor.close();
@@ -484,6 +515,60 @@ public class Refresh extends IntentService {
         if(cursor.moveToFirst()) { count = cursor.getInt(0); }
         cursor.close();
         return count;
+    }
+
+    /*
+     *  This copies a supplied MP3 file from the raw App storage area to the global media
+     *  region specified for a sound, e.g. Ringtone, Notification, etc.
+     *  eDir:   This should be a system label like Environment.DIRECTORY_NOTIFICATIONS
+     *  I believe just copying the file is all that is needed to have it put in use
+     *  by the system.  No special media settings, but make sure the MP3 has the "title"
+     *  field of the metadata filled in, as that is what is displayed to the user.
+     */
+    private boolean InstallNotificationSound(int resId, String eDir) {
+        try {
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+                return false; // no storage available.
+
+            // Copy the file
+            File path = Environment.getExternalStoragePublicDirectory(eDir);
+            //noinspection ResultOfMethodCallIgnored
+            path.mkdirs();  // if the path is not there, create it
+            String filename = getResources().getResourceEntryName(resId) + ".mp3";
+            File outFile = new File(path, filename);
+            copyResource(resId, outFile);
+
+            // Not sure needed, but this should let the system know there is a new file.
+            String mimeType = "audio/mpeg";
+            MediaScannerConnection.scanFile(this, new String[]{outFile.getPath()}, new String[]{mimeType}, null);
+            return true;
+
+        } catch (Exception ex) {
+            ExpClass.LogEX(ex, this.getClass().getName() + ".InstallNotificationSound");
+            return false;
+        }
+    }
+
+    /*
+     *  File copy for android.  Once min version 19 reached, can use  automatic resource management.
+     */
+    public void copyResource(int resourceId, File dst) throws IOException {
+        InputStream in = getResources().openRawResource(resourceId);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
     }
 }
 

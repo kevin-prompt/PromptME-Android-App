@@ -18,12 +18,14 @@ import static com.coolftc.prompt.utility.Constants.NETWORK_DOWN;
 public class SendInviteThread extends Thread {
     private Context mContext;
     private String [] mAddresses;
+    private String mDisplay;
     private boolean mMirror;
 
-    public SendInviteThread(Context activity, String [] addresses, boolean mirror) {
+    public SendInviteThread(Context activity, String [] addresses, String display, boolean mirror) {
         mAddresses = addresses;
         mContext = activity;
         mMirror = mirror;
+        mDisplay = display;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class SendInviteThread extends Thread {
             // Skip any empty addresses
             for (String address : mAddresses) {
                 if(address.length() > 0) {
-                    WebServiceModels.InviteResponse actual = sendInvite(sender, address, mMirror);
+                    WebServiceModels.InviteResponse actual = sendInvite(sender, address, mDisplay, mMirror);
                 }
             }
 
@@ -50,12 +52,13 @@ public class SendInviteThread extends Thread {
     /*
      *  Send a new invite to the server.
      */
-    private WebServiceModels.InviteResponse sendInvite(Actor from, String to, boolean mirror){
+    private WebServiceModels.InviteResponse sendInvite(Actor from, String unique, String display, boolean mirror){
         WebServiceModels.InviteResponse rtn;
         WebServices ws = new WebServices();
         if(ws.IsNetwork(mContext)) {
             WebServiceModels.InviteRequest rData = new WebServiceModels.InviteRequest();
-            rData.fname = to;
+            rData.fname = unique;
+            rData.fdisplay = display;
             rData.message = "";
             rData.mirror = mirror;
 
