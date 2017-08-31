@@ -137,9 +137,15 @@ public class Reminder  implements Serializable {
      *  Return the Prompt time as an epoch number.
      */
     public long GetPromptMSec() {
+        Calendar ali;
+        boolean isUTC = KTime.ParseOffset(targetTime, KTime.KT_fmtDate3339fk, KTime.KT_SECONDS) == 0;
         try {
-            Calendar ali = KTime.ParseToCalendar(targetTime, KTime.KT_fmtDate3339fk);
-            return KTime.ConvertTimezone(ali, TimeZone.getDefault().getID()).getTimeInMillis();
+            if(isUTC) {
+                ali = KTime.ConvertTimezone(KTime.ParseToCalendar(targetTime, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID());
+            } else {
+                ali = KTime.ParseToCalendar(targetTime, KTime.KT_fmtDate3339fk);
+            }
+            return ali.getTimeInMillis();
         } catch (ExpParseToCalendar expParseToCalendar) {
             return Calendar.getInstance().getTimeInMillis();
         }
