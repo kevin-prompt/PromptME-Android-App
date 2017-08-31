@@ -10,7 +10,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 
 import static com.coolftc.prompt.utility.Constants.*;
@@ -145,7 +144,8 @@ public class Refresh extends IntentService {
 
         /*
          *  Check for pending prompts (these are just ones sent by this user). We want to
-         *  cache this value so the main thread has easy access.
+         *  cache this value so the main thread has easy access.  Also update any server
+         *  specific user data.
          */
         try {
             mMessage = new MessageDB(getApplicationContext()); // Be sure to close this before leaving the thread.
