@@ -171,9 +171,14 @@ public class Detail extends AppCompatActivity {
                 if (holdPrompt.processed) mPrompt = holdPrompt;
             }
 
-            // Looks like this message is not in the local store, add it.
+            // Looks like this message is not in the local store, add it.  If we get
+            // back a db id, mark as processed.
             if (!mPrompt.processed){
                 mPrompt.status = (int)AddMessage(mPrompt);
+                if(mPrompt.status > 0) {
+                    mPrompt.processed = true;
+                    mPrompt.created = KTime.ParseNow(KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE).toString();
+                }
             }
 
         } catch (Exception ex) {

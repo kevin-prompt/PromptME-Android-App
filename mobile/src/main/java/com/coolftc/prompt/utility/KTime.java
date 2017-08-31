@@ -138,6 +138,8 @@ public class KTime {
     private static final String DAY_SSS = "SSS";    // milliseconds past last second - numeric
     private static final String DAY_Z = "Z";        // UTC Offset
     private static final String DAY_z = "z";        // UTC Offset
+    private static final String Day_plus = "+";     // UTC Offset
+    private static final String Day_minus = "-";    // UTC Offset
     private static final String MONTH_FIXED = "NUL JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC";
 
     /*
@@ -241,8 +243,13 @@ public class KTime {
         int ndx=inFormat.indexOf(DAY_Z);
         if(ndx == MISSING) ndx=inFormat.indexOf(DAY_z);
         if(ndx != MISSING){
-            int tmzoff = 0;
             int tmzsign = 1;
+            // This helps adjust for when the millisecond format has too few digits.
+            int altNdx = -1;
+            int tNdx = inTime.indexOf("T");
+            if (inTime.contains(Day_minus)) altNdx = inTime.lastIndexOf(Day_minus);
+            if (inTime.contains(Day_plus)) altNdx = inTime.indexOf(Day_plus);
+            if (altNdx > tNdx && ndx != altNdx) ndx = altNdx;
             String tmz = inTime.substring(ndx).trim(); // time zone is the final element in these formats
             if(!(tmz.equalsIgnoreCase("Z") || tmz.equalsIgnoreCase("GMT") || tmz.equalsIgnoreCase("UTC"))){
                 tmz = tmz.replace(":", "");
@@ -333,7 +340,10 @@ public class KTime {
 
             ndx=inFormat.indexOf(DAY_SSS);
             if(ndx != MISSING){
-                work.set(Calendar.MILLISECOND, Integer.parseInt(inTime.substring(ndx, ndx+3)));
+                // These dates have very inconsistent fractional seconds, so suspending
+                // until we improve this a little, e.g. sometimes it is two digits instead of 3.
+                //work.set(Calendar.MILLISECOND, Integer.parseInt(inTime.substring(ndx, ndx+3)));
+                work.set(Calendar.MILLISECOND, 0);
             }
 
             ndx=inFormat.indexOf(DAY_Z);
@@ -341,6 +351,12 @@ public class KTime {
             if(ndx != MISSING){
                 int tmzoff = 0;
                 int tmzsign = 1;
+                // This helps adjust for when the millisecond format has too few digits.
+                int altNdx = -1;
+                int tNdx = inTime.indexOf("T");
+                if (inTime.contains(Day_minus)) altNdx = inTime.lastIndexOf(Day_minus);
+                if (inTime.contains(Day_plus)) altNdx = inTime.indexOf(Day_plus);
+                if (altNdx > tNdx && ndx != altNdx) ndx = altNdx;
                 String tmz = inTime.substring(ndx).trim(); // time zone is the final element in these formats
                 if(!(tmz.equalsIgnoreCase("Z") || tmz.equalsIgnoreCase("GMT") || tmz.equalsIgnoreCase("UTC"))){
                     tmz = tmz.replace(":", "");

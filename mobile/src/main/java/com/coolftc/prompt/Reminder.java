@@ -118,6 +118,7 @@ public class Reminder  implements Serializable {
             default:
                 return context.getResources().getString(R.string.unknown);
         }
+        if (holdTimeStamp.length() == 0) return context.getResources().getString(R.string.unknown);
         Calendar delivery;
         String dateTimeFmt = Settings.getDateDisplayFormat(context, holdFormat);
         boolean isUTC = KTime.ParseOffset(holdTimeStamp, KTime.KT_fmtDate3339fk, KTime.KT_SECONDS) == 0;
