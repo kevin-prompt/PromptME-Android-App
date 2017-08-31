@@ -46,6 +46,7 @@
     <string name="vrf_detail_err">There is a problem with your verification code.  Reenter the code or request a new code.  Make sure you are connected to the internet, too.</string>
     <string name="prf_Personal">Personal</string>
     <string name="prf_System">System</string>
+    <string name="prf_Privacy">Privacy</string>
     <string name="prf_Use24Clock">Use 24 Hour Clock</string>
     <string name="prf_Use24ClockSum">Display time values using a 24 Hour clock format (not AM-PM).</string>
     <string name="prf_PickDateFormat">Select Date Format</string>
@@ -72,6 +73,7 @@
     <string name="prf_NotificationTone">Prompt Notification</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
+    <string name="abt_privacy"><a href="http://www.zalicon.com/Prompt/privacy.html">Prompt Policy</a></string>
     <string name="wel_Pending">Pending (%d)</string>
     <string name="ent_DefaulMsg">No Message - Just an alert.</string>
     <string name="his_SortOrder">Sort Order</string>

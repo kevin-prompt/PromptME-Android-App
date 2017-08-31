@@ -41,9 +41,9 @@ public class Actor extends Account {
     public String isAds(Context ctx) { return ads ? ctx.getResources().getString(R.string.yes):ctx.getResources().getString(R.string.no);}
 
     /*
-     * For the primary user, this method loads the relevant data from the
-     * local store (shared preferences).  Additionally, we can go to the
-     * server as well if full=true.
+     * For the primary user, this method loads the relevant data from the local
+     * store (shared preferences).  Additionally, it can go to the server, although
+     * that should not be used to change local users settings like sleep cycle.
      * NOTE: Any use of the network would require the calling party to
      * not be on the main thread when called.
      */

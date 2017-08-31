@@ -10,7 +10,7 @@ import android.util.Log;
 public class ExpClass extends Exception {
     public static final long serialVersionUID = -6463927990362971950L;  // required by superclass
     private static final String ERR_TAG = "Exception Sink";
-    private static final boolean DEBUG_RUN = true;
+    private static final boolean DEBUG_RUN = false;
 
     public int Number;
     public String Name;

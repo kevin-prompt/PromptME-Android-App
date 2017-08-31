@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.coolftc.prompt.source.WebServiceModels;
@@ -27,13 +28,26 @@ public class About extends AppCompatActivity {
         holdData = (TextView) findViewById(R.id.abtBroadcast);
         if(holdData != null) holdData.setText(acct.isBroadcast(getApplicationContext()));
         holdData = (TextView) findViewById(R.id.abtAds);
-        if(holdData != null) holdData.setText(acct.isAds(getApplicationContext()));
+        if(holdData != null) holdData.setText(getResources().getText(R.string.unknown));
         holdData = (TextView) findViewById(R.id.abtWhoAmI);
         if(holdData != null) holdData.setText(acct.unique);
         holdData = (TextView) findViewById(R.id.abtAccount);
         if(holdData != null) holdData.setText("(" + acct.acctIdStr() + ")");
 
         new CheckSystemTask(getApplicationContext()).execute(acct.ticket);
+        new CheckAdsTask(getApplicationContext()).execute(acct.ticket);
+    }
+
+    @Override
+    protected void onStart() {
+        /**
+         * To get the hyperlinks to work, we have to apply this setting to the
+         * textview after it has been created.  That is why it is here.
+         */
+        TextView holdView;
+        holdView = (TextView) findViewById(R.id.abtPrivacyLink);
+        holdView.setMovementMethod(LinkMovementMethod.getInstance());
+        super.onStart();
     }
 
     /*
@@ -68,6 +82,12 @@ public class About extends AppCompatActivity {
 
         holdView = (TextView) this.findViewById(R.id.abtSystemVer);
         if (holdView != null) { holdView.setText(holdResult); }
+    }
+
+    private void AdsCheck(boolean ads) {
+        TextView holdData;
+        holdData = (TextView) findViewById(R.id.abtAds);
+        if(holdData != null) holdData.setText(ads?getResources().getText(R.string.yes):getResources().getText(R.string.no));
     }
 
     /**
@@ -113,4 +133,35 @@ public class About extends AppCompatActivity {
             SystemCheck(result);
         }
     }
+
+    private class CheckAdsTask extends AsyncTask<String, Void, Boolean> {
+        private Context context;
+
+        public CheckAdsTask(Context startup) {
+            context = startup;
+        }
+
+        /*
+        *  This is a quick check to see that there is network, our server is reachable
+        *  and the ticket they are using is viable. Returns the server version, too.
+        */
+        @Override
+        protected Boolean doInBackground(String... criteria) {
+            try {
+                WebServices stat = new WebServices();
+                String ticket = criteria[0];
+                Actor user = new Actor();
+                user.LoadPrime(true, context);
+                return user.ads;
+            } catch (Exception ex) {
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            AdsCheck(result);
+        }
+    }
+
 }
