@@ -147,7 +147,7 @@
     <string name="problemTitle">Please Review</string>
     <string name="problemOccur">The occurrence interval of Days/Months must be at least 1.</string>
     <string name="problemDayWeek">There should be at least 1 day of the week selected.</string>
-    <string name="problemEndRepeat">The number of times to repeat this message before it stops should at least be 1.</string>
+    <string name="problemEndRepeat">Pick an end date or a number of times to repeat the Prompt.</string>
     <string name="problemEndDate">If an end date is desired, a specific date must be chosen.</string>
     <string name="problemDatePast">Check the time selected is in the future. </string>
     <string name="problemDatePastAM">Check the time selected is in the future. Verify the AM / PM selection is correct.</string>

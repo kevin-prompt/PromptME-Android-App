@@ -131,7 +131,7 @@ public class Detail extends AppCompatActivity {
             // A "copy" passes along the target address as the target address and
             // makes the message available to use as a default.
             if (mUser.unique.equalsIgnoreCase(mPrompt.from.unique)) {
-                mBundle.putSerializable(IN_USER_ACCT, mUser);
+                mBundle.putSerializable(IN_USER_ACCT, mPrompt.target);
                 mBundle.putSerializable(IN_MESSAGE, mPrompt);
             }
             // If the Prompt came from a friend, then the user can "reply" to it.

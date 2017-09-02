@@ -87,10 +87,10 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
     }
 
     /*
-     *  Go to the contact picker to create more prompts.
+     *  Go to the welcome screen to create more prompts.
      */
     public void NewMessage(View view) {
-        Intent intent = new Intent(this, ContactPicker.class);
+        Intent intent = new Intent(this, Welcome.class);
         startActivity(intent);
     }
 
@@ -369,7 +369,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
                             holdImage.setVisibility(View.INVISIBLE);
                         }
                         holdView = (TextView) convertView.findViewById(R.id.rowhNew);
-                        if(holdData.get(HS_LAST_15) != null && holdData.get(HS_LAST_15).length() > 0) {
+                        if(holdData.get(HS_LAST_15) != null && holdData.get(HS_LAST_15).length() > 0 && holdData.get(HS_WHO_FROM).length() == 0) {
                             holdView.setVisibility(View.VISIBLE);
                         }else{ // Always need to reset these, since they are reused.
                             holdView.setVisibility(View.INVISIBLE);

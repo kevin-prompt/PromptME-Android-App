@@ -243,14 +243,20 @@ public class KTime {
         int ndx=inFormat.indexOf(DAY_Z);
         if(ndx == MISSING) ndx=inFormat.indexOf(DAY_z);
         if(ndx != MISSING){
+            // Need to do some back flips to handle when fractional seconds are inconsistent.
             int tmzsign = 1;
-            // This helps adjust for when the millisecond format has too few digits.
             int altNdx = -1;
-            int tNdx = inTime.indexOf("T");
-            if (inTime.contains(Day_minus)) altNdx = inTime.lastIndexOf(Day_minus);
-            if (inTime.contains(Day_plus)) altNdx = inTime.indexOf(Day_plus);
-            if (altNdx > tNdx && ndx != altNdx) ndx = altNdx;
-            String tmz = inTime.substring(ndx).trim(); // time zone is the final element in these formats
+            String holdOffset;
+            if(inFormat.contains(DAY_SSS)) {
+                holdOffset = inTime.substring(inFormat.indexOf(DAY_SSS), inTime.length());
+                if (holdOffset.contains(Day_minus)) altNdx = holdOffset.indexOf(Day_minus);
+                if (holdOffset.contains(Day_plus)) altNdx = holdOffset.indexOf(Day_plus);
+                if(altNdx == MISSING) altNdx = DAY_SSS.length();
+            } else {
+                holdOffset = inTime;
+                altNdx = ndx;
+            }
+            String tmz = holdOffset.substring(altNdx).trim();
             if(!(tmz.equalsIgnoreCase("Z") || tmz.equalsIgnoreCase("GMT") || tmz.equalsIgnoreCase("UTC"))){
                 tmz = tmz.replace(":", "");
                 if(tmz.contains("-")) tmzsign = -1;
@@ -340,24 +346,48 @@ public class KTime {
 
             ndx=inFormat.indexOf(DAY_SSS);
             if(ndx != MISSING){
-                // These dates have very inconsistent fractional seconds, so suspending
-                // until we improve this a little, e.g. sometimes it is two digits instead of 3.
-                //work.set(Calendar.MILLISECOND, Integer.parseInt(inTime.substring(ndx, ndx+3)));
-                work.set(Calendar.MILLISECOND, 0);
+                // While I said this is positional, the fractional seconds are hard to force
+                // to 3 digits, as many times the non-significant digits are left off, which
+                // means there might be 1, 2 or 3 actual characters.  Since it is almost the
+                // last part of the parse, we will just test out the actual values.
+                //Old Parse: work.set(Calendar.MILLISECOND, Integer.parseInt(inTime.substring(ndx, ndx+3)));
+                int msec = 0;
+                if(inTime.length() >= ndx && Character.isDigit(inTime.substring(ndx, ndx+1).charAt(0))){
+                    msec = Integer.parseInt(inTime.substring(ndx, ndx+1)) * 100;
+                }
+                ndx += 1;
+                if(inTime.length() >= ndx && Character.isDigit(inTime.substring(ndx, ndx+1).charAt(0))){
+                    msec += Integer.parseInt(inTime.substring(ndx, ndx+1)) * 10;
+                }
+                ndx += 1;
+                if(inTime.length() >= ndx && Character.isDigit(inTime.substring(ndx, ndx+1).charAt(0))){
+                    msec += Integer.parseInt(inTime.substring(ndx, ndx+1));
+                }
+                work.set(Calendar.MILLISECOND, msec);
             }
 
             ndx=inFormat.indexOf(DAY_Z);
             if(ndx == MISSING) ndx=inFormat.indexOf(DAY_z);
             if(ndx != MISSING){
+                // If the fractional seconds are not going to always be consistent, then we
+                // need to compensate for the offset as well.  Here we are going to use the
+                // offset sign as a signal to adjust the parser.  Basically, if we find a +
+                // or - where the fractional seconds are suppose to be we use that to start
+                // the offset.
                 int tmzoff = 0;
                 int tmzsign = 1;
-                // This helps adjust for when the millisecond format has too few digits.
                 int altNdx = -1;
-                int tNdx = inTime.indexOf("T");
-                if (inTime.contains(Day_minus)) altNdx = inTime.lastIndexOf(Day_minus);
-                if (inTime.contains(Day_plus)) altNdx = inTime.indexOf(Day_plus);
-                if (altNdx > tNdx && ndx != altNdx) ndx = altNdx;
-                String tmz = inTime.substring(ndx).trim(); // time zone is the final element in these formats
+                String holdOffset;
+                if(inFormat.contains(DAY_SSS)) {
+                    holdOffset = inTime.substring(inFormat.indexOf(DAY_SSS), inTime.length());
+                    if (holdOffset.contains(Day_minus)) altNdx = holdOffset.indexOf(Day_minus);
+                    if (holdOffset.contains(Day_plus)) altNdx = holdOffset.indexOf(Day_plus);
+                    if(altNdx == MISSING) altNdx = DAY_SSS.length();
+                } else {
+                    holdOffset = inTime;
+                    altNdx = ndx;
+                }
+                String tmz = holdOffset.substring(altNdx).trim();
                 if(!(tmz.equalsIgnoreCase("Z") || tmz.equalsIgnoreCase("GMT") || tmz.equalsIgnoreCase("UTC"))){
                     tmz = tmz.replace(":", "");
                     if(tmz.contains("-")) tmzsign = -1;
