@@ -172,7 +172,8 @@ public class Welcome extends AppCompatActivity {
             hold.put(CP_NAME, acct.bestName());
             hold.put(CP_EXTRA, acct.bestNameAlt());
             hold.put(CP_UNIQUE, acct.unique);
-            hold.put(CP_LINKED, (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
+            // Decided that the buttons clutter up the Welcome screen, they are still available on Contact Picker.
+            hold.put(CP_LINKED, ""); // (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
             hold.put(CP_FACE, acct.contactPicUri());
             details.add(hold);
         }

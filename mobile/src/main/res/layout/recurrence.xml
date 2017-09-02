@@ -85,10 +85,9 @@
         </TextView>
 
         <EditText android:id="@+id/reptPeriod"
-            tools:text="888"
             android:textSize="@dimen/txt_edit_size"
             android:inputType="number"
-            android:hint="@string/nbr_one"
+            android:text="@string/nbr_one"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:layout_width="56dp"

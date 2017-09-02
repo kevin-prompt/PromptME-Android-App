@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
@@ -19,6 +20,7 @@ import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  *  The top level container screen for picking the exact time and date. Upon
@@ -48,6 +50,14 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
         Bundle extras = getIntent().getExtras();
         if(extras != null){
             mTimeStamp = extras.getString(IN_TIMESTAMP);
+            if(KTime.ParseOffset(mTimeStamp, KTime.KT_fmtDate3339fk, KTime.KT_SECONDS) == 0) {
+                // It is UTC so lets convert to local
+                try {
+                    mTimeStamp = DateFormat.format(KTime.KT_fmtDate3339fk_xS, KTime.ConvertTimezone(KTime.ParseToCalendar(mTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID())).toString();
+                } catch (ExpParseToCalendar expParseToCalendar) {
+                    mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
+                }
+            }
         }else{
             mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
         }
