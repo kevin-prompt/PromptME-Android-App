@@ -128,10 +128,13 @@ public class Detail extends AppCompatActivity {
 
             Bundle mBundle = new Bundle();
             // If the Prompt is created by the user, then they can copy that Prompt.
-            // A "copy" passes along the target address as the target address and
-            // makes the message available to use as a default.
+            // A "copy" passes along the target address, but we need to fill out the
+            // target account a little bit so it is usable by the Entry screen.
             if (mUser.unique.equalsIgnoreCase(mPrompt.from.unique)) {
-                mBundle.putSerializable(IN_USER_ACCT, mPrompt.target);
+                if(mUser.unique.equalsIgnoreCase(mPrompt.target.unique))
+                    mBundle.putSerializable(IN_USER_ACCT, mUser);
+                else
+                    mBundle.putSerializable(IN_USER_ACCT, GetAccountByName(mPrompt.target.unique));
                 mBundle.putSerializable(IN_MESSAGE, mPrompt);
             }
             // If the Prompt came from a friend, then the user can "reply" to it.

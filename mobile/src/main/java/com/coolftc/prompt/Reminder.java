@@ -68,13 +68,13 @@ public class Reminder  implements Serializable {
     //  The actual value is not of particular importance, just needs a String where false is zero length.
     public String IsPromptPast() { return IsPast()? "past" : ""; }
 
-    // The simple time settings as displayed are not an exact match for what is used by the
+    // The simple time settings as displayed are not always exact match for what is used by the
     // server.  To keep things manageable we use a couple of extra methods to access the data.
-    public int GetTargetTimeNameIdDsply(){ return targetTimeNameId > 0 ? targetTimeNameId - 1 : 0; }
-    public void SetTargetTimeNameIdDsply(int value){ targetTimeNameId = value + 1; }
+    public int GetTargetTimeNameIdDsply(){ return targetTimeNameId > 0 ? targetTimeNameId : 0; }
+    public void SetTargetTimeNameIdDsply(int value){ targetTimeNameId = value; if(value == 0) targetTime = "";}
     public int GetTargetTimeAdjIdDsply(){ return targetTimeAdjId > 0 ? targetTimeAdjId - 1 : 0; }
     public void SetTargetTimeAdjIdDsply(int value){ targetTimeAdjId = value + 1; }
-    public boolean IsExactTime(){ return targetTimeNameId == 0; }
+    public boolean IsExactTime(){ return targetTimeNameId == 0 && targetTime.length() > 0; }
 
     /*
      *  This method will search a few of the fields to determine if the

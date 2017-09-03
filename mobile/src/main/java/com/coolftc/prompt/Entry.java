@@ -51,8 +51,8 @@ public class Entry extends AppCompatActivity {
     private SeekBar mTimeadj;                    // Simple time - adjustment
 
     // Useful information
-    private int mDefaultTimeName = 0;
-    private int mDefaultTimeAdj = 47;
+    private int mDefaultTimeName = 1;           // Today
+    private int mDefaultTimeAdj = 47;           // Mid point between early and late
     private String mDefaultMessage = "";
     private static final int SEEK_MARK = 16;    // The seek bar has a range of 0 - 95, includes 5 marks
 
@@ -75,11 +75,13 @@ public class Entry extends AppCompatActivity {
                 }
                 // This passed-in message data is used when making a copy.
                 // Since exact time is not useful, just default to Today.
-               mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
+                mPrompt = (Reminder) extras.getSerializable(IN_MESSAGE);
                 if(mPrompt != null){
                     mDefaultTimeName = mPrompt.GetTargetTimeNameIdDsply();
+                    if(mDefaultTimeName == 0) ++mDefaultTimeName;
                     mDefaultTimeAdj = mPrompt.GetTargetTimeAdjIdDsply() * SEEK_MARK;
                     mDefaultMessage = mPrompt.message;
+                    mPrompt.target = mTarget;   // Just to be complete
                 } else {
                     mPrompt = new Reminder();
                 }
@@ -188,7 +190,12 @@ public class Entry extends AppCompatActivity {
             mTimeadj.setEnabled(false);
         } else {
             holdRaw += mTimename.getSelectedItem().toString();
-            holdRaw += ", " + GetTimeAdjustment(mTimename.getSelectedItemPosition());
+            if(mTimename.getSelectedItemPosition() > 0) {
+                holdRaw += ", " + GetTimeAdjustment(mTimename.getSelectedItemPosition());
+                mTimeadj.setEnabled(true);
+            } else {
+                mTimeadj.setEnabled(false);
+            }
         }
         holdText = (TextView) findViewById(R.id.sendTargeTime);
         if(holdText != null) { holdText.setText(holdRaw);}
@@ -212,7 +219,7 @@ public class Entry extends AppCompatActivity {
      *  This will force all adjustments for Tonight to avoid morning or afternoon.
      */
     private String GetTimeAdjustment(int name){
-        if(name == 1){
+        if(name == 2){  // tonight
             if(mTimeadj.getProgress() < 49){
                 return mTimeadjData.get(0);
             }

@@ -86,6 +86,7 @@ public class Constants {
     public static final String IN_DISP_TIME = "displaytime";
     public static final String IN_MESSAGE = "message";
     public static final String IN_ADDRESSES = "addresses";
+    public static final String IN_LABELS = "labels";
     public static final String IN_ADDRESSES_TRUE = "addresses.select";
     public static final int SEC_READ_CONTACTS = 10013;
     public static final int SEC_WRITE_STORAGE = 10014;

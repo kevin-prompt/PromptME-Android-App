@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="time_name">
+        <item>Now</item>
         <item>Today</item>
         <item>Tonight</item>
         <item>Tomorrow</item>

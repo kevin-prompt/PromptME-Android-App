@@ -282,13 +282,20 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                     holdView = (TextView) view.findViewById(R.id.rowpUnique);
                     if(holdView==null) break;
                     String uSelect = holdView.getText().toString();
+                    holdView = (TextView) view.findViewById(R.id.rowpContactName);
+                    String cSelect = "";
+                    if(holdView!=null) cSelect = holdView.getText().toString();
 
                     // Find the matching Account.
                     Account holdAcct = null;
                     for(Account acct : mAccounts) {
                         if (acct.unique.equalsIgnoreCase(uSelect)) {
-                            holdAcct = acct;
-                            break;
+                            if(acct.contactName.equalsIgnoreCase(cSelect) || cSelect.length() == 0) {
+                                holdAcct = acct;    // exact match in case two contacts share a uname
+                                break;
+                            } else {
+                                holdAcct = acct;    // not an exact match, but good enough if nothing else
+                            }
                         }
                     }
                     if(holdAcct == null) break;
@@ -313,6 +320,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
 
                         }else{ // Send an invitation or something.
                             String [] addresses = GetContactAddresses(holdAcct.bestName());
+                            String [] labels = GetContactLabels(holdAcct.bestName());
                             if (addresses.length > 0) {
                                 // This will require the network, so check it
                                 WebServices ws = new WebServices();
@@ -328,7 +336,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                                     mgr.beginTransaction().remove(frag).commit();
                                 }
                                 ContactPickerDialog invited = new ContactPickerDialog();
-                                invited.setInvites(holdAcct.bestName(), addresses);
+                                invited.setInvites(holdAcct.bestName(), addresses, labels);
                                 invited.show(mgr, KY_ADDR_FRAG);
                             } else {
                                 Toast.makeText(this, R.string.ctp_no_addresses, Toast.LENGTH_LONG).show();
@@ -350,6 +358,19 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
         for (Account acct : mAccounts) {
             if (acct.bestName().equalsIgnoreCase(anchor)) {
                 ali.add(acct.unique);
+            }
+        }
+        return ali.toArray(new String[0]);
+    }
+
+    /*
+     *  Find all the associated email address and phone number labels.
+     */
+    private String [] GetContactLabels(String anchor) {
+        List<String> ali = new ArrayList<>();
+        for (Account acct : mAccounts) {
+            if (acct.bestName().equalsIgnoreCase(anchor)) {
+                ali.add(acct.contactLabel);
             }
         }
         return ali.toArray(new String[0]);
@@ -407,8 +428,9 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
     private void LoadContacts(){
         List<Account> contacts = new ArrayList< >();
         String sortEnd = getString(R.string.zzzzz);
+        String customType = getString(R.string.other);
         Cursor contact = null;
-        String[] selection = {ContactsContract.Data.CONTACT_ID, ContactsContract.Data.DISPLAY_NAME_PRIMARY, ContactsContract.Contacts.Data.DATA1, ContactsContract.Data.MIMETYPE, ContactsContract.Contacts.PHOTO_THUMBNAIL_URI};
+        String[] selection = {ContactsContract.Data.CONTACT_ID, ContactsContract.Data.DISPLAY_NAME_PRIMARY, ContactsContract.Contacts.Data.DATA1, ContactsContract.Data.MIMETYPE, ContactsContract.Contacts.PHOTO_THUMBNAIL_URI, ContactsContract.CommonDataKinds.Phone.TYPE};
         try{
             contact = getContentResolver().query(
                     ContactsContract.Data.CONTENT_URI,
@@ -433,6 +455,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                         Phonenumber.PhoneNumber fullNbr = phoneHelper.parse(holdAcct.unique, "US");
                         String holdnbr = phoneHelper.format(fullNbr, PhoneNumberUtil.PhoneNumberFormat.E164);
                         holdAcct.unique = holdnbr.replace("+", "");
+                        holdAcct.contactLabel = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getResources(), Integer.parseInt(contact.getString(contact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE))), customType).toString();
                     }
                     holdAcct.contactPic = contact.getString(contact.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI));
                     contacts.add(holdAcct);

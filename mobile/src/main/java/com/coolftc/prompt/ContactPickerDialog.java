@@ -17,13 +17,16 @@ import static com.coolftc.prompt.utility.Constants.*;
 public class ContactPickerDialog extends DialogFragment {
     private FragmentTalkBack mActivity;
     private String [] mAddresses;
+    private String [] mLabels;
     private boolean [] mSelected;
     private String mDisplayName;
 
     // Use this to initialize the displayed data.
-    public void setInvites(String display, String [] contacts){
+    public void setInvites(String display, String [] contacts, String [] labels){
         mDisplayName = display;
         mAddresses = contacts;
+        mLabels = new String[labels.length];
+        for(int i = 0; i < contacts.length; ++i) mLabels[i] = mAddresses[i] + "  " + labels[i];
         mSelected = new boolean[mAddresses.length];
         for(int i = 0; i < mSelected.length; ++i) { mSelected[i] = true; }
     }
@@ -33,12 +36,13 @@ public class ContactPickerDialog extends DialogFragment {
         // When saved data is also passed in normally, it needs to be restored here.
         if (savedInstanceState != null) {
             mAddresses = savedInstanceState.getStringArray(IN_ADDRESSES);
+            mLabels = savedInstanceState.getStringArray(IN_LABELS);
             mSelected = savedInstanceState.getBooleanArray(IN_ADDRESSES_TRUE);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.ctp_Addresses)
-                .setMultiChoiceItems(mAddresses, mSelected, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(mLabels, mSelected, new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         mSelected[which] = isChecked;
                     }
@@ -68,6 +72,7 @@ public class ContactPickerDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putCharSequenceArray(IN_ADDRESSES, mAddresses);
+        outState.putCharSequenceArray(IN_LABELS, mLabels);
         outState.putBooleanArray(IN_ADDRESSES_TRUE, mSelected);
         super.onSaveInstanceState(outState);
     }

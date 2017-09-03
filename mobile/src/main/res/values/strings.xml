@@ -191,6 +191,7 @@
     <string name="created">Created</string>
     <string name="status">Status</string>
     <string name="unknown">Unknown</string>
+    <string name="other">Other</string>
     <string name="www_domain">www.coolftc.com</string>
     <string name="message">Message</string>
     <string name="send">Send</string>
