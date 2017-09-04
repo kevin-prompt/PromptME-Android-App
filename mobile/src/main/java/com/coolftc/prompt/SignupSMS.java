@@ -11,15 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
 import com.coolftc.prompt.utility.ExpClass;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,9 +29,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-
 import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.coolftc.prompt.utility.Constants.*;
@@ -97,6 +94,7 @@ public class SignupSMS extends AppCompatActivity {
             public void onVerificationFailed(FirebaseException ex) {
                 // This callback is invoked in an invalid request for verification is made,
                 // for instance if the the phone number format is not valid.
+                Crashlytics.logException(ex);
                 ExpClass.LogEX(ex, this.getClass().getName() + ".onVerificationFailed");
 
                 // Problem creating account.
@@ -137,6 +135,7 @@ public class SignupSMS extends AppCompatActivity {
             mPhoneNbr = holdnbr.replace("+", "");
         } catch (NumberParseException e) {
             mPhoneNbr = "";
+            Crashlytics.logException(e);
         }
         if (mPhoneNbr.length() == 0) return;
 
@@ -169,7 +168,9 @@ public class SignupSMS extends AppCompatActivity {
                 // Already Verified? OK...send to welcome.
                 Settings.setDisplayName(this, acct.display);
                 Intent intent = new Intent(this, Welcome.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
         }
         else {
@@ -177,6 +178,14 @@ public class SignupSMS extends AppCompatActivity {
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
+            if (acct.tag.length() > 0){
+                holdView = (TextView) findViewById(R.id.lblSmsStatus);
+                if (holdView != null) {
+                    holdView.setVisibility(View.VISIBLE);
+                    String holdStat = getString(R.string.status) + ":" + acct.tag;
+                    holdView.setText(holdStat);
+                }
+            }
         }
     }
 
@@ -203,6 +212,7 @@ public class SignupSMS extends AppCompatActivity {
                     PerformFirebaseVerify(task.getResult().getUser());
                 } else {
                     ExpClass.LogEX(task.getException(), this.getClass().getName() + ".SignInCreateVerify");
+                    Crashlytics.logException(task.getException());
                     // Problem creating account.
                     DisplayProblem();
                 }
@@ -228,6 +238,7 @@ public class SignupSMS extends AppCompatActivity {
                             task.getResult().getToken());
                 }else {
                     ExpClass.LogEX(task.getException(), this.getClass().getName() + ".PerformFirebaseVerify");
+                    Crashlytics.logException(task.getException());
                     DisplayProblem();
                 }
 
@@ -268,7 +279,6 @@ public class SignupSMS extends AppCompatActivity {
         }
 
         protected void onCancelled() {
-            //Toast.makeText(context, R.string.msgUserCancel, Toast.LENGTH_LONG).show();
             AccountCreated(new Actor(context));
         }
 
@@ -312,6 +322,8 @@ public class SignupSMS extends AppCompatActivity {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
                     acct.SyncPrime(false, context);
+                } else {
+                    acct.tag = Integer.toString(user.response);
                 }
             } else {
                 publishProgress(false);
@@ -375,7 +387,7 @@ public class SignupSMS extends AppCompatActivity {
          * 2 - Sleep Cycle
          * 3 - Custom Data (e.g. external id)
          ** Verification **
-         * 4 - Verify Code (digits, internal)
+         * 4 - Verify Code (firebase, internal)
          * 5 - Provider Key (for external verification)
          * 6 - Credential (for external verification)
          */
@@ -406,7 +418,7 @@ public class SignupSMS extends AppCompatActivity {
                     acct.acctId = user.id;
                     if (!regData.verify) {
                         WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
-                        confirm.code = Long.parseLong(criteria[4]);   // code 2 = digits
+                        confirm.code = Long.parseLong(criteria[4]);
                         confirm.provider = criteria[5];
                         confirm.credential = criteria[6];
                         int rtn = ws.Verify(acct.ticket, acct.acctIdStr(), confirm);
@@ -415,6 +427,8 @@ public class SignupSMS extends AppCompatActivity {
                         }
                     }
                     acct.SyncPrime(false, context);
+                } else {
+                    acct.tag = Integer.toString(user.response);
                 }
             } else {
                 publishProgress(false);

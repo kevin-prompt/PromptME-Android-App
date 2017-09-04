@@ -23,10 +23,12 @@ import android.widget.TextView;
 import com.coolftc.prompt.service.Refresh;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.ExpClass;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +57,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         // Set up main view and menu.
         setContentView(R.layout.welcome);
@@ -105,7 +108,6 @@ public class Welcome extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
     }
 
     /* The Options Menu works closely with the ActionBar.  It can show useful menu items on the bar

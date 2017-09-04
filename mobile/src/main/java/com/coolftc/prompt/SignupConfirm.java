@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
 import com.coolftc.prompt.utility.ExpClass;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -104,6 +105,7 @@ public class SignupConfirm extends AppCompatActivity {
                 // This callback is invoked in an invalid request for verification is made,
                 // for instance if the the phone number format is not valid.
                 ExpClass.LogEX(ex, this.getClass().getName() + ".onVerificationFailed");
+                Crashlytics.logException(ex);
 
                 // Problem creating account.
                 DisplayProblem();
@@ -169,8 +171,9 @@ public class SignupConfirm extends AppCompatActivity {
             // All set... onward to welcome.
             Settings.setDisplayName(this, acct.display);
             Intent intent = new Intent(this, Welcome.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }else{
             DisplayProblem();
         }
@@ -237,6 +240,7 @@ public class SignupConfirm extends AppCompatActivity {
                     PerformFirebaseVerify(task.getResult().getUser());
                 } else {
                     ExpClass.LogEX(task.getException(), this.getClass().getName() + ".SignInVerify");
+                    Crashlytics.logException(task.getException());
                     // Problem creating account.
                     DisplayProblem();
                 }
@@ -259,6 +263,7 @@ public class SignupConfirm extends AppCompatActivity {
                             task.getResult().getToken());
                 }else {
                     ExpClass.LogEX(task.getException(), this.getClass().getName() + ".PerformFirebaseVerify");
+                    Crashlytics.logException(task.getException());
                     DisplayProblem();
                 }
 

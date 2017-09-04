@@ -2,6 +2,8 @@ package com.coolftc.prompt.utility;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * Created by kevin on 3/18/2016.
  * This can be used when internally throwing exceptions.  Also, the static Logging methods are here.
@@ -29,6 +31,7 @@ public class ExpClass extends Exception {
 
     public static void LogEX(Exception ex, String key){
         Log.e(ERR_TAG, ex.getStackTrace()[0].getClassName() + "." + ex.getStackTrace()[0].getMethodName() + "() :: (key=" + key + ") " + ex.getMessage());
+        Crashlytics.logException(ex);
     }
 
     public static void LogIN(String tag, String message){
