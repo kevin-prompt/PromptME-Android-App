@@ -77,7 +77,9 @@ public class Welcome extends AppCompatActivity {
         // Check if user needs to sign up.
         if (!acct.confirmed) {
             Intent intent = new Intent(this, Signup.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
 
         Display();
@@ -99,7 +101,9 @@ public class Welcome extends AppCompatActivity {
         Actor acct = new Actor(this);
         if (acct.ticket.length() == 0) {
             Intent intent = new Intent(this, Signup.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
 
     }

@@ -102,7 +102,7 @@ public class SignupSMS extends AppCompatActivity {
                 // Problem creating account.
                 TextView holdView = (TextView) findViewById(R.id.lblError_SE);
                 if (holdView != null)
-                    holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptproblem));
+                    holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptwhite));
             }
 
             @Override
@@ -176,7 +176,7 @@ public class SignupSMS extends AppCompatActivity {
             // Problem creating account.
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
-                holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));
+                holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
         }
     }
 
@@ -187,7 +187,7 @@ public class SignupSMS extends AppCompatActivity {
     private void DisplayProblem(){
         TextView holdView = (TextView) findViewById(R.id.lblError_SE);
         if (holdView != null)
-            holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptproblem));
+            holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptwhite));
     }
 
     /*

@@ -96,7 +96,7 @@ public class SignupEmail extends AppCompatActivity {
             // Problem creating account.
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
-                holdView.setTextColor(ContextCompat.getColor(this, R.color.promptproblem));
+                holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
         }
     }
 
