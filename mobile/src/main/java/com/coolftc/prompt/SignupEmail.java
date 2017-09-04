@@ -9,16 +9,13 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.LoginFilter;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
-import com.coolftc.prompt.utility.ExpClass;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.TimeZone;
 
@@ -97,6 +94,14 @@ public class SignupEmail extends AppCompatActivity {
             TextView holdView = (TextView) findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
+            if (acct.tag.length() > 0){
+                holdView = (TextView) findViewById(R.id.lblEmailStatus);
+                if (holdView != null) {
+                    holdView.setVisibility(View.VISIBLE);
+                    String holdStat = getString(R.string.status) + ":" + acct.tag;
+                    holdView.setText(holdStat);
+                }
+            }
         }
     }
 
@@ -131,7 +136,6 @@ public class SignupEmail extends AppCompatActivity {
         }
 
         protected void onCancelled() {
-            //Toast.makeText(context, R.string.msgUserCancel, Toast.LENGTH_LONG).show();
             AccountCreated(new Actor(context));
         }
 
@@ -175,6 +179,8 @@ public class SignupEmail extends AppCompatActivity {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
                     acct.SyncPrime(false, context);
+                } else {
+                    acct.tag = Integer.toString(user.response);
                 }
             } else {
                 publishProgress(false);
