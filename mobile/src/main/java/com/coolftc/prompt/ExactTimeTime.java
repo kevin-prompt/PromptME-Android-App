@@ -11,7 +11,9 @@ import android.widget.TimePicker;
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  *  This fragment is used to select the time.  It can also
@@ -78,9 +80,9 @@ public class ExactTimeTime extends Fragment {
             timeset = Calendar.getInstance();
         }
         // Note: Using deprecated timePicker methods while min SDK is lower than the new methods.
-        int holdTm = Integer.parseInt(android.text.format.DateFormat.format("HH",timeset).toString());
+        int holdTm = timeset.get(Calendar.HOUR_OF_DAY);
         timePicker.setCurrentHour(holdTm);
-        holdTm = Integer.parseInt(android.text.format.DateFormat.format("mm",timeset).toString());
+        holdTm = timeset.get(Calendar.MINUTE);
         timePicker.setCurrentMinute(holdTm);
         timePicker.setOnTimeChangedListener(timeListener);
 

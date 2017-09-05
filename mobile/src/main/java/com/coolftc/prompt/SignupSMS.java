@@ -327,6 +327,7 @@ public class SignupSMS extends AppCompatActivity {
                 }
             } else {
                 publishProgress(false);
+                acct.tag = Integer.toString(NETWORK_DOWN);
             }
             return acct;
         }
@@ -432,6 +433,7 @@ public class SignupSMS extends AppCompatActivity {
                 }
             } else {
                 publishProgress(false);
+                acct.tag = Integer.toString(NETWORK_DOWN);
             }
             return acct;
         }

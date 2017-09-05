@@ -1,6 +1,7 @@
 package com.coolftc.prompt;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -75,8 +76,10 @@ public class ExactTimeDate extends Fragment {
         } catch (ExpParseToCalendar expParseToCalendar) {
             timeset = Calendar.getInstance();
         }
-        // Grab today's day as the minimum to avoid times in the past.
-        datePicker.setMinDate(Calendar.getInstance().getTimeInMillis()-1);
+        // Grab today's day as the minimum to avoid times in the past. Problematic on early versions.
+        if(Build.VERSION.SDK_INT > 18) {
+            datePicker.setMinDate(timeset.getTimeInMillis());
+        }
         datePicker.setDate(timeset.getTimeInMillis());
         datePicker.setOnDateChangeListener(dateListener);
 
