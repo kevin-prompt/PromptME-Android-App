@@ -70,7 +70,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        if(mViewPager != null){ mViewPager.setAdapter(mPageFragmentMgr);}
+        if(mViewPager != null){ mViewPager.setAdapter(mPageFragmentMgr); }
     }
 
     private void setTimeAgain(View view){

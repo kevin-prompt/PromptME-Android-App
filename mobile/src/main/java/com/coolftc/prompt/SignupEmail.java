@@ -184,6 +184,7 @@ public class SignupEmail extends AppCompatActivity {
                 }
             } else {
                 publishProgress(false);
+                acct.tag = Integer.toString(NETWORK_DOWN);
             }
             return acct;
         }
