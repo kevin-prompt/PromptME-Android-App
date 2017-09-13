@@ -51,6 +51,8 @@ public class Refresh extends IntentService {
     private static final String SRV_NAME = "RefreshService";  // Name can be used for debugging.
     private FriendDB mSocial;
     private MessageDB mMessage;
+    // The contact permission is stored to reduce management overhead.
+    int mContactPermissionCheck;
     // The friendAge is a debounce value for the friend query.
     private static String friendAge = THE_PAST;
 
@@ -123,8 +125,9 @@ public class Refresh extends IntentService {
                 WebServices ws = new WebServices();
                 if (ws.IsNetwork(this)) {
                     Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
-                    if (invites.friends.size() == 0)
+                    if (invites.friends == null || invites.friends.size() == 0)
                         return; // There is always 1 friend (yourself), if not something is wrong.
+                    mContactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
                     Account[] inviteStore = queryFriends();
                     CheckForDeletes(invites, inviteStore);
                     CheckForUpdates(invites, inviteStore);
@@ -343,24 +346,25 @@ public class Refresh extends IntentService {
      */
     private boolean UpdateContactInfo(Account[] local){
         List<Account> toChg = new ArrayList<>();
-
-        for(Account acct : local){
-            if(acct.contactId.length() == 0){
-                Account holdContact;
-                if(acct.isEmail()) {
-                    holdContact = getContactByEmail(acct.unique);
-                }else{
-                    holdContact = getContactByPhone(acct.unique);
-                }
-                if(holdContact.contactName.length() > 0) {
-                    acct.contactId = holdContact.contactId;
-                    acct.contactName = holdContact.contactName;
-                    acct.contactPic = holdContact.contactPic;
-                    toChg.add(acct);
+        if(mContactPermissionCheck == PackageManager.PERMISSION_GRANTED) {
+            for (Account acct : local) {
+                if (acct.contactId.length() == 0) {
+                    Account holdContact;
+                    if (acct.isEmail()) {
+                        holdContact = getContactByEmail(acct.unique);
+                    } else {
+                        holdContact = getContactByPhone(acct.unique);
+                    }
+                    if (holdContact.contactName.length() > 0) {
+                        acct.contactId = holdContact.contactId;
+                        acct.contactName = holdContact.contactName;
+                        acct.contactPic = holdContact.contactPic;
+                        toChg.add(acct);
+                    }
                 }
             }
+            chgFriends(toChg);
         }
-        chgFriends(toChg);
 
         return (toChg.size()>0);
     }

@@ -1,12 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.coolftc.prompt.ExactTime">
-    <item android:id="@+id/mnuConnections"
-        android:title="@string/connections" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/mnuHistory"
-        android:title="@string/his_name" />
+        android:icon="@drawable/ic_library_books_white_24dp"
+        android:title="@string/his_name"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/mnuWelcomeSettings"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/set_name"
         app:showAsAction="never" />
 </menu>

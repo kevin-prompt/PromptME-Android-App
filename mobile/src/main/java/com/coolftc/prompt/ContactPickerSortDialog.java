@@ -34,6 +34,7 @@ public class ContactPickerSortDialog extends DialogFragment {
                         // Save the new configuration if it changed, and let Activity know.
                         if(mCompromised) {
                             Settings.setNameSortOrder(getActivity().getApplicationContext(), mSortBy);
+                            if(mActivity == null) mActivity = (FragmentTalkBack) getActivity();
                             mActivity.newSort();
                         }
                         dismiss();
@@ -48,6 +49,10 @@ public class ContactPickerSortDialog extends DialogFragment {
         return builder.create();
     }
 
+    /*
+        This method only gets called on API v23, so will need to dynamically get the
+        activity when you need to access the callback for those lower versions.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
