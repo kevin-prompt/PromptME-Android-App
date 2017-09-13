@@ -177,6 +177,7 @@ public class Welcome extends AppCompatActivity {
             hold.put(CP_UNIQUE, acct.unique);
             // Decided that the buttons clutter up the Welcome screen, they are still available on Contact Picker.
             hold.put(CP_LINKED, ""); // (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");
+            // If the contact permission is revoked after acct is populated (from contacts), this will throw (should be uncommon)
             hold.put(CP_FACE, acct.contactPicUri());
             details.add(hold);
         }
