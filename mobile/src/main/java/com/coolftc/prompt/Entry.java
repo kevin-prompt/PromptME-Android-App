@@ -169,7 +169,6 @@ public class Entry extends AppCompatActivity {
         TextView holdText;
         CheckBox holdChkBox;
 
-
         // Who is getting the message (does not really change).
         holdImage = (ImageView) findViewById(R.id.sendFacePic);
         if(holdImage != null && mTarget.contactPicUri().length() > 0) {
@@ -178,7 +177,7 @@ public class Entry extends AppCompatActivity {
         holdText = (TextView) findViewById(R.id.sendContactName);
         if(holdText != null) { holdText.setText(mTarget.bestName());}
         holdText = (TextView) findViewById(R.id.sendContactExtra);
-        if(holdText != null) { holdText.setText(mTarget.unique);}
+        if(holdText != null) { holdText.setText(!mTarget.primary ? mTarget.bestNameAlt() : "");}
 
         // When are they getting the message (can change).
         String holdRaw = getResources().getString(R.string.deliver) + " ";

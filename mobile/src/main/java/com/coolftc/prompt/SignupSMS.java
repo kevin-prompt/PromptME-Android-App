@@ -112,12 +112,18 @@ public class SignupSMS extends AppCompatActivity {
                 // Save verification ID and resending token so we can use them later
                 mVerificationId = verificationId;
                 mResendToken = token;
+
+                // If the user is a Solo, passing in the existing unique name as the
+                // custom name will trigger the server to match up the accounts.
+                Actor user = new Actor(getApplicationContext());
+                String soloName = user.solo ? user.unique : "";
+
                 // Create the account, then verify on next step.
                 new AcctCreateTask(SignupSMS.this, getResources().getString(R.string.app_name)).execute(
                         mPhoneNbr,
                         mDsplName,
                         getResources().getString(R.string.prf_SleepCycleDefault),
-                        "");
+                        soloName);
             }
         };
     }
@@ -223,29 +229,32 @@ public class SignupSMS extends AppCompatActivity {
     /*
         Continuation of the SignInVerify chain of events.
      */
-    private void PerformFirebaseVerify(final FirebaseUser user){
-        user.getIdToken(false).addOnCompleteListener(this, new OnCompleteListener<GetTokenResult>() {
+    private void PerformFirebaseVerify(final FirebaseUser device){
+        device.getIdToken(false).addOnCompleteListener(this, new OnCompleteListener<GetTokenResult>() {
             @Override
             public void onComplete(@NonNull Task<GetTokenResult> task) {
                 if (task.isSuccessful()){
+                    // If the user is a Solo, passing in the existing unique name as the
+                    // custom name will trigger the server to match up the accounts.
+                    Actor user = new Actor(getApplicationContext());
+                    String soloName = user.solo ? user.unique : "";
+
                     new AcctCreateVerifyTask(SignupSMS.this, getResources().getString(R.string.app_name)).execute(
                             mPhoneNbr,
                             mDsplName,
                             getResources().getString(R.string.prf_SleepCycleDefault),
-                            user.getUid(),
+                            soloName,
                             FTI_FIREBASE_VERIFY,
-                            user.getUid(),
+                            device.getUid(),
                             task.getResult().getToken());
                 }else {
                     ExpClass.LogEX(task.getException(), this.getClass().getName() + ".PerformFirebaseVerify");
                     Crashlytics.logException(task.getException());
                     DisplayProblem();
                 }
-
             }
         });
     }
-
 
     /**
      * The nested AsyncTask class is used to off-load the network call to a separate
@@ -321,6 +330,8 @@ public class SignupSMS extends AppCompatActivity {
                 if(user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
+                    acct.solo = false;
+                    acct.confirmed = false;
                     acct.SyncPrime(false, context);
                 } else {
                     acct.tag = Integer.toString(user.response);
@@ -417,6 +428,8 @@ public class SignupSMS extends AppCompatActivity {
                 if (user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
+                    acct.solo = false;
+                    acct.confirmed = false;
                     if (!regData.verify) {
                         WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
                         confirm.code = Long.parseLong(criteria[4]);

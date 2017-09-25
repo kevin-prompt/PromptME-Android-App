@@ -91,6 +91,10 @@
             android:name=".SignupConfirm"
             android:screenOrientation="portrait"
             android:theme="@style/SignupTheme" />
+        <activity
+            android:name=".SignupSolo"
+            android:screenOrientation="portrait"
+            android:theme="@style/SignupTheme" />
 
         <service
             android:name=".service.Refresh"
@@ -130,6 +134,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

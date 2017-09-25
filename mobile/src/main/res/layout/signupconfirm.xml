@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblInform_SC"
         android:layout_margin="15dp"
-        android:textColor="@color/promptproblem"
+        android:textColor="@color/promptwhite"
         android:visibility="gone">
     </TextView>
 

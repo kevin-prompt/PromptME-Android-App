@@ -40,6 +40,16 @@
         <item name="android:width">@dimen/signup_btn_width</item>
     </style>
 
+    <style name="SkipButton" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/promptwhite</item>
+        <item name="android:background">@color/promptblue</item>
+        <item name="android:textSize">@dimen/skip_btn_text</item>
+        <item name="android:typeface">normal</item>
+    </style>
+
     <style name="normalText">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/promptwhite</item>

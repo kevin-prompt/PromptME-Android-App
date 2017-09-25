@@ -147,6 +147,7 @@ public class SignupConfirm extends AppCompatActivity {
 
         switch (mConfirmType) {
             case EMAIL_SIGNUP :
+                // This is called with no parameters, since the Actor should have all the info.
                 new AcctResendTask(SignupConfirm.this, getResources().getString(R.string.app_name)).execute();
                 break;
             case SMS_SIGNUP :

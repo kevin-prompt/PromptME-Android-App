@@ -54,6 +54,7 @@ public class Settings extends AppCompatActivity {
     public static final boolean DEFAULT_CONTACTS = true;
     public static final String PREF_SOUND_AVAILABLE = "1006";
     public static final boolean DEFAULT_SOUND_AVAILABLE = false;
+    public static final String PREF_VERIFICATION = "1007";
     public static final String PREF_NAMESORT = "name.sortorder";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
     public static final int DEFAULT_SORT_ORDER = 0;

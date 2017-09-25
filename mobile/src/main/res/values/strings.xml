@@ -40,6 +40,9 @@
     <string name="sms_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an SMS to confirm your phone number.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new text.  Standard messaging rates apply to any SMS verification codes received.</string>
     <string name="sms_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid phone number.</string>
     <string name="sms_edit_hint">Your Phone</string>
+    <string name="sol_title_name">Go Solo</string>
+    <string name="sol_detail_name">By not entering an email address or phone number for validation, you will be unable to send or receive Prompts from friends.  All other functionality is available.  To become verify later, go to Settings and tap on Verification.</string>
+    <string name="sol_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid phone number.</string>
     <string name="vrf_detail_code">Enter the code we sent to</string>
     <string name="vrf_edit_hint">Confirmation Code</string>
     <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Prompt can discover you by email address.</string>
@@ -70,6 +73,10 @@
     <string name="prf_SnoozeSum">Prompt notification snooze time: %s minutes.</string>
     <string name="prf_SnoozeDefault">60</string>
     <string name="prf_About">About</string>
+    <string name="prf_Verify">Verification</string>
+    <string name="prf_VerifySum">Allows Prompts between friends.</string>
+    <string name="prf_FeaturePic">Display Picture</string>
+    <string name="prf_FeaturePicSum">Add a picture of you to displayed in the App.</string>
     <string name="prf_NotificationTone">Prompt Notification</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
@@ -91,8 +98,11 @@
     <string name="btnConfirmSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>
+    <string name="btnSkip">Skip</string>
     <string name="btnConfirmCode">Create Account</string>
     <string name="btnResendCode">Resend Code</string>
+    <string name="btnSoleStop">Return to Signup</string>
+    <string name="btnSoleGo">Continue to App</string>
     <string name="img_contactpic">Contact Picture</string>
     <string name="img_recurring">Recurring Prompt</string>
     <string name="img_snooze">Snoozed Prompt</string>

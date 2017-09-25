@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
-import com.crashlytics.android.Crashlytics;
-
 import java.util.TimeZone;
 
 /**
@@ -61,12 +59,17 @@ public class SignupEmail extends AppCompatActivity {
         if(holdView!=null) txtEmailAddr = holdView.getText().toString();
         if(txtEmailAddr.length()==0) return;
 
+        // If the user is a Solo, passing in the existing unique name as the
+        // custom name will trigger the server to match up the accounts.
+        Actor user = new Actor(getApplicationContext());
+        String soloName = user.solo ? user.unique : "";
+
         // Create an account, then move on to verify page
         new AcctCreateTask(SignupEmail.this, getResources().getString(R.string.app_name)).execute(
                 txtEmailAddr,
                 mDsplName,
                 getResources().getString(R.string.prf_SleepCycleDefault),
-                "");
+                soloName);
     }
 
     /*
@@ -75,19 +78,11 @@ public class SignupEmail extends AppCompatActivity {
      */
     private void  AccountCreated(Actor acct){
         if(acct.ticket.length() > 0) {
-            if (!acct.confirmed) {
-                // Verify Screen - this is the normal path.
-                Intent confirmScreen = new Intent(this, SignupConfirm.class);
-                confirmScreen.putExtra(IN_DSPL_TGT, acct.unique);
-                confirmScreen.putExtra(IN_CONFIRM_TYPE, EMAIL_SIGNUP);
-                startActivity(confirmScreen);
-            }
-            else {
-                // Already Verified? OK...send to welcome.
-                Settings.setDisplayName(this, acct.display);
-                Intent intent = new Intent(this, Welcome.class);
-                startActivity(intent);
-            }
+            // Verify Screen - this is the normal path.
+            Intent confirmScreen = new Intent(this, SignupConfirm.class);
+            confirmScreen.putExtra(IN_DSPL_TGT, acct.unique);
+            confirmScreen.putExtra(IN_CONFIRM_TYPE, EMAIL_SIGNUP);
+            startActivity(confirmScreen);
         }
         else {
             // Problem creating account.
@@ -178,6 +173,8 @@ public class SignupEmail extends AppCompatActivity {
                 if(user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
+                    acct.solo = false;
+                    acct.confirmed = false;
                     acct.SyncPrime(false, context);
                 } else {
                     acct.tag = Integer.toString(user.response);
