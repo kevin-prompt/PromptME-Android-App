@@ -74,6 +74,9 @@
     <string name="prf_SnoozeDefault">60</string>
     <string name="prf_About">About</string>
     <string name="prf_Verify">Verification</string>
+    <string name="prf_VerifySum">Allows Prompts between friends.</string>
+    <string name="prf_FeaturePic">Display Picture</string>
+    <string name="prf_FeaturePicSum">Add a picture of you to displayed in the App.</string>
     <string name="prf_NotificationTone">Prompt Notification</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>

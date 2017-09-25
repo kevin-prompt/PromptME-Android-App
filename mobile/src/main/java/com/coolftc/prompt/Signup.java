@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -27,9 +28,17 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Set up main view and menu.
         setContentView(R.layout.signup);
+
+        // If they are already solo, slightly different look.
+        Actor user = new Actor(getApplicationContext());
+        if (user.solo){
+            TextView holdView = (TextView) findViewById(R.id.txtDisplayName);
+            if (holdView != null) holdView.setText(user.display);
+            Button holdButton = (Button) findViewById(R.id.btnSkip);
+            if (holdButton != null) holdButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     /*
@@ -37,8 +46,9 @@ public class Signup extends AppCompatActivity {
      */
     public void EmailVerification(View view) {
         TextView holdView = (TextView)findViewById(R.id.txtDisplayName);
-        String txtDspl = getResources().getString(R.string.mysteryme);
+        String txtDspl = "";
         if(holdView!=null) txtDspl = holdView.getText().toString();
+        if(txtDspl.length() == 0) txtDspl = getResources().getString(R.string.mysteryme);
 
         Intent emailConfirm = new Intent(this, SignupEmail.class);
         emailConfirm.putExtra(IN_DSPL_NAME, txtDspl);
@@ -50,18 +60,23 @@ public class Signup extends AppCompatActivity {
      */
     public void SMSVerification(View view) {
         TextView holdView = (TextView)findViewById(R.id.txtDisplayName);
-        String txtDspl = getResources().getString(R.string.mysteryme);
+        String txtDspl = "";
         if(holdView!=null) txtDspl = holdView.getText().toString();
+        if(txtDspl.length() == 0) txtDspl = getResources().getString(R.string.mysteryme);
 
         Intent phoneConfirm = new Intent(this, SignupSMS.class);
         phoneConfirm.putExtra(IN_DSPL_NAME, txtDspl);
         startActivity(phoneConfirm);
     }
 
+    /*
+     *  If they want to avoid giving any information about themselves, they can skip signup.
+     */
     public void SoloVerification(View view) {
         TextView holdView = (TextView)findViewById(R.id.txtDisplayName);
-        String txtDspl = getResources().getString(R.string.mysteryme);
+        String txtDspl = "";
         if(holdView!=null) txtDspl = holdView.getText().toString();
+        if(txtDspl.length() == 0) txtDspl = getResources().getString(R.string.mysteryme);
 
         Intent soloConfirm = new Intent(this, SignupSolo.class);
         soloConfirm.putExtra(IN_DSPL_NAME, txtDspl);

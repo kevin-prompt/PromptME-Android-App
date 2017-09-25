@@ -55,9 +55,9 @@ public class SignupSolo extends AppCompatActivity {
         if (user.device.length() > 0)
             mEmailAddr = user.device + FTI_SOLO_DOMAIN;
         else
-            mEmailAddr = FirebaseInstanceId.getInstance().getId();
+            mEmailAddr = FirebaseInstanceId.getInstance().getId() + FTI_SOLO_DOMAIN;
 
-        if(mEmailAddr == null || mEmailAddr.length() == 0){
+        if(mEmailAddr.length() == 0 || mEmailAddr.equalsIgnoreCase(FTI_SOLO_DOMAIN)){
             DisplayProblem();
             return;
         }

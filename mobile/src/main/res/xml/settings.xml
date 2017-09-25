@@ -17,7 +17,7 @@
         </ListPreference>
         <PreferenceScreen android:key="1007"
             android:title="@string/prf_Verify"
-            android:summary="@string/blank">
+            android:summary="@string/prf_VerifySum">
             <intent android:action="android.intent.action.MAIN"
                 android:targetPackage="com.coolftc.prompt"
                 android:targetClass="com.coolftc.prompt.Signup">
