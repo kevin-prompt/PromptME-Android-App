@@ -20,16 +20,8 @@ import android.support.v4.content.ContextCompat;
 
 import com.coolftc.prompt.service.Refresh;
 
-import static com.coolftc.prompt.Settings.PREF_CONTACTS;
-import static com.coolftc.prompt.Settings.PREF_SOUND_AVAILABLE;
 import static com.coolftc.prompt.utility.Constants.*;
-import static com.coolftc.prompt.Settings.PREF_DISPNAME;
-import static com.coolftc.prompt.Settings.PREF_PICKSHORTDATEFMT;
-import static com.coolftc.prompt.Settings.PREF_SCYCLE;
-import static com.coolftc.prompt.Settings.PREF_SNOOZE;
-import static com.coolftc.prompt.Settings.PREF_SOUND;
-import static com.coolftc.prompt.Settings.PREF_SYSTEM;
-import static com.coolftc.prompt.Settings.PREF_VIBRATEON;
+import static com.coolftc.prompt.Settings.*;
 
 /**
  *  The very basic fragment to display settings.  See the Settings
@@ -67,17 +59,25 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         // Do not bother showing these selections if the device does not support it
         // or it is no longer meaningful.
         // Note: To modify the structure of the page, need to use the category.
+        // No vibration choice if device does not vibrate.
         final Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         if (!v.hasVibrator()) {
             PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
-            Preference mVibrate = findPreference(PREF_VIBRATEON);
-            cat.removePreference(mVibrate);
+            Preference vibrate = findPreference(PREF_VIBRATEON);
+            cat.removePreference(vibrate);
         }
-
+        // Only offer to turn off the nag screen if it is still showing up.
         if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){
             PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
-            Preference mContacts = findPreference(PREF_CONTACTS);
-            cat.removePreference(mContacts);
+            Preference contacts = findPreference(PREF_CONTACTS);
+            cat.removePreference(contacts);
+        }
+        // Only show the option to verify if they have not yet verified.
+        Actor user = new Actor(getActivity());
+        if(!user.solo){
+            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SETTINGS);
+            Preference verify = findPreference(PREF_VERIFICATION);
+            cat.removePreference(verify);
         }
 
         // Apply any initialization (mostly summaries)

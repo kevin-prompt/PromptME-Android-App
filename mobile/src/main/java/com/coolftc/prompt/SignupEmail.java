@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.coolftc.prompt.source.WebServiceModels;
 import com.coolftc.prompt.source.WebServices;
-import com.crashlytics.android.Crashlytics;
-
 import java.util.TimeZone;
 
 /**

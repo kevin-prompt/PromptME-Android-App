@@ -15,6 +15,14 @@
             android:entryValues="@array/sleepcycle_values"
             android:defaultValue="@string/prf_SleepCycleDefault">
         </ListPreference>
+        <PreferenceScreen android:key="1007"
+            android:title="@string/prf_Verify"
+            android:summary="@string/blank">
+            <intent android:action="android.intent.action.MAIN"
+                android:targetPackage="com.coolftc.prompt"
+                android:targetClass="com.coolftc.prompt.Signup">
+            </intent>
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:key="prompt.system"
         android:title="@string/prf_System">

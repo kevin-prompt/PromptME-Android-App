@@ -58,4 +58,14 @@ public class Signup extends AppCompatActivity {
         startActivity(phoneConfirm);
     }
 
+    public void SoloVerification(View view) {
+        TextView holdView = (TextView)findViewById(R.id.txtDisplayName);
+        String txtDspl = getResources().getString(R.string.mysteryme);
+        if(holdView!=null) txtDspl = holdView.getText().toString();
+
+        Intent soloConfirm = new Intent(this, SignupSolo.class);
+        soloConfirm.putExtra(IN_DSPL_NAME, txtDspl);
+        startActivity(soloConfirm);
+    }
+
 }

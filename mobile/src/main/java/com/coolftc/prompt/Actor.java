@@ -29,6 +29,7 @@ public class Actor extends Account {
     public String timezoneExt = ""; // The time zone saved on the server.
     public boolean ads = true;      // Should ads be displayed on the app.
     public boolean broadcast = false; // Is this account broadcast only
+    public boolean solo = false;    // Account limited to self-reminders
 
     /*
      *  Constructors
@@ -66,6 +67,7 @@ public class Actor extends Account {
         notesWaiting = registered.getInt(SP_REG_PEND, 0);
         confirmed = registered.getBoolean(SP_REG_CONFIRM, false);
         force = registered.getBoolean(SP_REG_FORCE, false);
+        solo = registered.getBoolean(SP_REG_SOLO, false);
         isFriend = true;
         primary = true;
 
@@ -113,6 +115,7 @@ public class Actor extends Account {
         editor.putInt(SP_REG_PEND, notesWaiting);
         editor.putBoolean(SP_REG_CONFIRM, confirmed);
         editor.putBoolean(SP_REG_FORCE, force);
+        editor.putBoolean(SP_REG_SOLO, solo);
         editor.apply();
 
 

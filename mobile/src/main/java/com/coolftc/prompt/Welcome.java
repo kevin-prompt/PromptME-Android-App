@@ -147,8 +147,10 @@ public class Welcome extends AppCompatActivity {
         mAccounts.add(actor);
         //Get all friends stored locally.
         LoadFriends(FriendDB.SQLITE_TRUE);
-        // Add a title to suggest adding new connections
-        AddDelimitRow(R.string.contact_more);
+        // Add a title to suggest adding new connections unless solo user
+        if(!actor.solo) {
+            AddDelimitRow(R.string.contact_more);
+        }
 
         // The "uniques" hold all the unique names that are on the list
         Map<String, Boolean> uniques = new HashMap<>();
@@ -173,7 +175,7 @@ public class Welcome extends AppCompatActivity {
             // Copy the data to display.
             hold.put(CP_TYPE, acct.localId);
             hold.put(CP_NAME, acct.bestName());
-            hold.put(CP_EXTRA, acct.bestNameAlt());
+            hold.put(CP_EXTRA, !acct.primary ? acct.bestNameAlt() : "");
             hold.put(CP_UNIQUE, acct.unique);
             // Decided that the buttons clutter up the Welcome screen, they are still available on Contact Picker.
             hold.put(CP_LINKED, ""); // (acct.confirmed || acct.pending) && !acct.primary ? acct.unique : "");

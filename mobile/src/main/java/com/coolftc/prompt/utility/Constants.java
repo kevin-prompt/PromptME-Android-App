@@ -33,6 +33,7 @@ public class Constants {
     public static final String SP_REG_PEND = "prompt.pending";
     public static final String SP_REG_CONFIRM = "prompt.confirmed";
     public static final String SP_REG_FORCE = "prompt.force";
+    public static final String SP_REG_SOLO = "prompt.solo";
     public static final long Owner_ID = -1;
 
     /*
@@ -111,8 +112,10 @@ public class Constants {
     public static final String FTI_Ticket = "?ticket=";
     public static final int FTI_TIMEOUT = 30000;
     public static final int FTI_TYPE_ANDROID = 3;       // 3 = Android GCM
+    public static final String FTI_SOLO_DOMAIN = "@zalicon.com";
     public static final String FTI_DIGIT_VERIFY = "2";      // 2 = Digits
     public static final String FTI_FIREBASE_VERIFY = "3";   // 3 = Firebase
+    public static final String FTI_SOLO_VERIFY = "4";       // 4 = Solo
     public static final int NETWORK_DOWN = 99;          // Sometimes it is nice to know the issue was a bad network.
 
     /* The Google GCM account (called Project number in console) */
