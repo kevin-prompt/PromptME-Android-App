@@ -39,9 +39,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     wearApp project(':wear')
 
-    // helps parse json web services
-    // phone number formatting
-    // put a circle around images
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
@@ -52,9 +49,9 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:11.0.4'
     compile 'com.google.firebase:firebase-ads:11.0.4'
     compile 'com.google.firebase:firebase-auth:11.0.4'
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.googlecode.libphonenumber:libphonenumber:7.4.4'
-    compile 'com.mikhaellopez:circularimageview:3.0.2'
+    compile 'com.google.code.gson:gson:2.7'                         // helps parse json web services
+    compile 'com.googlecode.libphonenumber:libphonenumber:7.4.4'    // phone number formatting
+    compile 'com.mikhaellopez:circularimageview:3.0.2'              // put a circle around images
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'
