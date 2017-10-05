@@ -1,15 +1,6 @@
-Future Note Android
+PromptME Android
 
-The Future Note Android supports a social prompting system.
-
-To get this to run requires:
-
-
-1) Google Notifications
-
-2) Fabric Digits
-
-3) Future Note API
+The PromptME Android supports a personal reminder and social prompting system.
 
 
 
