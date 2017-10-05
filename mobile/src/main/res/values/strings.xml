@@ -1,7 +1,7 @@
 <resources>
-    <string name="ver_nbr">1.7.0.0</string>
-    <string name="ver_build">2017 - Sep 10</string>
-    <string name="app_name">Prompt</string>
+    <string name="ver_nbr">1.11.0.0</string>
+    <string name="ver_build">2017 - Sep 25</string>
+    <string name="app_name">PromptME</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
     <string name="abt_name">About</string>
@@ -18,7 +18,7 @@
     <string name="lblUniqueName">Unique Name (Phone# or Email)</string>
     <string name="lblDisplayName">Display Name</string>
     <string name="lblNoContacts">No Contacts Found</string>
-    <string name="lblDeepLinkWelcome">Welcome to Prompt</string>
+    <string name="lblDeepLinkWelcome">Welcome to PromptME</string>
     <string name="lblConnections">Connections</string>
     <string name="lblPromptMe">Prompt Me</string>
     <string name="lblWelcomeHelp">Tap on a connection to send a Prompt.</string>
@@ -33,19 +33,19 @@
     <string name="sup_detail_or">- or -</string>
     <string name="sup_edit_hint">Your Name</string>
     <string name="eml_detail_addr">Enter your email address</string>
-    <string name="eml_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an email to confirm your email address.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new email.</string>
+    <string name="eml_detail_print">By tapping &quot;Send Confirmation&quot; above, PromptME will send you an email to confirm your email address.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new email.</string>
     <string name="eml_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid email address.</string>
     <string name="eml_edit_hint">Your Email</string>
     <string name="sms_detail_addr">Enter your phone number</string>
-    <string name="sms_detail_print">By tapping &quot;Send Confirmation&quot; above, Prompt will send you an SMS to confirm your phone number.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new text.  Standard messaging rates apply to any SMS verification codes received.</string>
+    <string name="sms_detail_print">By tapping &quot;Send Confirmation&quot; above, PromptME will send you an SMS to confirm your phone number.  On the next screen enter the received code, or choose &quot;Resend Code&quot; to receive a new text.  Standard messaging rates apply to any SMS verification codes received.</string>
     <string name="sms_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid phone number.</string>
     <string name="sms_edit_hint">Your Phone</string>
     <string name="sol_title_name">Go Solo</string>
-    <string name="sol_detail_name">By not entering an email address or phone number for validation, you will be unable to send or receive Prompts from friends.  All other functionality is available.  To become verify later, go to Settings and tap on Verification.</string>
+    <string name="sol_detail_name">By skipping email address or phone number for validation, you will be unable to send or receive Prompts with friends.  All other functionality remains the same.  To verify later, go to Settings and tap on Verification.</string>
     <string name="sol_detail_err">There is a problem sending out your verification code.  Make sure you are connected to the internet and using a valid phone number.</string>
     <string name="vrf_detail_code">Enter the code we sent to</string>
     <string name="vrf_edit_hint">Confirmation Code</string>
-    <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the Prompt Terms of Service, and to share your email address with Prompt, and that other users of Prompt can discover you by email address.</string>
+    <string name="vrf_detail_print">By tapping &quot;Create Account&quot; above, you agree to the PromptME Terms of Service, and to share your email address with PromptME, and that other users of PromptME can discover you by email address.</string>
     <string name="vrf_detail_err">There is a problem with your verification code.  Reenter the code or request a new code.  Make sure you are connected to the internet, too.</string>
     <string name="prf_Personal">Personal</string>
     <string name="prf_System">System</string>
@@ -58,7 +58,7 @@
     <string name="prf_DisplayName">Your Name</string>
     <string name="prf_DisplayNameSum">Enter a different name for yourself.</string>
     <string name="prf_SleepCycle">Sleep Cycle</string>
-    <string name="prf_SleepCycleSum">Help Prompt know when you are awake.</string>
+    <string name="prf_SleepCycleSum">Help PromptME know when you are awake.</string>
     <string name="prf_SleepCycleDefault">2</string>
     <string name="prf_NameSort">Sort Contacts</string>
     <string name="prf_NameSortSum">Sort by %s.</string>
@@ -80,7 +80,7 @@
     <string name="prf_NotificationTone">Prompt Notification</string>
     <string name="abt_author">by coolftc</string>
     <string name="abt_sysup">Up (v%s)</string>
-    <string name="abt_privacy"><a href="http://www.zalicon.com/Prompt/privacy.html">Prompt Policy</a></string>
+    <string name="abt_privacy"><a href="http://www.zalicon.com/Prompt/privacy.html">PromptME Policy</a></string>
     <string name="wel_Pending">Pending (%d)</string>
     <string name="ent_DefaulMsg">No Message - Just an alert.</string>
     <string name="his_SortOrder">Sort Order</string>
@@ -106,7 +106,7 @@
     <string name="img_contactpic">Contact Picture</string>
     <string name="img_recurring">Recurring Prompt</string>
     <string name="img_snooze">Snoozed Prompt</string>
-    <string name="contact_pri">Prompt Connections</string>
+    <string name="contact_pri">PromptME Connections</string>
     <string name="contact_inv">Pending Invitations</string>
     <string name="contact_all">Full Contacts - Tap on a contact to invite.</string>
     <string name="contact_more">++ Add More Connections ++</string>
