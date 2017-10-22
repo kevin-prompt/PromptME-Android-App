@@ -261,9 +261,11 @@ public class KTime {
                 tmz = tmz.replace(":", "");
                 if(tmz.contains("-")) tmzsign = -1;
                 tmz = tmz.replace("-", ""); tmz = tmz.replace("+", "");
-                tmzHours = Integer.parseInt(tmz.substring(0, 2)) * tmzsign;
-                tmzMinutes = Integer.parseInt(tmz.substring(2)) * tmzsign;
-                fullSeconds = (tmzHours * 60 * 60) + (tmzMinutes * 60) * tmzsign;
+                if(tmz.trim().length() > 3) {
+                    tmzHours = Integer.parseInt(tmz.substring(0, 2)) * tmzsign;
+                    tmzMinutes = Integer.parseInt(tmz.substring(2)) * tmzsign;
+                    fullSeconds = (tmzHours * 60 * 60) + (tmzMinutes * 60) * tmzsign;
+                }
             }
         }
 

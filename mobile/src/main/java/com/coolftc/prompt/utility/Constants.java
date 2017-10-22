@@ -183,11 +183,12 @@ public class Constants {
     public static final int SMS_SIGNUP = 2;
 
     /* Constants used in dealing with the SQLite Database and Shared Preference Database. */
+    /* One trick with sqlite is that text columns must be surrounded by single quote in where clause. */
     public static final String Owner_DBID = "-1";
     public static final String ISO3166_Default = "US";
     public static final String DB_FriendsAll = "select * from friend";
-    public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = " + SUB_ZZZ + " order by " + FriendDB.FRIEND_DISPLAY + " COLLATE NOCASE";
-    public static final String DB_FriendByName = "select * from friend where " + FriendDB.FRIEND_UNIQUE + " = " + SUB_ZZZ;
+    public static final String DB_FriendsWhere = "select * from friend where " + FriendDB.FRIEND_CONFIRM + " = '" + SUB_ZZZ + "' order by " + FriendDB.FRIEND_DISPLAY + " COLLATE NOCASE";
+    public static final String DB_FriendByName = "select * from friend where " + FriendDB.FRIEND_UNIQUE + " = '" + SUB_ZZZ + "'";
     public static final String DB_Table_ID = BaseColumns._ID + " = " + SUB_ZZZ;
     public static final String DB_Table_ServerID = MessageDB.MESSAGE_SRVR_ID + " = " + SUB_ZZZ;
     public static final String DB_FriendExact = "select * from friend where " + DB_Table_ID;
