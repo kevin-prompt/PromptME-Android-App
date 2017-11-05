@@ -1,34 +1,26 @@
-# Built application files
+# Docs: https://git-scm.com/docs/gitignore
+# Good overview of leading slash: https://stackoverflow.com/questions/24139478/when-to-use-leading-slash-in-gitignore
+# Built application files.
+/build/
 /*/build/
-build/
 
-# Crashlytics configuations
+# Crashlytics configuations.
 com_crashlytics_export_strings.xml
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Local configuration file (sdk path, etc).
+/local.properties
 
-# Gradle generated files
-.gradle/
+# Gradle generated files.
+/.gradle/
 
-# Signing files
-.signing/
+# Signing files.
+/.signing/
 
-# User-specific configurations
-.idea/libraries/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/.name
-.idea/compiler.xml
-.idea/copyright/profiles_settings.xml
-.idea/encodings.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/scopes/scope_settings.xml
-.idea/vcs.xml
+# User-specific configurations.
+/.idea/
 *.iml
 
-# OS-specific files
+# OS-specific files that might show up anywhere, leaving off the leading slash searches all directories.
 .DS_Store
 .DS_Store?
 ._*
