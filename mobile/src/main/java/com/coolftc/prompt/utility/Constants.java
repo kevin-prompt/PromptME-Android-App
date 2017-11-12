@@ -118,6 +118,12 @@ public class Constants {
     public static final String FTI_SOLO_VERIFY = "4";       // 4 = Solo
     public static final int NETWORK_DOWN = 99;          // Sometimes it is nice to know the issue was a bad network.
 
+    /* Constants used for Analytics */
+    public static final String AN_UP_TICKET = "ticket";
+    public static final String AN_EV_SEND = "prompt_send";
+    public static final String AV_PM_SEND_WHO = "send_who";
+    public static final String AV_PM_SEND_WHEN = "send_when";
+
     /* The Google GCM account (called Project number in console) */
     public static final String SENDER_ID = "800396557293";
 

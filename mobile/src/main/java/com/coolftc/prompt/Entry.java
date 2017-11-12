@@ -19,6 +19,7 @@ import com.coolftc.prompt.service.SendMessageThread;
 import com.coolftc.prompt.source.WebServices;
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -55,6 +56,7 @@ public class Entry extends AppCompatActivity {
     private int mDefaultTimeAdj = 47;           // Mid point between early and late
     private String mDefaultMessage = "";
     private static final int SEEK_MARK = 16;    // The seek bar has a range of 0 - 95, includes 5 marks
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +138,9 @@ public class Entry extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
+        // Set up analytics.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         ShowDetails();
     }
@@ -370,5 +375,10 @@ public class Entry extends AppCompatActivity {
         Intent intent = new Intent(this, History.class);
         startActivity(intent);
 
+        // Let Analytics know we tried to send a prompt.
+        Bundle params = new Bundle();
+        params.putString(AV_PM_SEND_WHO, ali.from.unique);
+        params.putString(AV_PM_SEND_WHEN, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString());
+        mFirebaseAnalytics.logEvent(AN_EV_SEND, params);
     }
 }

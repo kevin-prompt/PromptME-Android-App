@@ -46,13 +46,12 @@ import java.util.TreeMap;
  */
 public class Welcome extends AppCompatActivity {
     // The contact list.
-    ListView mListView;
+    private ListView mListView;
     // The "mAccounts" collect all the possible people to display.
-    List<Account> mAccounts = new ArrayList< >();
+    private List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
-
+    private String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    private int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +64,7 @@ public class Welcome extends AppCompatActivity {
 
         // Lets see if what we know about this person.
         Actor acct = new Actor(this);
+
 
         // Google Play?  They will need it.
         isGooglePlayServicesAvailable(this);
@@ -84,6 +84,15 @@ public class Welcome extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        /*  User properties are attached to all analytics records and persist.
+            The idea is to use them for categorization, but could also use it
+            to drill down into individuals.  Google recommends again using any
+            PII here, like email, so would need some dumb identifier to be safe.
+         */
+        // This is just an example of how it would work.
+        //FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        //mFirebaseAnalytics.setUserProperty(AN_UP_TICKET, acct.ticket);
 
         Display();
     }

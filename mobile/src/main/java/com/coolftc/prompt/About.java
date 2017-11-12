@@ -43,10 +43,14 @@ public class About extends AppCompatActivity {
         /**
          * To get the hyperlinks to work, we have to apply this setting to the
          * textview after it has been created.  That is why it is here.
+         * If you need to read the string from the resource and then set the
+         * TextView, (e.g. to provide a dynamic link), you need to escape the
+         * HTML in the resource (mostly &lt; and &gt;) and then use:
+         *  textView.setText(Html.fromHtml(getResources().getText(R.string.SOMETHING).toString()));
          */
         TextView holdView;
         holdView = (TextView) findViewById(R.id.abtPrivacyLink);
-        holdView.setMovementMethod(LinkMovementMethod.getInstance());
+        if(holdView!=null) {holdView.setMovementMethod(LinkMovementMethod.getInstance());}
         super.onStart();
     }
 

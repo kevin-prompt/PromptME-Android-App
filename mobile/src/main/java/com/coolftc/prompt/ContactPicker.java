@@ -60,16 +60,16 @@ import java.util.TreeMap;
 public class ContactPicker extends AppCompatActivity implements FragmentTalkBack {
 
     // The contact list.
-    ListView mListView;
+    private ListView mListView;
     // The search box.
-    EditText mContactSearch;
+    private EditText mContactSearch;
     // The contact permission is stored to reduce management overhead.
-    int contactPermissionCheck;
+    private int contactPermissionCheck;
     // The "mAccounts" collect all the possible people to display.
-    List<Account> mAccounts = new ArrayList< >();
+    private List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE, CP_BUTTON};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
+    private String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE, CP_BUTTON};
+    private int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "800396557293-siedjjd4h8babs96uc7kuu7gjveca6bh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coolftc.prompt",
+            "certificate_hash": "838a3c5bfd93a85d59578471b99bc63ba416a10b"
+          }
+        },
+        {
           "client_id": "800396557293-b9hjih75ojgcsvif8k14mdkmbbuhasni.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -115,7 +115,6 @@
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
-            />
         </service>
         <service
             android:name=".service.NotificationX"
@@ -128,9 +127,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7e750d27a9de825cdf1cbf2e9f6e0b16329551a9" />
-        <meta-data
-            android:name="firebase_analytics_collection_deactivated"
-            android:value="true" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
