@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.coolftc.prompt.service.CancelMessageThread;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.source.MessageDB;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.utility.KTime;
 
@@ -85,7 +85,7 @@ public class Detail extends AppCompatActivity {
      *  the server pending queue.
      */
     public void CancelPrompt(final View view){
-        WebServices ws = new WebServices();
+        WebServicesOld ws = new WebServicesOld();
 
         // If we use the web serivce, we need the network.
         if(!ws.IsNetwork(this) && (!mPrompt.IsPast() || mPrompt.IsRecurring())) {

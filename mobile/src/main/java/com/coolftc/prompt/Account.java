@@ -65,7 +65,7 @@ public class Account implements Serializable {
     /*
      *  Returns the last word of the display name, to provided a semblance of sur name sorting
      *  for the list of users one is connected too.  While real names are expected to have sur
-     *  names (although not all do), the display names enter for the app are not to follow that
+     *  names (although not all do), the display names entered for the app do not follow that
      *  paradigm so often.  For example, many people will just have one word names.
      */
     public String LastWord(String words) {

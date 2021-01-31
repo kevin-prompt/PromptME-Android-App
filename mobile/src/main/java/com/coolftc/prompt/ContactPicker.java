@@ -25,7 +25,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,7 +34,7 @@ import android.widget.Toast;
 
 import com.coolftc.prompt.service.SendInviteThread;
 import com.coolftc.prompt.source.FriendDB;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpClass;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -323,7 +322,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                             String [] labels = GetContactLabels(holdAcct.bestName());
                             if (addresses.length > 0) {
                                 // This will require the network, so check it
-                                WebServices ws = new WebServices();
+                                WebServicesOld ws = new WebServicesOld();
                                 if(!ws.IsNetwork(this)) {
                                     Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
                                     break;

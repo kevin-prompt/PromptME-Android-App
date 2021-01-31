@@ -211,6 +211,7 @@
     <string name="picktime">Pick Time &gt;&gt;</string>
     <string name="err_cannot_connect">Unable to connect.</string>
     <string name="err_bad_request">Problem making request (%d)</string>
+    <string name="err_bad_resource">Problem making request (%d)</string>
     <string name="err_bad_auth">Not a valid account (%d)</string>
     <string name="err_bad_server">Server issue, try later (%d)</string>
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>

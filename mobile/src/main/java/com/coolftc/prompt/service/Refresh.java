@@ -10,7 +10,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.utility.KTime.KT_fmtDate3339fk;
@@ -24,9 +24,9 @@ import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.coolftc.prompt.source.WebServiceModels.*;
+import com.coolftc.prompt.source.WebServiceModelsOld.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -122,7 +122,7 @@ public class Refresh extends IntentService {
             mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
             if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KT_fmtDate3339fk, KTime.KT_MINUTES) > 10) {
-                WebServices ws = new WebServices();
+                WebServicesOld ws = new WebServicesOld();
                 if (ws.IsNetwork(this)) {
                     Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
                     if (invites.friends == null || invites.friends.size() == 0)

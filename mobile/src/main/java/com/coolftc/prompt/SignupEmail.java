@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 import java.util.TimeZone;
 
 /**
@@ -151,9 +151,9 @@ public class SignupEmail extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
             if(ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
+                WebServiceModelsOld.RegisterRequest regData = new WebServiceModelsOld.RegisterRequest();
                 regData.uname = criteria[0];
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
@@ -169,7 +169,7 @@ public class SignupEmail extends AppCompatActivity {
                 regData.type = FTI_TYPE_ANDROID;
                 regData.verify = true; // Send out a verification code
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
+                WebServiceModelsOld.RegisterResponse user = ws.Registration(regData);
                 if(user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;

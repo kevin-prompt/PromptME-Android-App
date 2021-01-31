@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -16,13 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coolftc.prompt.service.SendMessageThread;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -341,7 +339,7 @@ public class Entry extends AppCompatActivity {
         TextView holdText;
 
         Reminder ali = new Reminder();
-        WebServices ws = new WebServices();
+        WebServicesOld ws = new WebServicesOld();
 
         if(!ws.IsNetwork(this)) {
             Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();

@@ -6,10 +6,9 @@ import java.util.List;
  * This file contains the various request and reply model classes used for parsing the
  * JSON used in the Web Services.
  */
-public interface  WebServiceModels {
+public interface WebServiceModelsOld {
 
-    class PingResponse
-    {
+    class PingResponse {
         public String version;
         public int response;   // This is added locally to aid in processing
     }

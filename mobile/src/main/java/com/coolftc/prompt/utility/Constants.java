@@ -97,8 +97,18 @@ public class Constants {
     public static final String KY_CNTC_FRAG = "contactpicker.sort";
     public static final String KY_ADDR_FRAG = "contactpicker.fragment";
 
+    /* Constants used in dealing with web service calls. */
+    public static final int API_TIMEOUT = 30000;
+    public static final int API_TIMEOUT_SHORT = 30000;
+    public static final String API_HEADER_ACCEPT = "application/json";
+    public static final String API_HEADER_CONTENT = "application/json";
+    public static final String API_XFORM_CONTENT = "application/x-www-form-urlencoded";
+    public static final String API_ENCODING = "UTF-8";
+    public static final String API_BEARER = "bearer "; // note the trailing space
+    public static final String SUB_ZZZ = "%ZZZ!";
+    public static final String SUB_YYY = "%YYY!";     // if there are two substitutions together
+
     /* Constants used in dealing with the FutureTell API and other web sites */
-    public static final String SUB_ZZZ = "ZZZ";
     public static final String FTI_BaseURL = "https://promptapi.zalicon.com";
     public static final String FTI_Status = "/v1/status";
     public static final String FTI_Ping = "/v1/status/ping";

@@ -20,11 +20,17 @@ com_crashlytics_export_strings.xml
 /.idea/
 *.iml
 
+# Files generated when running the Layout Inspector or the Method Tracing in Android Studio
+/captures
+
 # OS-specific files that might show up anywhere, leaving off the leading slash searches all directories.
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
+.externalNativeBuild
 ehthumbs.db
 Thumbs.db
+*.cxx
+/app/*.cxx

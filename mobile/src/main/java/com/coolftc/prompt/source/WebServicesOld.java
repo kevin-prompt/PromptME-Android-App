@@ -8,7 +8,7 @@ import com.coolftc.prompt.utility.ExpClass;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import static com.coolftc.prompt.utility.Constants.*;
-import static com.coolftc.prompt.source.WebServiceModels.*;
+import static com.coolftc.prompt.source.WebServiceModelsOld.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.net.URL;
  * and some other things need to be excluded from Proguard or they will stop
  * working in the Release build.
  */
-public class WebServices {
+public class WebServicesOld {
 
     // Suggest anyone using the web services to first check that this returns TRUE.
     public boolean IsNetwork(Context context){

@@ -49,7 +49,7 @@ public class AcceptInvite extends IntentService {
             smt.start();
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntent");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntent");
         }
     }
 }

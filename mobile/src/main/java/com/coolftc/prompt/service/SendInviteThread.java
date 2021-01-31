@@ -5,8 +5,8 @@ import android.content.Intent;
 
 import com.coolftc.prompt.Actor;
 import com.coolftc.prompt.utility.ExpClass;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 
 import static com.coolftc.prompt.utility.Constants.NETWORK_DOWN;
 
@@ -36,7 +36,7 @@ public class SendInviteThread extends Thread {
             // Skip any empty addresses
             for (String address : mAddresses) {
                 if(address.length() > 0) {
-                    WebServiceModels.InviteResponse actual = sendInvite(sender, address, mDisplay, mMirror);
+                    WebServiceModelsOld.InviteResponse actual = sendInvite(sender, address, mDisplay, mMirror);
                 }
             }
 
@@ -52,11 +52,11 @@ public class SendInviteThread extends Thread {
     /*
      *  Send a new invite to the server.
      */
-    private WebServiceModels.InviteResponse sendInvite(Actor from, String unique, String display, boolean mirror){
-        WebServiceModels.InviteResponse rtn;
-        WebServices ws = new WebServices();
+    private WebServiceModelsOld.InviteResponse sendInvite(Actor from, String unique, String display, boolean mirror){
+        WebServiceModelsOld.InviteResponse rtn;
+        WebServicesOld ws = new WebServicesOld();
         if(ws.IsNetwork(mContext)) {
-            WebServiceModels.InviteRequest rData = new WebServiceModels.InviteRequest();
+            WebServiceModelsOld.InviteRequest rData = new WebServiceModelsOld.InviteRequest();
             rData.fname = unique;
             rData.fdisplay = display;
             rData.message = "";
@@ -64,7 +64,7 @@ public class SendInviteThread extends Thread {
 
             rtn = ws.NewInvite(from.ticket, from.acctIdStr(), rData);
         } else {
-            rtn = new WebServiceModels.InviteResponse();
+            rtn = new WebServiceModelsOld.InviteResponse();
             rtn.response = NETWORK_DOWN;
         }
         return rtn;

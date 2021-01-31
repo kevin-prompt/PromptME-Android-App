@@ -155,6 +155,11 @@ public class KTime {
         return DateFormat.format(outFormat, work);
     }
 
+    /* Get an Epoch time right now. */
+    public static long GetEpochNow(){
+        return Calendar.getInstance().getTimeInMillis() / 1000;
+    }
+
     /*
      *  Calculates the absolute difference between 2 dates, supplied as formatted strings.
      *  The formatting strings are expected to be in the same timezone.

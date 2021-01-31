@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpClass;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -308,9 +308,9 @@ public class SignupSMS extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
             if(ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
+                WebServiceModelsOld.RegisterRequest regData = new WebServiceModelsOld.RegisterRequest();
                 regData.uname = criteria[0];
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
@@ -326,7 +326,7 @@ public class SignupSMS extends AppCompatActivity {
                 regData.type = FTI_TYPE_ANDROID;
                 regData.verify = false; // Don't send out a verification code
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
+                WebServiceModelsOld.RegisterResponse user = ws.Registration(regData);
                 if(user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
@@ -406,9 +406,9 @@ public class SignupSMS extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
             if (ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
+                WebServiceModelsOld.RegisterRequest regData = new WebServiceModelsOld.RegisterRequest();
                 regData.uname = criteria[0];
                 acct.unique = regData.uname;
                 regData.dname = criteria[1];
@@ -424,14 +424,14 @@ public class SignupSMS extends AppCompatActivity {
                 regData.type = FTI_TYPE_ANDROID;
                 regData.verify = false; // Don't send out a verification code
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
+                WebServiceModelsOld.RegisterResponse user = ws.Registration(regData);
                 if (user.response >= 200 && user.response < 300) {
                     acct.ticket = user.ticket;
                     acct.acctId = user.id;
                     acct.solo = false;
                     acct.confirmed = false;
                     if (!regData.verify) {
-                        WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
+                        WebServiceModelsOld.VerifyRequest confirm = new WebServiceModelsOld.VerifyRequest();
                         confirm.code = Long.parseLong(criteria[4]);
                         confirm.provider = criteria[5];
                         confirm.credential = criteria[6];

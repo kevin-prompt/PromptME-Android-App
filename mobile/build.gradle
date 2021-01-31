@@ -1,29 +1,19 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
-apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "com.coolftc.prompt"
-        minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 11
-        versionName "1.11"
-        resConfigs "auto"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 20
+        versionName "2.00"
+        // Required (multiDexEnabled) to support Java v8 desugaring when minSdkVersion <= 20
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -31,26 +21,47 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        // Sets Java compatibility to Java 8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     return void
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    wearApp project(':wear')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    /* GSON - Helps parse JSON <-> Kotlin classes. See https://github.com/google/gson. */
+    /* Not sure it is needed, but proguard-rules.pro has special settings for gson. */
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    /* DeSugar - Helps give access to Java v8. See https://developer.android.com/studio/write/java8-support#library-desugaring */
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+/*
+    compilex fileTree(include: ['*.jar'], dir: 'libs')
+    compilex 'com.android.support:appcompat-v7:26.1.0'
+    compilex 'com.android.support:design:26.1.0'
+    compilex 'com.android.support:support-v4:26.1.0'
+*/
+    implementation 'com.google.firebase:firebase-core:18.0.1'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation 'com.google.firebase:firebase-auth:20.0.2'
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.1.0'    // phone number formatting
+    implementation 'com.mikhaellopez:circularimageview:3.0.2'              // put a circle around images
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true
-    }
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.firebase:firebase-core:11.4.2'
-    compile 'com.google.firebase:firebase-messaging:11.4.2'
-    compile 'com.google.firebase:firebase-auth:11.4.2'
-    compile 'com.google.code.gson:gson:2.8.0'                       // helps parse json web services
-    compile 'com.googlecode.libphonenumber:libphonenumber:8.1.0'    // phone number formatting
-    compile 'com.mikhaellopez:circularimageview:3.0.2'              // put a circle around images
-    testCompile 'junit:junit:4.12'
+    // Testing Dependencies
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 apply plugin: 'com.google.gms.google-services'

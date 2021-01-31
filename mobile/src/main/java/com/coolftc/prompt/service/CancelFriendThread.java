@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpClass;
 
 /**
@@ -31,7 +31,7 @@ public class CancelFriendThread extends Thread {
     @Override
     public void run() {
         Actor sender = new Actor(mContext);
-        WebServices ws = new WebServices();
+        WebServicesOld ws = new WebServicesOld();
 
         try {
             if (ws.IsNetwork(mContext)) {

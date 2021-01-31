@@ -3,12 +3,12 @@ package com.coolftc.prompt;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 import com.coolftc.prompt.utility.ExpClass;
 
 import java.util.TimeZone;
 import static com.coolftc.prompt.utility.Constants.*;
-import static com.coolftc.prompt.source.WebServiceModels.*;
+import static com.coolftc.prompt.source.WebServiceModelsOld.*;
 
 /**
  * The Actor is the person using the app.  They have many of the same
@@ -73,7 +73,7 @@ public class Actor extends Account {
 
         if(full) {
             // LoadPrime the server data, too.
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
             if(ws.IsNetwork(context)) {
                 UserResponse user = ws.GetUser(ticket, Long.toString(acctId));
                 custom = user.cname;
@@ -121,7 +121,7 @@ public class Actor extends Account {
 
         if (full && ticket.length() > 0) {
             // Save data to the server, too.
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
             if (ws.IsNetwork(context)) {
                 UserRequest user = new UserRequest();
                 user.dname = display;

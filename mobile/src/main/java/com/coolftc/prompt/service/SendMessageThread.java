@@ -10,8 +10,8 @@ import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.Reminder;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 
 import static com.coolftc.prompt.utility.Constants.*;
 
@@ -42,7 +42,7 @@ public class SendMessageThread extends Thread {
 
             // Create the record on the server using the web service. Get the real time back.
             Actor sender = new Actor(mContext);
-            WebServiceModels.PromptResponse actual = sendMessage(sender, mData);
+            WebServiceModelsOld.PromptResponse actual = sendMessage(sender, mData);
 
             // Update the local record with future time or status, and mark as processed.
             if(actual.response >= 200 && actual.response < 300) {
@@ -65,11 +65,11 @@ public class SendMessageThread extends Thread {
      *  Send a new prompt to the server. If things work out, the server returns
      *  the actual time that the prompt will be generated.
      */
-    private WebServiceModels.PromptResponse sendMessage(Actor from, Reminder msg){
-        WebServiceModels.PromptResponse realTime;
-        WebServices ws = new WebServices();
+    private WebServiceModelsOld.PromptResponse sendMessage(Actor from, Reminder msg){
+        WebServiceModelsOld.PromptResponse realTime;
+        WebServicesOld ws = new WebServicesOld();
         if(ws.IsNetwork(mContext)) {
-            WebServiceModels.PromptRequest rData = new WebServiceModels.PromptRequest();
+            WebServiceModelsOld.PromptRequest rData = new WebServiceModelsOld.PromptRequest();
             rData.when = msg.targetTime;
             rData.timezone = msg.target.timezone;
             rData.timename = msg.targetTimeNameId;
@@ -85,7 +85,7 @@ public class SendMessageThread extends Thread {
 
             realTime = ws.NewPrompt(from.ticket, from.acctIdStr(), rData);
         } else {
-            realTime = new WebServiceModels.PromptResponse();
+            realTime = new WebServiceModelsOld.PromptResponse();
             realTime.response = NETWORK_DOWN;
         }
         return realTime;

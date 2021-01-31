@@ -9,7 +9,7 @@ import com.coolftc.prompt.Actor;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.Reminder;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServicesOld;
 
 import static com.coolftc.prompt.utility.Constants.*;
 
@@ -39,7 +39,7 @@ public class CancelMessageThread extends Thread {
         try {
             mMessage = new MessageDB(mContext);  // Be sure to close this before leaving the thread.
             Actor sender = new Actor(mContext);
-            WebServices ws = new WebServices();
+            WebServicesOld ws = new WebServicesOld();
 
             // For Recurring notes, we want to always try to remove from the server but still
             // delete them locally if there is a failure to do so (since they might not be there).

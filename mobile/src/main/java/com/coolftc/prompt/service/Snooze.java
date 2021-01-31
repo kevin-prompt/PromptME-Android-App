@@ -15,8 +15,8 @@ import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.Reminder;
 import com.coolftc.prompt.Settings;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 
 import java.util.Calendar;
 
@@ -62,7 +62,7 @@ public class Snooze extends IntentService {
             mMessage = new MessageDB(getApplicationContext());  // Be sure to close this before leaving the thread.
 
             // Tell the server to snooze this message (really it just creates a special Prompt).
-            WebServiceModels.PromptResponse actual = sendSnooze(getNewSnoozeTime(), mPrompt);
+            WebServiceModelsOld.PromptResponse actual = sendSnooze(getNewSnoozeTime(), mPrompt);
 
             // Update the local record with future time or status, and mark as processed.
             if(actual.response >= 200 && actual.response < 300) {
@@ -91,12 +91,12 @@ public class Snooze extends IntentService {
      *  Snooze a prompt to the server. If things work out, the server returns
      *  the actual time that the prompt will be (again) generated.
      */
-    private WebServiceModels.PromptResponse sendSnooze(String snoozeTime, Reminder msg){
+    private WebServiceModelsOld.PromptResponse sendSnooze(String snoozeTime, Reminder msg){
         Actor user = new Actor(getApplicationContext());
-        WebServiceModels.PromptResponse realTime;
-        WebServices ws = new WebServices();
+        WebServiceModelsOld.PromptResponse realTime;
+        WebServicesOld ws = new WebServicesOld();
         if(ws.IsNetwork(getApplicationContext())) {
-            WebServiceModels.SnoozeRequest rData = new WebServiceModels.SnoozeRequest();
+            WebServiceModelsOld.SnoozeRequest rData = new WebServiceModelsOld.SnoozeRequest();
             rData.when = snoozeTime;
             rData.timezone = msg.target.timezone;
             rData.message = msg.message;
@@ -105,7 +105,7 @@ public class Snooze extends IntentService {
 
             realTime = ws.SnoozePrompt(user.ticket, user.acctIdStr(), rData);
         } else {
-            realTime = new WebServiceModels.PromptResponse();
+            realTime = new WebServiceModelsOld.PromptResponse();
             realTime.response = NETWORK_DOWN;
         }
         return realTime;

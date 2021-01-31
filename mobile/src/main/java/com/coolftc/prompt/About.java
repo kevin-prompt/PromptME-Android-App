@@ -2,13 +2,14 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.coolftc.prompt.source.WebServiceModelsOld;
+import com.coolftc.prompt.source.WebServicesOld;
 
 public class About extends AppCompatActivity {
 
@@ -32,7 +33,7 @@ public class About extends AppCompatActivity {
         holdData = (TextView) findViewById(R.id.abtWhoAmI);
         if(holdData != null) holdData.setText(acct.unique);
         holdData = (TextView) findViewById(R.id.abtAccount);
-        if(holdData != null) holdData.setText("(" + acct.acctIdStr() + ")");
+        if(holdData != null) holdData.setText(String.format("(%s)", acct.acctIdStr()));
 
         new CheckSystemTask(getApplicationContext()).execute(acct.ticket);
         new CheckAdsTask(getApplicationContext()).execute(acct.ticket);
@@ -40,7 +41,7 @@ public class About extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        /**
+        /*
          * To get the hyperlinks to work, we have to apply this setting to the
          * textview after it has been created.  That is why it is here.
          * If you need to read the string from the resource and then set the
@@ -57,7 +58,7 @@ public class About extends AppCompatActivity {
     /*
      *  This displays the result of a system status call.
      */
-    private void SystemCheck(WebServiceModels.PingResponse ver) {
+    private void SystemCheck(WebServiceModelsOld.PingResponse ver) {
         TextView holdView;
         String holdResult;
 
@@ -76,7 +77,7 @@ public class About extends AppCompatActivity {
                     holdResult = String.format(getResources().getText(R.string.err_bad_auth).toString(), ver.response);
                     break;
                 case 404:
-                    holdResult = String.format(getResources().getText(R.string.err_bad_request).toString(), ver.response);
+                    holdResult = String.format(getResources().getText(R.string.err_bad_resource).toString(), ver.response);
                     break;
                 default:
                     holdResult = String.format(getResources().getText(R.string.err_bad_server).toString(), ver.response);
@@ -104,8 +105,8 @@ public class About extends AppCompatActivity {
      * 4) If possible prevent the most common Activity killer by locking into portrait.
      * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
      */
-    private class CheckSystemTask extends AsyncTask<String, Void, WebServiceModels.PingResponse> {
-        private Context context;
+    private class CheckSystemTask extends AsyncTask<String, Void, WebServiceModelsOld.PingResponse> {
+        private final Context context;
 
         public CheckSystemTask(Context startup) {
             context = startup;
@@ -116,30 +117,30 @@ public class About extends AppCompatActivity {
         *  and the ticket they are using is viable. Returns the server version, too.
         */
         @Override
-        protected WebServiceModels.PingResponse doInBackground(String... criteria) {
+        protected WebServiceModelsOld.PingResponse doInBackground(String... criteria) {
             try {
-                WebServices stat = new WebServices();
+                WebServicesOld stat = new WebServicesOld();
                 String ticket = criteria[0];
 
                 if(stat.IsNetwork(context)) {
                     return stat.GetVersion(ticket);
                 }else {
-                    return new WebServiceModels.PingResponse();
+                    return new WebServiceModelsOld.PingResponse();
                 }
 
             } catch (Exception ex) {
-                return new WebServiceModels.PingResponse();
+                return new WebServiceModelsOld.PingResponse();
             }
         }
 
         @Override
-        protected void onPostExecute(WebServiceModels.PingResponse result) {
+        protected void onPostExecute(WebServiceModelsOld.PingResponse result) {
             SystemCheck(result);
         }
     }
 
     private class CheckAdsTask extends AsyncTask<String, Void, Boolean> {
-        private Context context;
+        private final Context context;
 
         public CheckAdsTask(Context startup) {
             context = startup;
@@ -152,8 +153,8 @@ public class About extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... criteria) {
             try {
-                WebServices stat = new WebServices();
-                String ticket = criteria[0];
+                //WebServices stat = new WebServices();
+                //String ticket = criteria[0];
                 Actor user = new Actor();
                 user.LoadPrime(true, context);
                 return user.ads;
