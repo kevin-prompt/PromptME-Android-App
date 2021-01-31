@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+see https://developer.android.com/jetpack/androidx/migrate/class-mappings
+
+import androidx.annotation.NonNull;
 
 import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
@@ -52,7 +55,7 @@ public class NotificationX extends FirebaseMessagingService {
     private static final int TYPE_FRIEND = 3;
 
     @Override
-    public void onMessageReceived(RemoteMessage prompt) {
+    public void onMessageReceived(@NonNull RemoteMessage prompt) {
         try {
 
             Reminder note = parseNotification(prompt.getData());
@@ -68,12 +71,17 @@ public class NotificationX extends FirebaseMessagingService {
                     friendNotification(note);
                     break;
                 default:
-                    ExpClass.LogIN(KEVIN_SPEAKS, "An unknown notification type came into the Application.");
+                    ExpClass.Companion.logINFO(KEVIN_SPEAKS, "An unknown notification type came into the Application.");
             }
         } catch (Exception ex) {
             // This is a general catch to avoid showing a crash screen to the user.
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onMessageReceived");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onMessageReceived");
         }
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
     }
 
     /*

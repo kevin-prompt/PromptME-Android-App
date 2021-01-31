@@ -1,5 +1,8 @@
 package com.coolftc.prompt.utility
 
+import android.app.IntentService
+import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonWriter
@@ -7,13 +10,19 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.time.LocalDate
 import com.coolftc.prompt.utility.Constants.*
+import kotlin.jvm.Throws
 
 /**
  *  The WebServices Class holds methods that can be used to communicate with the
  *  JSON based REST Web Service APIs.
+ *  For Kotlin only code, the @Throws(ExpClass::class) can be removed.
  */
 class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEOUT) : IWebServices {
+    // Support for Java methods using this class, add a second constructor.
+    constructor(parser: Gson) : this(Parser = parser, Timeout = API_TIMEOUT)
+
     /*
      * Class specific to the error and return information from the API. If API
      * returns detailed error data, customize this class to support parsing it.
@@ -45,6 +54,27 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         return result.toString()
     }
 
+    /*
+        Use a base URL from a well known endpoint.  This allows that API to move as needed.
+        Somewhere in the client code, should check periodically to refresh this value.
+     */
+    override fun saveBaseURL(context: Context, url: String) {
+        val registered: SharedPreferences = context.getSharedPreferences(SP_REG_STORE, Context.MODE_PRIVATE)
+        val editor = registered.edit()
+        editor.putString(SP_BASE_URL, url)
+        editor.putString(SP_BASE_URL_LIFE, LocalDate.now().plusDays(1).toString())
+        editor.apply()
+    }
+
+    override fun baseUrl(context: Context): String? {
+        val preference = context.getSharedPreferences(SP_REG_STORE, IntentService.MODE_PRIVATE)
+        return preference.getString(SP_BASE_URL, "")
+    }
+
+    override fun baseUrlAge(context: Context): LocalDate? {
+        val preference = context.getSharedPreferences(SP_REG_STORE, IntentService.MODE_PRIVATE)
+        return LocalDate.parse(preference.getString(SP_BASE_URL_LIFE, "1964-02-06"))
+    }
 
     /*
         Retrieve a resource.  Since this is a GET, there is no request data other than the
@@ -57,6 +87,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         a success(2xx) code, the error response stream is parsed and an instance of the
         ExpClass is thrown. This will contain the HTTP status code and/or the actual exception.
     */
+    @Throws(ExpClass::class)
     override fun <U> callGetApi(path: String, typeU: Class<U>, token: String): U? {
         val methodName = this.javaClass.name + ".CallGetApi-" + path
         val bearer: String = if (token.isBlank()) token else API_BEARER + token
@@ -125,37 +156,42 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
      */
     override fun <T> callPostApi(path: String, input: T, token: String) {
         callPostApi(
-                path,
-                input,
-                Nothing::class.java,
-                token)
+            path,
+            input,
+            Nothing::class.java,
+            token
+        )
     }
 
     override fun <T, U> callPostApi(path: String, input: T, typeU: Class<U>, token: String): U? {
         return callPostPutApi(
-                path,
-                input,
-                typeU,
-                token)
+            path,
+            input,
+            typeU,
+            token
+        )
     }
 
     override fun <T> callPutApi(path: String, input: T, token: String) {
         callPutApi(
-                path,
-                input,
-                Nothing::class.java,
-                token)
+            path,
+            input,
+            Nothing::class.java,
+            token
+        )
     }
 
     override fun <T, U> callPutApi(path: String, input: T, typeU: Class<U>, token: String): U? {
         return callPostPutApi(
-                path,
-                input,
-                typeU,
-                token,
-                false)
+            path,
+            input,
+            typeU,
+            token,
+            false
+        )
     }
 
+    @Throws(ExpClass::class)
     private fun <T, U> callPostPutApi(path: String, input: T, typeU: Class<U>, token: String, post: Boolean = true): U? {
         val methodName = this.javaClass.name + ".CallPostPutApi-" + path
         val bearer: String = if (token.isBlank()) token else API_BEARER + token
@@ -165,7 +201,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
             // Set up the connection
             val web = URL(path)
             webC = web.openConnection() as HttpURLConnection
-            webC.requestMethod = if(post) "POST" else "PUT" // Available: POST, PUT, DELETE, OPTIONS, HEAD and TRACE
+            webC.requestMethod = if (post) "POST" else "PUT" // Available: POST, PUT, DELETE, OPTIONS, HEAD and TRACE
             webC.setRequestProperty("Accept", API_HEADER_ACCEPT)
             if (bearer.isNotEmpty()) webC.setRequestProperty("Authorization", bearer)
             webC.setRequestProperty("Content-type", API_HEADER_CONTENT)
@@ -235,12 +271,14 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
      */
     override fun callPostFormApi(path: String, params: HashMap<String, String>, token: String) {
         callPostFormApi(
-                path,
-                params,
-                Nothing::class.java,
-                token)
+            path,
+            params,
+            Nothing::class.java,
+            token
+        )
     }
 
+    @Throws(ExpClass::class)
     override fun <U> callPostFormApi(path: String, params: HashMap<String, String>, typeU: Class<U>, token: String): U? {
         val methodName = this.javaClass.name + ".CallPostFormApi-" + path
         val bearer: String = if (token.isBlank()) token else API_BEARER + token
@@ -285,6 +323,54 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
                     throw ExpClass(ExpClass.PARSE_EXP, methodName, ex.toString(), ex)
                 }
             } else {
+                val br = BufferedReader(InputStreamReader(webC.errorStream, API_ENCODING))
+                val sb = StringBuilder()
+                var line: String?
+                while (br.readLine().also { line = it } != null) {
+                    sb.append(line).append("\n")
+                }
+                br.close()
+                val er = checkErrResponse(sb.toString())
+                throw ExpClass(status, er.message ?: "", methodName)
+            }
+        } catch (ex: IOException) {
+            throw ExpClass(ExpClass.NETWORK_EXP, methodName, ex.toString(), ex)
+        } finally {
+            if (webC != null) {
+                try {
+                    webC.disconnect()
+                } catch (ex: Exception) {
+                    throw ExpClass(ExpClass.GENERAL_EXP, methodName, ex.toString(), ex)
+                }
+            }
+        }
+    }
+
+    /*
+        The callDeleteApi is a general method used to handle HTTP DELETE calls. The
+        delete does not use JSON for input or output.  The URL is expected to have
+        all the information needed by the server to perform the removal of data.
+     */
+    @Throws(ExpClass::class)
+    override fun callDeleteApi(path: String, token: String) {
+        val methodName = this.javaClass.name + ".callDeleteApi-" + path
+        val bearer: String = if (token.isBlank()) token else API_BEARER + token
+        var webC: HttpURLConnection? = null
+        try {
+            // Set up the connection
+            val web = URL(path)
+            webC = web.openConnection() as HttpURLConnection
+            webC.requestMethod = "DELETE"
+            webC.setRequestProperty("Accept", API_HEADER_ACCEPT)
+            if (bearer.isNotEmpty()) webC.setRequestProperty("Authorization", bearer)
+            webC.useCaches = false
+            webC.allowUserInteraction = false
+            webC.connectTimeout = Timeout
+            webC.readTimeout = Timeout
+            webC.connect()
+            // Process the response
+            val status = webC.responseCode
+            if (status !in 200..299) {
                 val br = BufferedReader(InputStreamReader(webC.errorStream, API_ENCODING))
                 val sb = StringBuilder()
                 var line: String?

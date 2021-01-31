@@ -35,9 +35,8 @@ public class IgnoreNotification extends IntentService {
         // Just in case.
         if(mAccount == null) return;
 
-            // Clear the notification.
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel((int) mAccount.acctId);
-
+        // Clear the notification.
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel((int) mAccount.acctId);
     }
 }

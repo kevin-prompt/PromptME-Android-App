@@ -107,6 +107,8 @@ public class Constants {
     public static final String API_BEARER = "bearer "; // note the trailing space
     public static final String SUB_ZZZ = "%ZZZ!";
     public static final String SUB_YYY = "%YYY!";     // if there are two substitutions together
+    public static final String SP_BASE_URL = "API.baseURL";
+    public static final String SP_BASE_URL_LIFE = "API.baseURL.age";
 
     /* Constants used in dealing with the FutureTell API and other web sites */
     public static final String FTI_BaseURL = "https://promptapi.zalicon.com";

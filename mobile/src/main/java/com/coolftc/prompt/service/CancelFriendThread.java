@@ -5,8 +5,13 @@ import android.content.Intent;
 
 import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
+
+import static com.coolftc.prompt.utility.Constants.FTI_Invite_Del;
+import static com.coolftc.prompt.utility.Constants.SUB_ZZZ;
 
 /**
  *  This thread is used to:
@@ -15,13 +20,13 @@ import com.coolftc.prompt.utility.ExpClass;
  */
 
 public class CancelFriendThread extends Thread {
-   private Context mContext;
+   private final Context mContext;
 
-    Account mData;
+    Account mFriend;
 
-    public CancelFriendThread(Context activity, Account friend) {
-        mData = friend;
-        mContext = activity;
+    public CancelFriendThread(Context application, Account friend) {
+        mFriend = friend;
+        mContext = application;
     }
 
     /*
@@ -30,14 +35,17 @@ public class CancelFriendThread extends Thread {
      */
     @Override
     public void run() {
-        Actor sender = new Actor(mContext);
-        WebServicesOld ws = new WebServicesOld();
 
-        try {
-            if (ws.IsNetwork(mContext)) {
+        try (Connection net = new Connection(mContext)) {
+
+            Actor sender = new Actor(mContext);
+            WebServices ws = new WebServices(new Gson());
+
+            if (net.isOnline()) {
                 // There is not currently any recourse if this fails, other than the user
                 // can just retry after seeing the connection still exists.
-                ws.DelInvite(sender.ticket, sender.acctIdStr(), mData.acctIdStr());
+                String realPath = ws.baseUrl(mContext) + FTI_Invite_Del.replace(SUB_ZZZ, sender.acctIdStr()) + mFriend.acctIdStr();
+                ws.callDeleteApi(realPath, sender.ticket);
             }
 
             // Trigger the Refresh to update the Pending count.
@@ -45,7 +53,7 @@ public class CancelFriendThread extends Thread {
             mContext.startService(intent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".run");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
         }
     }
 }

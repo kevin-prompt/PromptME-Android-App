@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.Reminder;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
 
 import static com.coolftc.prompt.utility.Constants.*;
 
@@ -20,13 +22,12 @@ import static com.coolftc.prompt.utility.Constants.*;
  */
 
 public class CancelMessageThread extends Thread {
-    private Reminder mData;
-    private MessageDB mMessage;
-    private Context mContext;
+    private final Context mContext;
+    private final Reminder mPrompt;
 
-    public CancelMessageThread(Context activity, Reminder msg) {
-        mData = msg;
-        mContext = activity;
+    public CancelMessageThread(Context application, Reminder msg) {
+        mPrompt = msg;
+        mContext = application;
     }
 
     /*
@@ -36,43 +37,51 @@ public class CancelMessageThread extends Thread {
      */
     @Override
     public void run() {
-        try {
-            mMessage = new MessageDB(mContext);  // Be sure to close this before leaving the thread.
-            Actor sender = new Actor(mContext);
-            WebServicesOld ws = new WebServicesOld();
 
-            // For Recurring notes, we want to always try to remove from the server but still
-            // delete them locally if there is a failure to do so (since they might not be there).
-            // It is possible to snooze a recurring message, so also try to delete that, which
-            // also might not exist any longer.
-            if (mData.IsRecurring()) {
-                if (ws.IsNetwork(mContext)) {
-                    ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.ServerIdStr());
-                    if(mData.snoozeId > 0) {
-                        ws.DelPrompt(sender.ticket, sender.acctIdStr(), mData.SnoozeIdStr());
+        try (Connection net = new Connection(mContext); MessageDB db = new MessageDB(mContext)) {
+            Actor sender = new Actor(mContext);
+            WebServices ws = new WebServices(new Gson());
+
+            // For Recurring notes, we want to try to remove from the server but always delete
+            // them locally, even if the API call fails. It is possible to snooze a recurring
+            // message, so also try to delete it.
+            if (mPrompt.IsRecurring()) {
+                if (net.isOnline()) {
+                    try {
+                        String realPath = ws.baseUrl(mContext) + FTI_Message_Del.replace(SUB_ZZZ, sender.acctIdStr()) + mPrompt.ServerIdStr();
+                        ws.callDeleteApi(realPath, sender.ticket);
+                        if (mPrompt.snoozeId > 0) {
+                            realPath = ws.baseUrl(mContext) + FTI_Message_Del.replace(SUB_ZZZ, sender.acctIdStr()) + mPrompt.SnoozeIdStr();
+                            ws.callDeleteApi(realPath, sender.ticket);
+                        }
+                    } catch (ExpClass kx) {
+                        /* skip api failures and just delete locally. */
+                        ExpClass.Companion.logEXP(kx, this.getClass().getName() + ".run");
                     }
-                    DelMessage(mData.id);
+                    DelMessage(db, mPrompt.id);
                 } else {
-                    updFailure(mData.id, NETWORK_DOWN);
+                    updFailure(db, mPrompt.id, NETWORK_DOWN);
                 }
             } else {
                 // If message delivery time has passed, there is no message on the server to delete.
-                if (mData.IsPast()) {
-                    DelMessage(mData.id);
+                if (mPrompt.IsPast()) {
+                    DelMessage(db, mPrompt.id);
                 } else {
                     // Check if this is snoozed, as we will need to use the snooze id.  If the call
                     // fails for some reason, we will leave the record but update the status so they
                     // can try again.
-                    if (ws.IsNetwork(mContext)) {
-                        String realID = mData.snoozeId > 0 ? mData.SnoozeIdStr() : mData.ServerIdStr();
-                        int actual = ws.DelPrompt(sender.ticket, sender.acctIdStr(), realID);
-                        if (actual >= 200 && actual < 300) {
-                            DelMessage(mData.id);
-                        } else {
-                            updFailure(mData.id, actual);
+                    if (net.isOnline()) {
+                        try {
+                            String realID = mPrompt.snoozeId > 0 ? mPrompt.SnoozeIdStr() : mPrompt.ServerIdStr();
+                            String realPath = ws.baseUrl(mContext) + FTI_Message_Del.replace(SUB_ZZZ, sender.acctIdStr()) + realID;
+                            ws.callDeleteApi(realPath, sender.ticket);
+                            DelMessage(db, mPrompt.id);
+                        } catch (ExpClass kx) {
+                            /* Update the local record. */
+                            updFailure(db, mPrompt.id, kx.getStatus());
                         }
                     } else {
-                        updFailure(mData.id, NETWORK_DOWN);
+                        updFailure(db, mPrompt.id, NETWORK_DOWN);
                     }
                 }
             }
@@ -82,27 +91,25 @@ public class CancelMessageThread extends Thread {
             mContext.startService(intent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".run");
-        } finally {
-            mMessage.close();
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
         }
     }
 
     /*
      *  Delete the record locally.
      */
-    private void DelMessage(long id){
-        SQLiteDatabase db = mMessage.getWritableDatabase();
+    private void DelMessage(MessageDB database, long id){
+        SQLiteDatabase db = database.getWritableDatabase();
 
-        String where = "_ID=" + Long.toString(id);
+        String where = "_ID=" + id;
         db.delete(MessageDB.MESSAGE_TABLE, where, null);
     }
 
     /*
      *  Change an existing record to reflect message failed to send. Mark as processed.
      */
-    private void updFailure(long id, long status) {
-        SQLiteDatabase db = mMessage.getWritableDatabase();
+    private void updFailure(MessageDB database, long id, long status) {
+        SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessageDB.MESSAGE_STATUS, status);
