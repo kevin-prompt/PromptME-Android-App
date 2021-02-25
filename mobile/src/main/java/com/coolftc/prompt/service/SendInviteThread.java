@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.source.InviteRequest;
+import com.coolftc.prompt.source.InviteResponse;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
-import com.coolftc.prompt.source.WebServiceModelsOld;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
 
-import static com.coolftc.prompt.utility.Constants.NETWORK_DOWN;
+import static com.coolftc.prompt.utility.Constants.FTI_Invite;
+import static com.coolftc.prompt.utility.Constants.SUB_ZZZ;
 
 /**
  *  This thread is used to send an invitation to each supplied address.  While the
@@ -16,10 +20,10 @@ import static com.coolftc.prompt.utility.Constants.NETWORK_DOWN;
     and the Refresh service is allowed to update the local data.
  */
 public class SendInviteThread extends Thread {
-    private Context mContext;
-    private String [] mAddresses;
-    private String mDisplay;
-    private boolean mMirror;
+    private final Context mContext;
+    private final String [] mAddresses;
+    private final String mDisplay;
+    private final boolean mMirror;
 
     public SendInviteThread(Context activity, String [] addresses, String display, boolean mirror) {
         mAddresses = addresses;
@@ -36,7 +40,7 @@ public class SendInviteThread extends Thread {
             // Skip any empty addresses
             for (String address : mAddresses) {
                 if(address.length() > 0) {
-                    WebServiceModelsOld.InviteResponse actual = sendInvite(sender, address, mDisplay, mMirror);
+                    sendInvite(sender, address, mDisplay, mMirror);
                 }
             }
 
@@ -45,30 +49,21 @@ public class SendInviteThread extends Thread {
             mContext.startService(sIntent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".run");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
         }
     }
 
     /*
      *  Send a new invite to the server.
      */
-    private WebServiceModelsOld.InviteResponse sendInvite(Actor from, String unique, String display, boolean mirror){
-        WebServiceModelsOld.InviteResponse rtn;
-        WebServicesOld ws = new WebServicesOld();
-        if(ws.IsNetwork(mContext)) {
-            WebServiceModelsOld.InviteRequest rData = new WebServiceModelsOld.InviteRequest();
-            rData.fname = unique;
-            rData.fdisplay = display;
-            rData.message = "";
-            rData.mirror = mirror;
-
-            rtn = ws.NewInvite(from.ticket, from.acctIdStr(), rData);
-        } else {
-            rtn = new WebServiceModelsOld.InviteResponse();
-            rtn.response = NETWORK_DOWN;
+    private void sendInvite(Actor from, String unique, String display, boolean mirror){
+        try (Connection net = new Connection(mContext)) {
+            WebServices ws = new WebServices(new Gson());
+            if (net.isOnline()) {
+                InviteRequest invite = new InviteRequest(unique, display, "", mirror);
+                String realPath = ws.baseUrl(mContext) + FTI_Invite.replace(SUB_ZZZ, from.acctIdStr());
+                ws.callPostApi(realPath, invite, InviteResponse.class, from.ticket);
+            }
         }
-        return rtn;
     }
-
-
 }

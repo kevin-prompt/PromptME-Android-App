@@ -95,6 +95,14 @@
     <string name="inv_unique">Phone number or Email address</string>
     <string name="inv_mirror_box">Make this connection a Mirror.*</string>
     <string name="inv_mirror_help">*Mirror connections receive all your Prompts. This allows a Prompt created with your phone to also show up on another device, like a tablet that you own.  Recommended to only select Mirror if this invite is to another device of yours.</string>
+    <string name="ntf_channel_name_prompt">PromptMe Messages</string>
+    <string name="ntf_channel_desc_prompt">These are the notes you have sent your future self.</string>
+    <string name="ntf_channel_name_invite">PromptMe Invite</string>
+    <string name="ntf_channel_desc_invite">Invitations to share prompt messages.</string>
+    <string name="ntf_channel_name_friend">PromptMe Friend</string>
+    <string name="ntf_channel_desc_friend">When friends accept your friend request.</string>
+    <string name="ntf_channel_group_name">PromptMe Notifications</string>
+    <string name="ntf_channel_group_desc">PromptMe notifications support all the features of PromptMe, like receiving prompts and other notifications.</string>
     <string name="btnConfirmSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>

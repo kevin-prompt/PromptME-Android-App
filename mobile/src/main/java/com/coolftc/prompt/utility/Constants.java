@@ -57,7 +57,6 @@ public class Constants {
     public static final String DB_fmtDateTimeZone = "h:mmaa z";
     public static final String DB_fmtDayOfWeek = "EEEE";
     public static final String BAD_TIME = "99:99";
-    public static final String THE_PAST = "1964-02-06T11:50:25+00:00";      // Handy initialization
     // Date Formatting Constants
     public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
     public static final int DATE_TIME_FMT_SHORT = 1;        // Short Date and Time Display format
@@ -188,7 +187,7 @@ public class Constants {
     public static final String IN_NOTE_RECUR = "recurUnit";
     public static final String IN_NOTE_MSG = "message";
     public static final String IN_NOTE_MIRROR = "mirror";
-    public static final String IN_TYPE_NOTE = "NOTE";
+    public static final String IN_TYPE_PROMPT = "NOTE";
     public static final String IN_TYPE_INVITE = "INVITE";
     public static final String IN_TYPE_FRIEND = "FRIEND";
     public static final String IN_NOTE_RAW = "line2-notify";

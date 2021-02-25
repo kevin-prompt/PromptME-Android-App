@@ -11,17 +11,46 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import java.time.LocalDate
-import com.coolftc.prompt.utility.Constants.*
 import kotlin.jvm.Throws
 
 /**
- *  The WebServices Class holds methods that can be used to communicate with the
- *  JSON based REST Web Service APIs.
+ *  The WebServices Class holds methods that can be used to communicate with JSON
+ *  based REST Web Service APIs.  See IWebServices for corresponding interfaces.
+ *  To use these functions, create data classes that match the input and output of
+ *  the targeted REST endpoints. The functions are generic enough to work with those
+ *  classes and APIs.  If the API defines an error return format, it can be managed
+ *  by adding it (manually) to the checkErrResponse() method.
  *  For Kotlin only code, the @Throws(ExpClass::class) can be removed.
+ *
+ *  This class requires the network permission: android.permission.INTERNET.
+ *  This requires the JAVA 1.8 desugaring option enabled in for use of java.time.
+ *  See https://developer.android.com/studio/write/java8-support#library-desugaring.
+ *    defaultConfig{... multiDexEnabled true }
+ *    compileOptions{... coreLibraryDesugaringEnabled true }
+ *    dependencies{... coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:x.x.x' }
+ *  This requires GSON (https://github.com/google/gson.) to be installed in dependencies.
+ *      implementation 'com.google.code.gson:gson:x.x.x'
  */
 class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEOUT) : IWebServices {
     // Support for Java methods using this class, add a second constructor.
     constructor(parser: Gson) : this(Parser = parser, Timeout = API_TIMEOUT)
+
+    companion object {
+        const val API_TIMEOUT = 90000       // Wait for a response to complete, in msec.
+        const val API_TIMEOUT_SHORT = 30000 // When waiting seems pointless.
+        const val API_ENCODING = "UTF-8"    // Helps with the JSON parsing.
+        const val API_BEARER = "bearer "    // Common in Auth. Note the trailing space.
+
+        // Typical headers to define API formats.
+        const val API_HEADER_ACCEPT = "application/json"
+        const val API_HEADER_CONTENT = "application/json"
+        const val API_XFORM_CONTENT = "application/x-www-form-urlencoded"
+        
+        // Used for management of the Base URL.
+        const val SP_BASE_URL_STORE = "API.baseURL.table"     // Shared Preference Table name.
+        const val SP_BASE_URL = "API.baseURL.value"     // Shared Preference Value name.
+        const val SP_BASE_URL_LIFE = "API.baseURL.age"  // Shared Preference Last Update name.
+    }
 
     /*
      * Class specific to the error and return information from the API. If API
@@ -56,10 +85,10 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
 
     /*
         Use a base URL from a well known endpoint.  This allows that API to move as needed.
-        Somewhere in the client code, should check periodically to refresh this value.
+        Somewhere check periodically to refresh this value, debounce with the baseUrlAge().
      */
     override fun saveBaseURL(context: Context, url: String) {
-        val registered: SharedPreferences = context.getSharedPreferences(SP_REG_STORE, Context.MODE_PRIVATE)
+        val registered: SharedPreferences = context.getSharedPreferences(SP_BASE_URL_STORE, Context.MODE_PRIVATE)
         val editor = registered.edit()
         editor.putString(SP_BASE_URL, url)
         editor.putString(SP_BASE_URL_LIFE, LocalDate.now().plusDays(1).toString())
@@ -67,12 +96,12 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
     }
 
     override fun baseUrl(context: Context): String? {
-        val preference = context.getSharedPreferences(SP_REG_STORE, IntentService.MODE_PRIVATE)
+        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, IntentService.MODE_PRIVATE)
         return preference.getString(SP_BASE_URL, "")
     }
 
-    override fun baseUrlAge(context: Context): LocalDate? {
-        val preference = context.getSharedPreferences(SP_REG_STORE, IntentService.MODE_PRIVATE)
+    override fun baseUrlAge(context: Context): LocalDate? { // LocalDate is only a date and not a time.
+        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, IntentService.MODE_PRIVATE)
         return LocalDate.parse(preference.getString(SP_BASE_URL_LIFE, "1964-02-06"))
     }
 
@@ -154,6 +183,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         response stream is parsed and an instance of the ExpClass is thrown. This will contain
         the HTTP status code and/or the actual exception.
      */
+    @Throws(ExpClass::class)
     override fun <T> callPostApi(path: String, input: T, token: String) {
         callPostApi(
             path,
@@ -163,6 +193,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         )
     }
 
+    @Throws(ExpClass::class)
     override fun <T, U> callPostApi(path: String, input: T, typeU: Class<U>, token: String): U? {
         return callPostPutApi(
             path,
@@ -172,6 +203,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         )
     }
 
+    @Throws(ExpClass::class)
     override fun <T> callPutApi(path: String, input: T, token: String) {
         callPutApi(
             path,
@@ -181,6 +213,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         )
     }
 
+    @Throws(ExpClass::class)
     override fun <T, U> callPutApi(path: String, input: T, typeU: Class<U>, token: String): U? {
         return callPostPutApi(
             path,
@@ -269,6 +302,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         The input data is a set of key/value pairs that are converted to a query string,
         but sent in the body instead of the URL.
      */
+    @Throws(ExpClass::class)
     override fun callPostFormApi(path: String, params: HashMap<String, String>, token: String) {
         callPostFormApi(
             path,

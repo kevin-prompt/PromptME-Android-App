@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.coolftc.prompt.Actor;
+import com.coolftc.prompt.source.PromptRequest;
+import com.coolftc.prompt.source.PromptResponse;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
-import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.Reminder;
-import com.coolftc.prompt.source.WebServiceModelsOld;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.KTime;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
 
 import static com.coolftc.prompt.utility.Constants.*;
 
@@ -23,41 +26,39 @@ import static com.coolftc.prompt.utility.Constants.*;
  */
 public class SendMessageThread extends Thread {
 
-    private Reminder mData;
-    private MessageDB mMessage;
-    private Context mContext;
+    private final Reminder prompt;
+    private MessageDB promptDb;
+    private final Context context;
 
     public SendMessageThread(Context activity, Reminder msg) {
-        mData = msg;
-        mContext = activity;
+        prompt = msg;
+        context = activity;
     }
 
     @Override
     public void run() {
         try {
-            mMessage = new MessageDB(mContext);  // Be sure to close this before leaving the thread.
+            promptDb = new MessageDB(context);  // Be sure to close this before leaving the thread.
 
             // Create the record in the local db, but set to not processed.
-            long localId = addMessage(mData, false);
+            long localId = addMessage(prompt, false);
 
             // Create the record on the server using the web service. Get the real time back.
-            Actor sender = new Actor(mContext);
-            WebServiceModelsOld.PromptResponse actual = sendMessage(sender, mData);
-
-            // Update the local record with future time or status, and mark as processed.
-            if(actual.response >= 200 && actual.response < 300) {
-                updSuccess(localId, actual.noteTime, actual.noteId);
-            }else {
-                updFailure(localId, actual.response);
+            Actor sender = new Actor(context);
+            try {
+                PromptResponse actual = sendMessage(sender, prompt);
+                updSuccess(localId, actual.getPromptTime(), actual.getPromptId());
+            } catch (ExpClass kx) {
+                updFailure(localId, kx.getStatus());
             }
 
             // Trigger the Refresh to update the Pending count.
-            Intent intent = new Intent(mContext, Refresh.class);
-            mContext.startService(intent);
+            Intent intent = new Intent(context, Refresh.class);
+            context.startService(intent);
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".run");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
         } finally {
-            mMessage.close();
+            promptDb.close();
         }
     }
 
@@ -65,35 +66,38 @@ public class SendMessageThread extends Thread {
      *  Send a new prompt to the server. If things work out, the server returns
      *  the actual time that the prompt will be generated.
      */
-    private WebServiceModelsOld.PromptResponse sendMessage(Actor from, Reminder msg){
-        WebServiceModelsOld.PromptResponse realTime;
-        WebServicesOld ws = new WebServicesOld();
-        if(ws.IsNetwork(mContext)) {
-            WebServiceModelsOld.PromptRequest rData = new WebServiceModelsOld.PromptRequest();
-            rData.when = msg.targetTime;
-            rData.timezone = msg.target.timezone;
-            rData.timename = msg.targetTimeNameId;
-            rData.timeadj = msg.targetTimeAdjId;
-            rData.scycle = msg.target.sleepcycle;
-            rData.receiveId = msg.target.acctId;
-            rData.units = msg.recurUnit;
-            rData.period = msg.recurPeriod;
-            rData.recurs = msg.recurNumber;
-            rData.end = msg.recurEnd;
-            rData.groupId = 0;
-            rData.message = msg.message;
-
-            realTime = ws.NewPrompt(from.ticket, from.acctIdStr(), rData);
-        } else {
-            realTime = new WebServiceModelsOld.PromptResponse();
-            realTime.response = NETWORK_DOWN;
+    private PromptResponse sendMessage(Actor from, Reminder msg) throws ExpClass {
+        try (Connection net = new Connection(context)) {
+            WebServices ws = new WebServices(new Gson());
+            if (net.isOnline()) {
+                PromptRequest message = new PromptRequest(
+                        msg.targetTime,
+                        msg.target.timezone,
+                        msg.targetTimeNameId,
+                        msg.targetTimeAdjId,
+                        msg.target.sleepcycle,
+                        msg.target.acctId,
+                        msg.recurUnit,
+                        msg.recurPeriod,
+                        msg.recurEnd,
+                        msg.recurNumber,
+                        0,
+                        msg.message
+                );
+                String realPath = ws.baseUrl(context) + FTI_Message.replace(SUB_ZZZ, from.acctIdStr());
+                return ws.callPostApi(realPath, message, PromptResponse.class, from.ticket);
+            } else {
+                throw new ExpClass(99, this.getClass().getName() + ".sendMessage", "offline");
+            }
+        } catch (ExpClass kx) {
+            ExpClass.Companion.logEXP(kx, this.getClass().getName() + ".sendMessage");
+            throw kx;
         }
-        return realTime;
     }
 
     // Add a new reminder to local DB.
     private long addMessage(Reminder msg, boolean processed) {
-        SQLiteDatabase db = mMessage.getWritableDatabase();
+        SQLiteDatabase db = promptDb.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessageDB.MESSAGE_TARGET, msg.target.unique);
@@ -121,7 +125,7 @@ public class SendMessageThread extends Thread {
 
     // Change an existing record to hold the server time and id.  Mark as processed.
     private void updSuccess(long id, String timeExact, long serverId) {
-        SQLiteDatabase db = mMessage.getWritableDatabase();
+        SQLiteDatabase db = promptDb.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessageDB.MESSAGE_TIME, timeExact);
@@ -134,7 +138,7 @@ public class SendMessageThread extends Thread {
 
     // Change an existing record to reflect message failed to send. Mark as processed.
     private void updFailure(long id, long status) {
-        SQLiteDatabase db = mMessage.getWritableDatabase();
+        SQLiteDatabase db = promptDb.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessageDB.MESSAGE_STATUS, status);
