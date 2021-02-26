@@ -18,9 +18,8 @@ import static com.coolftc.prompt.utility.Constants.SUB_ZZZ;
     a. Remove a friend relationship.
     b. Reject an invitation to connect.
  */
-
 public class CancelFriendThread extends Thread {
-   private final Context mContext;
+    private final Context mContext;
 
     Account mFriend;
 

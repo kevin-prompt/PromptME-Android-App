@@ -95,6 +95,8 @@ public class Constants {
     public static final String KY_HIST_FRAG = "history.sort";
     public static final String KY_CNTC_FRAG = "contactpicker.sort";
     public static final String KY_ADDR_FRAG = "contactpicker.fragment";
+    public static final int WHAT_OK_PING = 1000;
+    public static final int WHAT_ERR_PING = 2000;
 
     /* Constants used in dealing with web service calls. */
     public static final int API_TIMEOUT = 30000;
