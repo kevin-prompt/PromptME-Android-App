@@ -3,18 +3,19 @@ package com.coolftc.prompt;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import static com.coolftc.prompt.utility.Constants.*;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
@@ -69,6 +70,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
         PageFragmentMgr mPageFragmentMgr = new PageFragmentMgr(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
+        // At some point consider ViewPager2 see https://developer.android.com/training/animation/vp2-migration
         mViewPager = (ViewPager) findViewById(R.id.container);
         if(mViewPager != null){ mViewPager.setAdapter(mPageFragmentMgr); }
     }

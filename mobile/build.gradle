@@ -41,21 +41,18 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     /* GSON - Helps parse JSON <-> Kotlin classes. See https://github.com/google/gson. */
     /* Not sure it is needed, but proguard-rules.pro has special settings for gson. */
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     /* DeSugar - Helps give access to Java v8. See https://developer.android.com/studio/write/java8-support#library-desugaring */
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
-/*
-    compilex fileTree(include: ['*.jar'], dir: 'libs')
-    compilex 'com.android.support:appcompat-v7:26.1.0'
-    compilex 'com.android.support:design:26.1.0'
-    compilex 'com.android.support:support-v4:26.1.0'
-*/
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    /* Firebase - various service provided by Google. */
     implementation 'com.google.firebase:firebase-core:18.0.2'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'      // Push Notifications
-    implementation 'com.google.firebase:firebase-auth:20.0.2'           // SMS Registration
+    implementation 'com.google.firebase:firebase-auth:20.0.3'           // SMS Registration
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.1'    // Crashlytics
+
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.1.0' // phone number formatting
     implementation 'com.mikhaellopez:circularimageview:3.0.2'           // put a circle around it
 

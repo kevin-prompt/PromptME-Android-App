@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolftc.prompt.source.MessageDB;
 import com.coolftc.prompt.utility.ExpClass;
@@ -120,7 +121,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
                     break;
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -271,7 +272,7 @@ public class History extends AppCompatActivity implements FragmentTalkBack{
                 mReminders.add(local);
             }
             cursor.close();
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetMessages"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetMessages"); }
         finally { message.close(); }
 
     }

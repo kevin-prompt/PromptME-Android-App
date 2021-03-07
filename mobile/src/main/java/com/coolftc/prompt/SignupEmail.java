@@ -6,15 +6,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.coolftc.prompt.source.WebServiceModelsOld;
-import com.coolftc.prompt.source.WebServicesOld;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.coolftc.prompt.source.RegisterRequest;
+import com.coolftc.prompt.source.RegisterResponse;
+import com.coolftc.prompt.utility.Connection;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
+
 import java.util.TimeZone;
 
 /**
@@ -54,7 +61,7 @@ public class SignupEmail extends AppCompatActivity {
         Ready to go, try and create the account.
      */
     public void EmailCreateAcct(View view) {
-        TextView holdView = (TextView)findViewById(R.id.txtEmailAddr_SE);
+        TextView holdView = findViewById(R.id.txtEmailAddr_SE);
         String txtEmailAddr = "";
         if(holdView!=null) txtEmailAddr = holdView.getText().toString();
         if(txtEmailAddr.length()==0) return;
@@ -86,11 +93,11 @@ public class SignupEmail extends AppCompatActivity {
         }
         else {
             // Problem creating account.
-            TextView holdView = (TextView) findViewById(R.id.lblError_SE);
+            TextView holdView = findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
             if (acct.tag.length() > 0){
-                holdView = (TextView) findViewById(R.id.lblEmailStatus);
+                holdView = findViewById(R.id.lblEmailStatus);
                 if (holdView != null) {
                     holdView.setVisibility(View.VISIBLE);
                     String holdStat = getString(R.string.status) + ":" + acct.tag;
@@ -112,8 +119,8 @@ public class SignupEmail extends AppCompatActivity {
      */
     private class AcctCreateTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
-        private Context context;
-        private String title;
+        private final Context context;
+        private final String title;
 
         public AcctCreateTask(AppCompatActivity activity, String name){
             context = activity;
@@ -151,40 +158,43 @@ public class SignupEmail extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServicesOld ws = new WebServicesOld();
-            if(ws.IsNetwork(context)) {
-                WebServiceModelsOld.RegisterRequest regData = new WebServiceModelsOld.RegisterRequest();
-                regData.uname = criteria[0];
-                acct.unique = regData.uname;
-                regData.dname = criteria[1];
-                acct.display = regData.dname.length() > 0 ? regData.dname : regData.uname;
-                regData.scycle = Integer.parseInt(criteria[2]);
-                acct.sleepcycle = regData.scycle;
-                regData.cname = criteria[3];
-                acct.custom = regData.cname;
-                regData.timezone = TimeZone.getDefault().getID();
-                acct.timezone = regData.timezone;
-                regData.device = acct.device;
-                regData.target = acct.token;
-                regData.type = FTI_TYPE_ANDROID;
-                regData.verify = true; // Send out a verification code
+            try (Connection net = new Connection(context)) {
+                if (net.isOnline()) {
+                    WebServices ws = new WebServices(new Gson());
+                    acct.unique = criteria[0];
+                    acct.timezone = TimeZone.getDefault().getID();
+                    acct.display = criteria[1].length() > 0 ? criteria[1] : acct.unique;
+                    acct.sleepcycle = Integer.parseInt(criteria[2]);
+                    acct.custom = criteria[3];
 
-                WebServiceModelsOld.RegisterResponse user = ws.Registration(regData);
-                if(user.response >= 200 && user.response < 300) {
-                    acct.ticket = user.ticket;
-                    acct.acctId = user.id;
-                    acct.solo = false;
-                    acct.confirmed = false;
-                    acct.SyncPrime(false, context);
+                    RegisterRequest data = new RegisterRequest(
+                            acct.unique,
+                            true,
+                            acct.timezone,
+                            acct.display,
+                            acct.sleepcycle,
+                            acct.custom,
+                            acct.device,
+                            acct.token,
+                            FTI_TYPE_ANDROID);
+                    String realPath = ws.baseUrl(context) + FTI_Register;
+                    RegisterResponse user = ws.callPostApi(realPath, data, RegisterResponse.class, acct.ticket);
+                    if (user != null) {
+                        acct.ticket = user.getTicket();
+                        acct.acctId = user.getId();
+                        acct.solo = false;
+                        acct.confirmed = false;
+                        acct.SyncPrime(false, context);
+                    }
+
                 } else {
-                    acct.tag = Integer.toString(user.response);
+                    publishProgress(false);
+                    acct.tag = Integer.toString(NETWORK_DOWN);
                 }
-            } else {
-                publishProgress(false);
-                acct.tag = Integer.toString(NETWORK_DOWN);
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
             }
             return acct;
         }
     }
-
 }

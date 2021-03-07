@@ -27,7 +27,8 @@
         android:textSize="@dimen/txt_edit_size"
         android:inputType="textEmailAddress"
         android:maxLines="1"
-        android:hint="@string/eml_edit_hint">
+        android:hint="@string/eml_edit_hint"
+        android:autofillHints="">
         <requestFocus />
     </EditText>
 

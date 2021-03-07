@@ -21,12 +21,13 @@ import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
 import com.coolftc.prompt.R;
 import com.coolftc.prompt.Settings;
+import com.coolftc.prompt.source.Invitations;
+import com.coolftc.prompt.source.InviteResponse;
 import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
-import com.coolftc.prompt.source.WebServiceModelsOld.*;
 import com.coolftc.prompt.utility.WebServices;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
@@ -40,6 +41,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  This service is used to update various local data with any changed server data.
@@ -134,7 +136,7 @@ public class Refresh extends IntentService {
                 if (net.isOnline()) {
                     String realPath = ws.baseUrl(getApplicationContext()) + FTI_Friends.replace(SUB_ZZZ, ghost.acctIdStr());
                     Invitations invites = ws.callGetApi(realPath, Invitations.class, ghost.ticket);
-                    if (invites != null && (invites.friends == null || invites.friends.size() == 0))
+                    if (invites != null && (invites.getFriends() == null || invites.getFriends().size() == 0))
                         return; // There is always 1 friend (yourself), if not something is wrong.
                     mContactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
                     Account[] inviteStore = queryFriends();
@@ -185,23 +187,23 @@ public class Refresh extends IntentService {
     private void CheckForAdditions(Invitations server, Account[] local){
         List<Account> toAdd = new ArrayList<>();
 
-        localLoop: for(InviteResponse invite : server.friends){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, true, false));
         }
-        localLoop: for(InviteResponse invite : server.rsvps){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, false, true));
         }
-        localLoop: for(InviteResponse invite : server.invites){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, false, false));
@@ -212,12 +214,12 @@ public class Refresh extends IntentService {
     // Copy server invite to build an account.
     private Account CopyInviteAcct(InviteResponse invite, boolean confirm, boolean sent){
         Account hold = new Account();
-        hold.acctId = invite.friendId;
-        hold.timezone = invite.timezone;
-        hold.sleepcycle = invite.scycle;
-        hold.unique = invite.fname;
-        hold.display = invite.fdisplay;
-        hold.mirror = invite.mirror;
+        hold.acctId = invite.getFriendId();
+        hold.timezone = invite.getTimezone();
+        hold.sleepcycle = invite.getScycle();
+        hold.unique = invite.getFname();
+        hold.display = invite.getFdisplay();
+        hold.mirror = invite.getMirror();
         hold.pending = sent;
         hold.confirmed = confirm;
         hold.isFriend = true;
@@ -235,60 +237,60 @@ public class Refresh extends IntentService {
 
         // The localLoop will cut short the iterations by moving on when found
         localLoop: for(Account acct : local){
-            for(InviteResponse invite : server.friends){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = true;
                     acct.pending = false;
                     acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
-            for(InviteResponse invite : server.rsvps){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && !acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && !acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = false;
                     acct.pending = true;
                     acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
-            for(InviteResponse invite : server.invites){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && !acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && !acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = false;
                     acct.pending = false;
                     acct.isFriend = true;
@@ -328,16 +330,16 @@ public class Refresh extends IntentService {
 
         // The localLoop will cut short the iterations by moving on when found
         localLoop: for(Account acct : local){
-            for(InviteResponse invite : server.friends){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
-            for(InviteResponse invite : server.rsvps){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
-            for(InviteResponse invite : server.invites){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
             toDel.add(acct.localId);

@@ -12,10 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,9 +28,14 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.coolftc.prompt.service.SendInviteThread;
 import com.coolftc.prompt.source.FriendDB;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -264,7 +265,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             startActivity(intent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -322,11 +323,12 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                             String [] labels = GetContactLabels(holdAcct.bestName());
                             if (addresses.length > 0) {
                                 // This will require the network, so check it
-                                WebServicesOld ws = new WebServicesOld();
-                                if(!ws.IsNetwork(this)) {
-                                    Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
-                                    break;
-                                }
+                                try (Connection net = new Connection(getApplicationContext())) {
+                                    if (!net.isOnline()) {
+                                        Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+                                        break;
+                                    }
+                                } catch (Exception ex) { /* Just exit */ break; }
 
                                 // Create a dialog to allow selection of address.
                                 FragmentManager mgr = getFragmentManager();
@@ -345,7 +347,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                     break;
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -415,7 +417,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             }
 
             cursor.close();
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
     }
 
@@ -473,7 +475,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 mAccounts.add(ali);
             }
         }catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
             if(contact != null) contact.close();
         }
     }
@@ -572,7 +574,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                         return TYPE_ITEM;
                 }
             } catch (Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return TYPE_SEPARATOR; // safest option
             }
         }
@@ -636,7 +638,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 }
                 return convertView;
             }catch(Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return null;
             }
         }

@@ -10,15 +10,17 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.coolftc.prompt.service.Refresh;
+
+import java.util.Objects;
 
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.Settings.*;
@@ -27,18 +29,28 @@ import static com.coolftc.prompt.Settings.*;
  *  The very basic fragment to display settings.  See the Settings
  *  activity for all the important stuff.  Note that you need to
  *  place the listener here in the fragment to pick up changes.
+ *
+ *  May need to adjust the Theme
+ *  See https://stackoverflow.com/questions/32070670/preferencefragmentcompat-requires-preferencetheme-to-be-set/44236460#44236460
+ *
+ *  Help with preferences : https://guides.codepath.com/android/settings-with-preferencefragment
+ *
+ *  Here is an option for ringtone picker https://issuetracker.google.com/issues/37057453#comment2
+ *
  */
-public class SettingsBasic extends PreferenceFragment  implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsBasic extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, PreferenceManager.OnPreferenceTreeClickListener{
 
     private SharedPreferences mPrefDB;
     private Preference mActorName;
     private Preference mSleepCycle;
-    private RingtonePreference mSound;
+    private Preference mSound;
     private Preference mShortDate;
     private Preference mSnooze;
 
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
@@ -46,13 +58,14 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
 
         // Get local access to the default shared preference DB
         PreferenceManager pm = this.getPreferenceManager();
+        pm.setOnPreferenceTreeClickListener(this);
         mPrefDB = pm.getSharedPreferences();
         mPrefDB.registerOnSharedPreferenceChangeListener(this);
 
         // Get all the preference rows that will need dynamic updating
         mActorName = findPreference(PREF_DISPNAME);
         mSleepCycle = findPreference(PREF_SCYCLE);
-        mSound = (RingtonePreference)findPreference(PREF_SOUND);
+        mSound = findPreference(PREF_SOUND);
         mShortDate = findPreference(PREF_PICKSHORTDATEFMT);
         mSnooze = findPreference(PREF_SNOOZE);
 
@@ -60,43 +73,44 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         // or it is no longer meaningful.
         // Note: To modify the structure of the page, need to use the category.
         // No vibration choice if device does not vibrate.
-        final Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator v = (Vibrator) requireActivity().getSystemService(Context.VIBRATOR_SERVICE);
         if (!v.hasVibrator()) {
-            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
+            PreferenceCategory cat = findPreference(PREF_SYSTEM);
             Preference vibrate = findPreference(PREF_VIBRATEON);
-            cat.removePreference(vibrate);
+            Objects.requireNonNull(cat).removePreference(vibrate);
         }
         // Only offer to turn off the nag screen if it is still showing up.
-        if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){
-            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SYSTEM);
+        if(ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+            PreferenceCategory cat = findPreference(PREF_SYSTEM);
             Preference contacts = findPreference(PREF_CONTACTS);
-            cat.removePreference(contacts);
+            Objects.requireNonNull(cat).removePreference(contacts);
         }
         // Only show the option to verify if they have not yet verified.
         Actor user = new Actor(getActivity());
         if(!user.solo){
-            PreferenceCategory cat = (PreferenceCategory) findPreference(PREF_SETTINGS);
+            PreferenceCategory cat = findPreference(PREF_SETTINGS);
             Preference verify = findPreference(PREF_VERIFICATION);
-            cat.removePreference(verify);
+            Objects.requireNonNull(cat).removePreference(verify);
         }
 
         // Apply any initialization (mostly summaries)
         mActorName.setSummary(mPrefDB.getString(PREF_DISPNAME, ""));
         mSleepCycle.setSummary(getSleepCycleSummary());
-        mSound.setSummary(getRingtoneSummary());
+//        mSound.setSummary(getRingtoneSummary());
         mShortDate.setSummary(getShortDate());
         mSnooze.setSummary(getSnoozeSummary());
 
         // Check if the user will let us write (the ringtone) to external storage. We will trigger a Refresh
         // to do the write in either case, no harm and less work than implementing a callback in the Activity.
-        int storagePermissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int storagePermissionCheck = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (storagePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // If permission has not been granted, ask for it, unless the user has explicitly said not to.
-                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SEC_WRITE_STORAGE);
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SEC_WRITE_STORAGE);
             Intent sIntent = new Intent(getActivity(), Refresh.class);
-            getActivity().startService(sIntent);
+            requireActivity().startService(sIntent);
         }
     }
+
 
     @Override
     public void onDestroy() {
@@ -111,6 +125,52 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         mPrefDB.unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    /*
+        The RingtonePreference was removed from the AndroidX version of preferences.  This
+        option was suggested at https://issuetracker.google.com/issues/37057453#comment2.
+        This is mostly for picking a different notification sound. I try to make the one
+        that comes with the program work without having to explicitly pick it.
+     */
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference.getKey().equals(PREF_SOUND)) {
+            Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI);
+
+            Uri existingValue =  Settings.getRingtone(requireContext());
+            if (existingValue != null) {
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingValue);
+            } else {
+                // No ringtone has been selected, set to the default
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI);
+            }
+
+            startActivityForResult(intent, KY_SOUND_PICKER);
+            return true;
+        } else {
+            return super.onPreferenceTreeClick(preference);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == KY_SOUND_PICKER && data != null) {
+            Uri ringtone = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            if (ringtone != null) {  // if null, leave it as is
+                mSound.setSummary(getRingtoneSummary());
+                // Sometimes the sound thinks it is copied but is not, this gives it another try.
+                if (!mSound.getSummary().toString().equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone)))
+                    mPrefDB.edit().putBoolean(PREF_SOUND_AVAILABLE, false).apply();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences shared, String key) {
         // Update the Account and mark for update for the next time Refresh runs.
@@ -119,22 +179,24 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
             Actor ali = new Actor(getActivity());
             ali.display = shared.getString(SP_REG_DISPLAY, ali.display);
             ali.force = true;
-            ali.SyncPrime(false, getActivity());
+            ali.SyncPrime(false, requireActivity());
         }
         if (key.equals(SP_REG_SCYCLE)) {
             mSleepCycle.setSummary(getSleepCycleSummary());
             Actor ali = new Actor(getActivity());
-            try { ali.sleepcycle = Integer.parseInt(shared.getString(SP_REG_SCYCLE, ali.sleepcycleStr())); }
+            try { ali.sleepcycle = Integer.parseInt(Objects.requireNonNull(shared.getString(SP_REG_SCYCLE, ali.sleepcycleStr()))); }
             catch (NumberFormatException ex){ /*skip it*/}
             ali.force = true;
-            ali.SyncPrime(false, getActivity());
+            ali.SyncPrime(false, requireActivity());
         }
+/*
         if (key.equals(PREF_SOUND)) {
             mSound.setSummary(getRingtoneSummary());
             // Sometimes the sound thinks it is copied but is not, this gives it another try.
             if (!mSound.getSummary().toString().equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone)))
                 mPrefDB.edit().putBoolean(PREF_SOUND_AVAILABLE, false).apply();
         }
+*/
         if (key.equals(PREF_PICKSHORTDATEFMT)){
             mShortDate.setSummary(getShortDate());
         }
@@ -145,7 +207,7 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
 
     private String getSleepCycleSummary(){
         int sc = 2;
-        try { sc = Integer.parseInt(mPrefDB.getString(SP_REG_SCYCLE, "2")); }
+        try { sc = Integer.parseInt(Objects.requireNonNull(mPrefDB.getString(SP_REG_SCYCLE, "2"))); }
         catch (NumberFormatException ex){ /*skip it*/}
 
         String [] cycles = getResources().getStringArray(R.array.sleepcycle);
@@ -165,24 +227,25 @@ public class SettingsBasic extends PreferenceFragment  implements SharedPreferen
         int sdNdx = 0; // middle(US)
 
         String sd = mPrefDB.getString(PREF_PICKSHORTDATEFMT, "");
-        if(sd.equalsIgnoreCase(SDATE_MID)) sdNdx = 0;
-        if(sd.equalsIgnoreCase(SDATE_SML)) sdNdx = 1;
-        if(sd.equalsIgnoreCase(SDATE_BIG)) sdNdx = 2;
+        if (sd != null) {
+            if (sd.equalsIgnoreCase(SDATE_MID)) sdNdx = 0;
+            if (sd.equalsIgnoreCase(SDATE_SML)) sdNdx = 1;
+            if (sd.equalsIgnoreCase(SDATE_BIG)) sdNdx = 2;
+        }
         String summary = getResources().getString(R.string.prf_PickDateFormatSum);
         String [] dtypes = getResources().getStringArray(R.array.dateorder);
 
         return String.format(summary, dtypes[sdNdx].substring(0, 12));
     }
 
-
     private String getRingtoneSummary() {
         final String path = mPrefDB.getString(PREF_SOUND, getResources().getString(R.string.prf_NotificationTone));
 
-        if (!path.isEmpty() && !path.equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone))) {
+        if (path != null && !path.isEmpty() && !path.equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone))) {
             final Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse(path));
-            return ringtone.getTitle(getActivity().getApplicationContext());
+            return ringtone.getTitle(requireActivity().getApplicationContext());
         }
-        if (path.isEmpty()) {
+        if (path == null || path.isEmpty()) {
             return getResources().getString(R.string.silent);
         }
         return getResources().getString(R.string.prf_NotificationTone);

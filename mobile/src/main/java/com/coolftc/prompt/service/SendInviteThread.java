@@ -35,12 +35,10 @@ public class SendInviteThread extends Thread {
     @Override
     public void run() {
         try {
-            Actor sender = new Actor(mContext);
-
             // Skip any empty addresses
             for (String address : mAddresses) {
                 if(address.length() > 0) {
-                    sendInvite(sender, address, mDisplay, mMirror);
+                    sendInvite(address, mDisplay, mMirror);
                 }
             }
 
@@ -56,14 +54,17 @@ public class SendInviteThread extends Thread {
     /*
      *  Send a new invite to the server.
      */
-    private void sendInvite(Actor from, String unique, String display, boolean mirror){
+    private void sendInvite(String unique, String display, boolean mirror){
         try (Connection net = new Connection(mContext)) {
-            WebServices ws = new WebServices(new Gson());
             if (net.isOnline()) {
+                Actor from = new Actor(mContext);
+                WebServices ws = new WebServices(new Gson());
                 InviteRequest invite = new InviteRequest(unique, display, "", mirror);
                 String realPath = ws.baseUrl(mContext) + FTI_Invite.replace(SUB_ZZZ, from.acctIdStr());
                 ws.callPostApi(realPath, invite, InviteResponse.class, from.ticket);
             }
+        } catch (ExpClass kx) {
+            ExpClass.Companion.logEXP(kx, this.getClass().getName() + ".run");
         }
     }
 }

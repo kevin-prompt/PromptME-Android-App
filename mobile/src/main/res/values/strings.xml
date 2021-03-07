@@ -225,6 +225,9 @@
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>
     <string name="err_no_message">There is a problem finding the details of that message.</string>
     <string name="err_no_contact">Please enter a valid phone number or email address and then press Send.</string>
+    <string name="invite_friend">Invite a friend.</string>
+    <string name="new_prompt">Create a new Prompt.</string>
+    <string name="repeat_period">Repeat period.</string>
 </resources>
 
 

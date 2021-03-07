@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -79,7 +80,6 @@
             android:textSize="@dimen/lbl_med_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginTop="16dp">
         </TextView>
@@ -92,8 +92,9 @@
             android:paddingRight="8dp"
             android:layout_width="56dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptEvery"
-            android:layout_toEndOf="@+id/reptEvery">
+            android:layout_toEndOf="@+id/reptEvery"
+            android:hint="@string/repeat_period"
+            android:autofillHints="">
         </EditText>
 
         <TextView android:id="@+id/reptEveryTime"
@@ -101,9 +102,7 @@
             android:textSize="@dimen/lbl_med_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
-            android:layout_toRightOf="@+id/reptPeriod"
             android:layout_toEndOf="@+id/reptPeriod"
             android:layout_marginTop="16dp">
         </TextView>
@@ -123,7 +122,6 @@
             android:text="@string/sunday_abbr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="16dp">
         </CheckBox>
@@ -131,30 +129,24 @@
             android:text="@string/monday_abbr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptSun"
             android:layout_toEndOf="@+id/reptSun"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </CheckBox>
         <CheckBox android:id="@+id/reptTue"
             android:text="@string/tuesday_abbr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptMon"
             android:layout_toEndOf="@+id/reptMon"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </CheckBox>
         <CheckBox android:id="@+id/reptWed"
             android:text="@string/wednsday_abbr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptTue"
             android:layout_toEndOf="@+id/reptTue"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </CheckBox>
         <CheckBox android:id="@+id/reptThr"
@@ -162,10 +154,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/reptSun"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp">
         </CheckBox>
         <CheckBox android:id="@+id/reptFri"
@@ -173,10 +163,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/reptSun"
-            android:layout_toRightOf="@+id/reptThr"
             android:layout_toEndOf="@+id/reptThr"
             android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </CheckBox>
         <CheckBox android:id="@+id/reptSat"
@@ -184,11 +172,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/reptSun"
-            android:layout_toRightOf="@+id/reptFri"
             android:layout_toEndOf="@+id/reptFri"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </CheckBox>
     </RelativeLayout>
@@ -223,16 +209,15 @@
             android:paddingRight="8dp"
             android:layout_width="56dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptOccur"
             android:layout_toEndOf="@+id/reptOccur"
-            android:layout_alignBaseline="@id/reptOccur">
+            android:layout_alignBaseline="@id/reptOccur"
+            android:autofillHints="">
         </EditText>
         <TextView android:id="@+id/reptOccurLbl"
             android:text="@string/times"
             android:textSize="@dimen/lbl_med_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptOccurNbr"
             android:layout_toEndOf="@+id/reptOccurNbr"
             android:layout_alignBaseline="@id/reptOccur">
         </TextView>
@@ -243,9 +228,7 @@
             android:onClick="PickEndDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptOccurLbl"
             android:layout_toEndOf="@+id/reptOccurLbl"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp">
         </RadioButton>
         <TextView android:id="@+id/reptEndDate"
@@ -253,9 +236,7 @@
             android:textSize="@dimen/lbl_med_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/reptPickDay"
             android:layout_toEndOf="@+id/reptPickDay"
-            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_alignBaseline="@id/reptOccur">
         </TextView>
@@ -265,7 +246,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/reptPickDay"
-            android:layout_alignLeft="@id/reptPickDay"
             android:layout_alignStart="@id/reptPickDay">
         </TextView>
 
@@ -276,7 +256,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lblOr"
-            android:layout_alignLeft="@id/reptPickDay"
             android:layout_alignStart="@id/reptPickDay">
         </RadioButton>
     </RelativeLayout>
@@ -296,7 +275,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="@dimen/fin_margin"
         android:layout_marginEnd="@dimen/fin_margin"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

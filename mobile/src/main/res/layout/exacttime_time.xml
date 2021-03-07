@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="PickDate"
-        android:layout_toLeftOf="@+id/exactTimeFinish"
         android:layout_toStartOf="@+id/exactTimeFinish"
         android:layout_alignParentBottom="true"/>
 
@@ -28,10 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="PickFinish"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/fin_margin"
         android:layout_marginEnd="@dimen/fin_margin"/>
 
 </RelativeLayout>

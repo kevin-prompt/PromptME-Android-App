@@ -37,12 +37,12 @@ public class CancelFriendThread extends Thread {
 
         try (Connection net = new Connection(mContext)) {
 
-            Actor sender = new Actor(mContext);
-            WebServices ws = new WebServices(new Gson());
 
             if (net.isOnline()) {
                 // There is not currently any recourse if this fails, other than the user
                 // can just retry after seeing the connection still exists.
+                Actor sender = new Actor(mContext);
+                WebServices ws = new WebServices(new Gson());
                 String realPath = ws.baseUrl(mContext) + FTI_Invite_Del.replace(SUB_ZZZ, sender.acctIdStr()) + mFriend.acctIdStr();
                 ws.callDeleteApi(realPath, sender.ticket);
             }

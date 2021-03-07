@@ -6,18 +6,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.coolftc.prompt.service.CancelMessageThread;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.source.MessageDB;
-import com.coolftc.prompt.source.WebServicesOld;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.utility.KTime;
 
@@ -75,7 +77,7 @@ public class Detail extends AppCompatActivity {
      *  restore data in the OnCreate().
      */
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -85,13 +87,14 @@ public class Detail extends AppCompatActivity {
      *  the server pending queue.
      */
     public void CancelPrompt(final View view){
-        WebServicesOld ws = new WebServicesOld();
 
         // If we use the web serivce, we need the network.
-        if(!ws.IsNetwork(this) && (!mPrompt.IsPast() || mPrompt.IsRecurring())) {
-            Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
-            return;
-        }
+        try (Connection net = new Connection(getApplicationContext())) {
+            if (!net.isOnline() && (!mPrompt.IsPast() || mPrompt.IsRecurring())) {
+                Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception ex) { /* Just exit */ return; }
 
         // Delete nag dialog.  To launch another activity inside a listener, we save off the main activity.
         final Activity holdAct = this;
@@ -149,7 +152,7 @@ public class Detail extends AppCompatActivity {
             intent.putExtras(mBundle);
             startActivity(intent);
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".CopyPrompt");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".CopyPrompt");
         }
     }
 
@@ -185,7 +188,7 @@ public class Detail extends AppCompatActivity {
             }
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".BuildPrompt");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".BuildPrompt");
         } finally {
             mMessage.close();
         }
@@ -329,7 +332,7 @@ public class Detail extends AppCompatActivity {
                 local.target.display = cursor.getString(cursor.getColumnIndex(MessageDB.MESSAGE_NAME));
             }
             cursor.close();
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetMessages"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetMessages"); }
         return local;
     }
 
@@ -402,7 +405,7 @@ public class Detail extends AppCompatActivity {
             }
             cursor.close();
             return local;
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".GetAccountByName"); return new Account(); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetAccountByName"); return new Account(); }
         finally { social.close(); }
     }
 }

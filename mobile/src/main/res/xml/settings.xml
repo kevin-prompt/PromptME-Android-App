@@ -15,47 +15,47 @@
             android:entryValues="@array/sleepcycle_values"
             android:defaultValue="@string/prf_SleepCycleDefault">
         </ListPreference>
-        <PreferenceScreen android:key="1007"
+        <Preference android:key="settings.verify"
             android:title="@string/prf_Verify"
             android:summary="@string/prf_VerifySum">
             <intent android:action="android.intent.action.MAIN"
                 android:targetPackage="com.coolftc.prompt"
                 android:targetClass="com.coolftc.prompt.Signup">
             </intent>
-        </PreferenceScreen>
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:key="prompt.system"
         android:title="@string/prf_System">
-        <RingtonePreference android:key="1000"
+        <Preference android:key="setting.sound"
             android:title="@string/prf_Sounds"
             android:summary="@string/prf_SoundsSum"
             android:ringtoneType="all"
             android:showDefault="true"
             android:showSilent="true"
             android:defaultValue="@string/prf_NotificationTone">
-        </RingtonePreference>
-        <CheckBoxPreference android:key="1001"
+        </Preference>
+        <SwitchPreferenceCompat android:key="settings.vibrate"
             android:title="@string/prf_VibrateOn"
             android:summary="@string/prf_VibrateOnSum"
             android:defaultValue="false">
-        </CheckBoxPreference>
-        <CheckBoxPreference android:key="1005"
+        </SwitchPreferenceCompat>
+        <CheckBoxPreference android:key="settings.contacts"
             android:title="@string/prf_ContactsOk"
             android:summary="@string/prf_ContactsOkSum"
             android:defaultValue="true">
         </CheckBoxPreference>
-        <EditTextPreference android:key="1004"
+        <EditTextPreference android:key="settings.snooze"
             android:title="@string/prf_Snooze"
             android:summary="@string/prf_SnoozeSum"
             android:inputType="number"
             android:defaultValue="@string/prf_SnoozeDefault">
         </EditTextPreference>
-        <CheckBoxPreference android:key="1002"
+        <CheckBoxPreference android:key="settings.clock24"
             android:title="@string/prf_Use24Clock"
             android:summary="@string/prf_Use24ClockSum"
             android:defaultValue="false">
         </CheckBoxPreference>
-        <ListPreference android:key="1003"
+        <ListPreference android:key="settings.shortdate"
             android:title="@string/prf_PickDateFormat"
             android:dialogTitle="@string/prf_PickDateFormat"
             android:summary="@string/prf_PickDateFormatSum"
@@ -63,12 +63,13 @@
             android:entryValues="@array/dateorder_values"
             android:defaultValue="@string/prf_PickDateFormatDefault">
         </ListPreference>
-        <PreferenceScreen android:title="@string/prf_About"
+        <Preference
+            android:title="@string/prf_About"
             android:summary="@string/blank">
             <intent android:action="android.intent.action.MAIN"
                 android:targetPackage="com.coolftc.prompt"
                 android:targetClass="com.coolftc.prompt.About">
             </intent>
-        </PreferenceScreen>
+        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

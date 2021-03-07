@@ -45,6 +45,7 @@ data class UserResponse(var dname: String?,
 
 /* After registration, need to verify the user. */
 data class VerifyRequest(var code: Long, var provider: String?, var credential: String?)
+data class VerifyResponse(var verified: Boolean)
 
 /* To make friends, both parties have to accept the invites. */
 data class InviteRequest(var fname: String?, var fdisplay: String?, var message: String?, var mirror: Boolean)
@@ -57,9 +58,9 @@ data class InviteResponse(var fname: String?,
                           var mirror: Boolean,
                           var complete: Boolean)
 
-data class Invitations(var friends: List<WebServiceModelsOld.InviteResponse?>?,
-                       var rsvps: List<WebServiceModelsOld.InviteResponse?>?,
-                       var invites: List<WebServiceModelsOld.InviteResponse?>?)
+data class Invitations(var friends: List<InviteResponse?>?,
+                       var rsvps: List<InviteResponse?>?,
+                       var invites: List<InviteResponse?>?)
 
 /* Create a prompt. */
 data class PromptRequest(var `when`: String?,

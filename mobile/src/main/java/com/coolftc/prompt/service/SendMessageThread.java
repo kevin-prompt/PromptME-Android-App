@@ -44,9 +44,8 @@ public class SendMessageThread extends Thread {
             long localId = addMessage(prompt, false);
 
             // Create the record on the server using the web service. Get the real time back.
-            Actor sender = new Actor(context);
             try {
-                PromptResponse actual = sendMessage(sender, prompt);
+                PromptResponse actual = sendMessage(prompt);
                 updSuccess(localId, actual.getPromptTime(), actual.getPromptId());
             } catch (ExpClass kx) {
                 updFailure(localId, kx.getStatus());
@@ -66,10 +65,11 @@ public class SendMessageThread extends Thread {
      *  Send a new prompt to the server. If things work out, the server returns
      *  the actual time that the prompt will be generated.
      */
-    private PromptResponse sendMessage(Actor from, Reminder msg) throws ExpClass {
+    private PromptResponse sendMessage(Reminder msg) throws ExpClass {
         try (Connection net = new Connection(context)) {
-            WebServices ws = new WebServices(new Gson());
             if (net.isOnline()) {
+                Actor from = new Actor(context);
+                WebServices ws = new WebServices(new Gson());
                 PromptRequest message = new PromptRequest(
                         msg.targetTime,
                         msg.target.timezone,

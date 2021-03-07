@@ -1,6 +1,7 @@
 package com.coolftc.prompt.utility
 
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 @Suppress("unused")
 class ExpParseToCalendar(Desc: String, Source: Throwable) : ExpClass(TIME_EXP, "ParseToCalendarErr", Desc, Source)
@@ -64,30 +65,26 @@ open class ExpClass(
             else -> "Unknown Failure"
         }
 
-        /* The Audit is an opportunity to record affirmative actions, to prove something is going on.
-        fun audit(title: String?, msg: String?, keys: List<Pair<String?, String?>>) {
+        fun audit(title: String?, msg: String?, keys: List<Pair<String, String>>) {
             for (tuple in keys) {
                 FirebaseCrashlytics.getInstance().setCustomKey(tuple.first, tuple.second)
             }
-            FirebaseCrashlytics.getInstance().log(msg)
-            FirebaseCrashlytics.getInstance().recordException(ExpClass(AUDIT_LOG, "Audit Message", title, "Custom Keys:" + keys.size.toString()))
+            if (msg != null) {
+                FirebaseCrashlytics.getInstance().log(msg)
+            }
+            FirebaseCrashlytics.getInstance().recordException(ExpClass(AUDIT_LOG, "Audit Message", title ?: "", "Custom Keys:" + keys.size.toString()))
         }
-        */
 
         fun logEXP(ex: ExpClass, key: String?) {
-            /*  If using crashlytics, include these methods to log exceptions to the network.
-            FirebaseCrashlytics.getInstance().log(ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + HttpStatusName(ex.Status) + ") key=" + key + " :: " + ex.message + " -extra- " + ex.Extra)
+            FirebaseCrashlytics.getInstance().log(ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.message + " -extra- " + ex.Extra)
             FirebaseCrashlytics.getInstance().recordException(ex)
-            */
-            Log.e(ERR_TAG, ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.Desc + " -extra- " + ex.Extra)
+            // Log.e(ERR_TAG, ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.Desc + " -extra- " + ex.Extra)
         }
 
         fun logEX(ex: Exception, key: String?) {
-            /*  If using crashlytics, include these methods to log exceptions to the network.
             FirebaseCrashlytics.getInstance().log(ERR_TAG + ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message)
             FirebaseCrashlytics.getInstance().recordException(ex)
-            */
-            Log.e(ERR_TAG, ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message, ex)
+            // Log.e(ERR_TAG, ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message, ex)
         }
 
         fun logINFO(tag: String?, message: String) {
