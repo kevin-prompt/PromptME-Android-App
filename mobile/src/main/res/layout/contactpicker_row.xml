@@ -31,14 +31,12 @@
         app:civ_border_color="@color/promptcomp"
         app:civ_border_width="2dp"
         app:civ_shadow="false"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </com.mikhaellopez.circularimageview.CircularImageView>
     <TextView android:id="@+id/rowpContactName"
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:layout_toRightOf="@+id/rowpFacePic"
         android:layout_toEndOf="@+id/rowpFacePic"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
@@ -49,7 +47,6 @@
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
         android:layout_below="@+id/rowpContactName"
-        android:layout_toRightOf="@+id/rowpFacePic"
         android:layout_toEndOf="@+id/rowpFacePic"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
@@ -61,7 +58,6 @@
         android:layout_height="wrap_content"
         android:text="@string/linked"
         android:onClick="UnInvite"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="4dp">
     </Button>

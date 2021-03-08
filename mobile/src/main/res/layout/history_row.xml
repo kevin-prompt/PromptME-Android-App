@@ -16,8 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        tools:text="06/26/2017 @ 2:05PM"
-        android:layout_alignParentLeft="true"
+        tools:text="06/26/2021 @ 2:05PM"
         android:layout_alignParentStart="true">
     </TextView>
     <ImageView android:id="@+id/rowhRecur"
@@ -25,10 +24,8 @@
         android:layout_height="18dp"
         android:contentDescription="@string/img_recurring"
         android:src="@drawable/ic_replay_black_18dp"
-        android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
         android:visibility="invisible"
-        android:layout_toRightOf="@id/rowhTargetTime"
         android:layout_toEndOf="@id/rowhTargetTime">
     </ImageView>
     <ImageView android:id="@+id/rowhSnooze"
@@ -36,10 +33,8 @@
         android:layout_height="18dp"
         android:contentDescription="@string/img_snooze"
         android:src="@drawable/ic_snooze_black_18dp"
-        android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
         android:visibility="invisible"
-        android:layout_toRightOf="@id/rowhRecur"
         android:layout_toEndOf="@id/rowhRecur">
     </ImageView>
     <TextView android:id="@+id/rowhNew"
@@ -50,18 +45,14 @@
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_toRightOf="@+id/rowhSnooze"
         android:layout_toEndOf="@+id/rowhSnooze">
     </TextView>
     <TextView android:id="@+id/rowhTargetFrom"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:paddingLeft="2dp"
         android:paddingStart="2dp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true">
     </TextView>
@@ -69,7 +60,6 @@
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/rowhTargetTime">
     </TextView>
@@ -77,9 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:paddingLeft="2dp"
         android:paddingStart="2dp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true">
     </TextView>

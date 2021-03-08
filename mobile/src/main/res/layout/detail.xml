@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +12,7 @@
     tools:context="com.coolftc.prompt.Detail">
 
     <TextView android:id="@+id/dtlNoteTime"
-        tools:text="Arrived 06/29/2017 @ 4:43pm"
+        tools:text="Arrived 06/29/2021 @ 4:43pm"
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,7 +42,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/lblDisplayBar"
         app:layout_constraintLeft_toRightOf="parent"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"/>
 
@@ -56,7 +56,7 @@
         android:layout_marginTop="16dp"/>
 
     <TextView android:id="@+id/dtlCreated"
-        tools:text="Created 06/25/2017 @ 7:30pm"
+        tools:text="Created 06/25/2021 @ 7:30pm"
         android:textSize="@dimen/lbl_medsml_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -96,7 +96,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="@+id/dtlMessage"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="@dimen/fin_margin"
         android:layout_marginEnd="@dimen/fin_margin"/>
 
     <Button android:id="@+id/dtlCopy" android:text="@string/copy"
@@ -106,7 +105,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="@dimen/fin_margin"
         android:layout_marginEnd="@dimen/fin_margin"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,15 +19,15 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.coolftc.prompt.service.Refresh;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.ExpClass;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,18 +45,16 @@ import java.util.TreeMap;
  */
 public class Welcome extends AppCompatActivity {
     // The contact list.
-    ListView mListView;
+    private ListView mListView;
     // The "mAccounts" collect all the possible people to display.
-    List<Account> mAccounts = new ArrayList< >();
+    private List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
-
+    private String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    private int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         // Set up main view and menu.
         setContentView(R.layout.welcome);
@@ -66,12 +63,13 @@ public class Welcome extends AppCompatActivity {
         // Lets see if what we know about this person.
         Actor acct = new Actor(this);
 
+
         // Google Play?  They will need it.
         isGooglePlayServicesAvailable(this);
 
         /* The Refresh service is important as it is the primary way
          * most of the data (SQL and Web Service) is refreshed. For
-         * now is only triggered in Welcome, but we do trigger it
+         * now mostly triggered only in Welcome, but we do trigger it
          * every time this screen shows up.
          */
         Intent sIntent = new Intent(this, Refresh.class);
@@ -84,6 +82,15 @@ public class Welcome extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        /*  User properties are attached to all analytics records and persist.
+            The idea is to use them for categorization, but could also use it
+            to drill down into individuals.  Google recommends again using any
+            PII here, like email, so would need some dumb identifier to be safe.
+         */
+        // This is just an example of how it would work.
+        //FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        //mFirebaseAnalytics.setUserProperty(AN_UP_TICKET, acct.ticket);
 
         Display();
     }
@@ -277,7 +284,7 @@ public class Welcome extends AppCompatActivity {
                 mAccounts.add(ali);
             }
 
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
     }
 
@@ -323,7 +330,7 @@ public class Welcome extends AppCompatActivity {
             startActivity(intent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -373,7 +380,7 @@ public class Welcome extends AppCompatActivity {
                     break;
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -414,7 +421,7 @@ public class Welcome extends AppCompatActivity {
                         return TYPE_ITEM;
                 }
             } catch (Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return TYPE_SEPARATOR; // safest option
             }
         }
@@ -477,7 +484,7 @@ public class Welcome extends AppCompatActivity {
                 }
                 return convertView;
             }catch(Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return null;
             }
         }

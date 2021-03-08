@@ -2,13 +2,19 @@ package com.coolftc.prompt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.source.UserRequest;
+import com.coolftc.prompt.source.UserResponse;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
 
+import java.util.Locale;
+import java.util.Random;
 import java.util.TimeZone;
 import static com.coolftc.prompt.utility.Constants.*;
-import static com.coolftc.prompt.source.WebServiceModels.*;
 
 /**
  * The Actor is the person using the app.  They have many of the same
@@ -34,13 +40,20 @@ public class Actor extends Account {
     /*
      *  Constructors
      */
-    public Actor () {};
+    public Actor () {}
     public Actor (Context ctx) { LoadPrime(false, ctx); }
 
     // Helpers
     public String isBroadcast(Context ctx) { return broadcast ? ctx.getResources().getString(R.string.yes):ctx.getResources().getString(R.string.no);}
     public String isAds(Context ctx) { return ads ? ctx.getResources().getString(R.string.yes):ctx.getResources().getString(R.string.no);}
-
+    public String identifier() {    // Google keeps dumping their own unique ids, so build one.
+        final String DEVICE_LAYOUT = "%s::%s::%s::%s::%d";
+        return String.format(Locale.US, DEVICE_LAYOUT,
+                max50(Build.MANUFACTURER), max50(Build.MODEL), max50(Build.DEVICE), max50(Build.ID), someNbr())
+                .replaceAll("\\s", "_");
+    }
+    private String max50(String in) { return in.length() > 50 ? in.substring(0, 50) : in.trim(); }
+    private int someNbr() { return new Random().nextInt(1000000000 - 100000000) + 100000000; }
     /*
      * For the primary user, this method loads the relevant data from the local
      * store (shared preferences).  Additionally, it can go to the server, although
@@ -73,18 +86,25 @@ public class Actor extends Account {
 
         if(full) {
             // LoadPrime the server data, too.
-            WebServices ws = new WebServices();
-            if(ws.IsNetwork(context)) {
-                UserResponse user = ws.GetUser(ticket, Long.toString(acctId));
-                custom = user.cname;
-                ads = user.ads;
-                confirmed = user.verified;
-                timezoneExt = user.timezone;
-                sleepcycle = user.scycle;
-                broadcast = user.broadcast;
-            }
+            try (Connection net = new Connection(context)) {
+                WebServices ws = new WebServices(new Gson());
+                if (net.isOnline()) {
+                    String realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acctIdStr());
+                    UserResponse user = ws.callGetApi(realPath, UserResponse.class, ticket);
+                    if(user != null) {
+                        custom = user.getCname();
+                        ads = user.getAds();
+                        confirmed = user.getVerified();
+                        timezoneExt = user.getTimezone();
+                        sleepcycle = user.getScycle();
+                        broadcast = user.getBroadcast();
+                    }
+                }
             else
-                ExpClass.LogIN(KEVIN_SPEAKS, "Account.LoadPrime Network Unavailable");
+                ExpClass.Companion.logINFO(KEVIN_SPEAKS, "Account.LoadPrime Network Unavailable");
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".LoadPrime");
+            }
         }
     }
 
@@ -118,23 +138,25 @@ public class Actor extends Account {
         editor.putBoolean(SP_REG_SOLO, solo);
         editor.apply();
 
-
         if (full && ticket.length() > 0) {
             // Save data to the server, too.
-            WebServices ws = new WebServices();
-            if (ws.IsNetwork(context)) {
-                UserRequest user = new UserRequest();
-                user.dname = display;
-                user.timezone = TimeZone.getDefault().getID();
-                user.target = token;
-                user.scycle = sleepcycle;
-                user.type = FTI_TYPE_ANDROID;
-                UserResponse data = ws.ChgUser(ticket, acctIdStr(), user);
-                if (data.response < 200 || data.response >= 300)
-                    ExpClass.LogIN(KEVIN_SPEAKS, "Account.SyncPrime server fail response = " + Integer.toString(data.response));
-            } else
-                ExpClass.LogIN(KEVIN_SPEAKS, "Account.SyncPrime Network Unavailable");
+            try (Connection net = new Connection(context)) {
+                WebServices ws = new WebServices(new Gson());
+                if (net.isOnline()) {
+                    UserRequest user = new UserRequest(
+                            TimeZone.getDefault().getID(),
+                            display,
+                            sleepcycle,
+                            token,
+                            FTI_TYPE_ANDROID
+                    );
+                    String realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acctIdStr());
+                    ws.callPostApi(realPath, user, UserResponse.class, ticket);
+                } else
+                    ExpClass.Companion.logINFO(KEVIN_SPEAKS, "Account.SyncPrime Network Unavailable");
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".SyncPrime");
+            }
         }
     }
-
 }

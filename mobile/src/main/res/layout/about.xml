@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -33,7 +34,8 @@
         app:layout_constraintHorizontal_bias="0.50"
         android:visibility="gone"/>
 
-    <android.support.constraint.Guideline android:id="@+id/abtCenterline"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/abtCenterline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -44,7 +46,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="24dp"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -55,7 +56,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblVersion"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -65,18 +65,16 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
         app:layout_constraintTop_toBottomOf="@+id/lblVersion"/>
 
     <TextView android:id="@+id/abtBuildDate"
-        tools:text="Jun 18, 2017"
+        tools:text="Jun 18, 2021"
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblBuildDate"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -86,7 +84,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -97,7 +94,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblBroadcast"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -107,7 +103,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -118,7 +113,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblAds"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -128,7 +122,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -139,7 +132,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblWhoAmI"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -149,7 +141,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toBottomOf="@+id/abtWhoAmI"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -159,7 +150,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -170,7 +160,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblSystemUp"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -180,7 +169,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/abt_center_margin"
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
@@ -191,7 +179,6 @@
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/abt_center_margin"
         android:layout_marginStart="@dimen/abt_center_margin"
         app:layout_constraintTop_toTopOf="@+id/lblPrivacy"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
@@ -203,4 +190,4 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

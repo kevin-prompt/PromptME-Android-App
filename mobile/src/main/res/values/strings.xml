@@ -1,6 +1,6 @@
 <resources>
-    <string name="ver_nbr">1.11.0.0</string>
-    <string name="ver_build">2017 - Sep 25</string>
+    <string name="ver_nbr">1.15.0.0</string>
+    <string name="ver_build">2021 - Mar 1</string>
     <string name="app_name">PromptME</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
@@ -13,7 +13,7 @@
     <string name="inv_name">Invite</string>
     <string name="isRegistered">Registered? </string>
     <string name="msgNoNet">Network Connection not found.</string>
-    <string name="blank"></string>
+    <string name="blank"/>
     <string name="processing">Processing&#8230;</string>
     <string name="lblUniqueName">Unique Name (Phone# or Email)</string>
     <string name="lblDisplayName">Display Name</string>
@@ -95,6 +95,14 @@
     <string name="inv_unique">Phone number or Email address</string>
     <string name="inv_mirror_box">Make this connection a Mirror.*</string>
     <string name="inv_mirror_help">*Mirror connections receive all your Prompts. This allows a Prompt created with your phone to also show up on another device, like a tablet that you own.  Recommended to only select Mirror if this invite is to another device of yours.</string>
+    <string name="ntf_channel_name_prompt">PromptMe Messages</string>
+    <string name="ntf_channel_desc_prompt">These are the notes you have sent your future self.</string>
+    <string name="ntf_channel_name_invite">PromptMe Invite</string>
+    <string name="ntf_channel_desc_invite">Invitations to share prompt messages.</string>
+    <string name="ntf_channel_name_friend">PromptMe Friend</string>
+    <string name="ntf_channel_desc_friend">When friends accept your friend request.</string>
+    <string name="ntf_channel_group_name">PromptMe Notifications</string>
+    <string name="ntf_channel_group_desc">PromptMe notifications support all the features of PromptMe, like receiving prompts and other notifications.</string>
     <string name="btnConfirmSend">Send confirmation</string>
     <string name="btnEmailAddr">Email Address</string>
     <string name="btnPhoneNbr">Phone Number</string>
@@ -206,16 +214,20 @@
     <string name="message">Message</string>
     <string name="send">Send</string>
     <string name="zzzzz">zzzzz</string>
-    <string name="ver_copyright">© 2017 zalicon enterprises, inc.</string>
+    <string name="ver_copyright">© 2021 zalicon enterprises, inc.</string>
     <string name="pickdate">&lt;&lt; Pick Date</string>
     <string name="picktime">Pick Time &gt;&gt;</string>
     <string name="err_cannot_connect">Unable to connect.</string>
     <string name="err_bad_request">Problem making request (%d)</string>
+    <string name="err_bad_resource">Problem making request (%d)</string>
     <string name="err_bad_auth">Not a valid account (%d)</string>
     <string name="err_bad_server">Server issue, try later (%d)</string>
     <string name="err_no_fragmenttalkback">-Must implement FragmentTalkBack.</string>
     <string name="err_no_message">There is a problem finding the details of that message.</string>
     <string name="err_no_contact">Please enter a valid phone number or email address and then press Send.</string>
+    <string name="invite_friend">Invite a friend.</string>
+    <string name="new_prompt">Create a new Prompt.</string>
+    <string name="repeat_period">Repeat period.</string>
 </resources>
 
 

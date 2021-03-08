@@ -3,14 +3,13 @@ package com.coolftc.prompt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import com.coolftc.prompt.utility.ExpClass;
-
 import java.util.Locale;
-
 import static com.coolftc.prompt.utility.Constants.*;
 
 /**
@@ -42,39 +41,36 @@ public class Settings extends AppCompatActivity {
     public static final String PREF_SYSTEM = "prompt.system";
     public static final String PREF_DISPNAME = SP_REG_DISPLAY;
     public static final String PREF_SCYCLE = SP_REG_SCYCLE;
-    public static final String PREF_SOUND = "1000";
-    public static final String PREF_VIBRATEON = "1001";
+    public static final String PREF_SOUND = "setting.sound";
+    public static final String PREF_VIBRATEON = "settings.vibrate";
     public static final boolean DEFAULT_VIBRATEON = false;
-    public static final String PREF_USE24CLOCK = "1002";
+    public static final String PREF_USE24CLOCK = "settings.clock24";
     public static final boolean DEFAULT_USE24CLOCK = false;
-    public static final String PREF_PICKSHORTDATEFMT = "1003";
+    public static final String PREF_PICKSHORTDATEFMT = "settings.shortdate";
     public static final String DEFAULT_PICKSHORTDATEFMT = DB_fmtDateShrtMiddle;
-    public static final String PREF_SNOOZE = "1004";
-    public static final String PREF_CONTACTS = "1005";
+    public static final String PREF_SNOOZE = "settings.snooze";
+    public static final String PREF_CONTACTS = "settings.contacts";
     public static final boolean DEFAULT_CONTACTS = true;
-    public static final String PREF_SOUND_AVAILABLE = "1006";
+    public static final String PREF_SOUND_AVAILABLE = "settings.is.sound";
+    public static final int KY_SOUND_PICKER = 1200;
     public static final boolean DEFAULT_SOUND_AVAILABLE = false;
-    public static final String PREF_VERIFICATION = "1007";
+    public static final String PREF_VERIFICATION = "settings.verify";
     public static final String PREF_NAMESORT = "name.sortorder";
     public static final String PREF_SORT_ORDER = "prompt.sortorder";
     public static final int DEFAULT_SORT_ORDER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsBasic())
                 .commit();
     }
 
     // What name is stored in preferences.
     public static String getDisplayName(Context context) {
-        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_DISPNAME, "");
-        context = null; // we do not want these context objects to have to hang around forever in these static methods.
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_DISPNAME, "");
     }
 
     // Allow name update to be adjusted programmatically (to initialized it).
@@ -83,21 +79,17 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putString(PREF_DISPNAME, name);
         ali.apply();
-        context = null;
     }
 
     // What sleep cycle is stored in preferences.
     public static int getSleepCycle(Context context) {
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SCYCLE, "2");
-        context = null;
-        return Integer.parseInt(holdAnswer);
+        return holdAnswer != null ? Integer.parseInt(holdAnswer) : 0;
     }
 
     // How names should be sorted as stored in preferences.
     public static int getNameSortOrder(Context context) {
-        int holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_NAMESORT, DEFAULT_SORT_ORDER);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_NAMESORT, DEFAULT_SORT_ORDER);
     }
 
     // Shortcut to see if sorting by last name, which is not the default.
@@ -110,7 +102,6 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putInt(PREF_NAMESORT, sort);
         ali.apply();
-        context = null;
     }
 
     // The ringtone to be used for notifications.  There are times when we want to use the
@@ -118,53 +109,41 @@ public class Settings extends AppCompatActivity {
     public static Uri getRingtone(Context context){
         String defaultRingtone = String.format(Locale.getDefault(), "android.resource://%s/%d",context.getPackageName(),R.raw.promptbeep);
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SOUND, defaultRingtone);
-        if (holdAnswer.equalsIgnoreCase(context.getResources().getString(R.string.prf_NotificationTone))) {
+        if (holdAnswer != null && holdAnswer.equalsIgnoreCase(context.getResources().getString(R.string.prf_NotificationTone))) {
             holdAnswer = defaultRingtone;
         }
-        context = null;
         return Uri.parse(holdAnswer);
     }
 
     // When true, have the device vibrate on incoming prompts.
     public static boolean getVibrateOn(Context context) {
-        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_VIBRATEON, DEFAULT_VIBRATEON);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_VIBRATEON, DEFAULT_VIBRATEON);
     }
 
     // When true, continue to ask to use the Contacts.
     public static boolean getContactsOk(Context context) {
-        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_CONTACTS, DEFAULT_CONTACTS);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_CONTACTS, DEFAULT_CONTACTS);
     }
 
-    // What sleep cycle is stored in preferences.
+    // What snooze lenght is stored in preferences.
     public static int getSnooze(Context context) {
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SNOOZE, "60");
-        context = null;
-        return Integer.parseInt(holdAnswer);
+        return holdAnswer != null ? Integer.parseInt(holdAnswer) : 60;
     }
 
     // When true, display time in a 24 hour format.
     public static boolean getUse24Clock(Context context) {
-        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_USE24CLOCK, DEFAULT_USE24CLOCK);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_USE24CLOCK, DEFAULT_USE24CLOCK);
     }
 
     // Select how the day/month/year is ordered in displaying dates.
     public static String getPickShortDateFmt(Context context) {
-        String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PICKSHORTDATEFMT, DEFAULT_PICKSHORTDATEFMT);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PICKSHORTDATEFMT, DEFAULT_PICKSHORTDATEFMT);
     }
 
     // Return which sort order is in effect for prompts.
     public static int getPromptSortOrder(Context context) {
-        int holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_SORT_ORDER, DEFAULT_SORT_ORDER);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_SORT_ORDER, DEFAULT_SORT_ORDER);
     }
 
     // Allow non-settings screen to update this value.
@@ -172,14 +151,11 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putInt(PREF_SORT_ORDER, sort);
         ali.apply();
-        context = null;
     }
 
     // Check if the default notification sound has been copied locally to the device.
     public static boolean isSoundCopied(Context context) {
-        boolean holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_SOUND_AVAILABLE, DEFAULT_SOUND_AVAILABLE);
-        context = null;
-        return holdAnswer;
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_SOUND_AVAILABLE, DEFAULT_SOUND_AVAILABLE);
     }
 
     // Called after a successful copy of the notification sound, so we do not bother with it again.
@@ -187,7 +163,6 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor ali = PreferenceManager.getDefaultSharedPreferences(context).edit();
         ali.putBoolean(PREF_SOUND_AVAILABLE, done);
         ali.apply();
-        context = null;
     }
 
     /*
@@ -200,7 +175,6 @@ public class Settings extends AppCompatActivity {
         String holdFmt;
         String fmt = getPickShortDateFmt(context);
         String tmt = getUse24Clock(context) ? DB_fmtDateTime24 : DB_fmtDateTime;
-        context = null;
 
         switch (datetype){
 
@@ -211,7 +185,7 @@ public class Settings extends AppCompatActivity {
                     if (fmt.equalsIgnoreCase("sml")) holdFmt = DB_fmtDateShrtLittle;
                     return holdFmt;
                 } catch (Exception ex) {
-                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_FMT_SHORT");
+                    ExpClass.Companion.logEX(ex, "Settings.getDateDisplayFormat-DATE_FMT_SHORT");
                     return DB_fmtDateShrtMiddle;
                 }
 
@@ -223,7 +197,7 @@ public class Settings extends AppCompatActivity {
                     holdFmt += " @ " + tmt;
                     return holdFmt;
                 } catch (Exception ex) {
-                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
+                    ExpClass.Companion.logEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
                     return DB_fmtDateShrtMiddle + " @ " + DB_fmtDateTime;
                 }
             case DATE_TIME_FMT_REV:
@@ -234,7 +208,7 @@ public class Settings extends AppCompatActivity {
                     holdFmt = tmt + " on " + holdFmt;
                     return holdFmt;
                 } catch (Exception ex) {
-                    ExpClass.LogEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
+                    ExpClass.Companion.logEX(ex, "Settings.getDateDisplayFormat-DATE_TIME_FMT_SHORT");
                     return DB_fmtDateShrtMiddle + " @ " + DB_fmtDateTime;
                 }
             default:

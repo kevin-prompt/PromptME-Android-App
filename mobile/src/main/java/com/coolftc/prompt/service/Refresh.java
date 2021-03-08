@@ -8,9 +8,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.content.ContextCompat;
 
 import static com.coolftc.prompt.utility.Constants.*;
 import static com.coolftc.prompt.utility.KTime.KT_fmtDate3339fk;
@@ -20,21 +22,28 @@ import com.coolftc.prompt.Account;
 import com.coolftc.prompt.Actor;
 import com.coolftc.prompt.R;
 import com.coolftc.prompt.Settings;
+import com.coolftc.prompt.source.Invitations;
+import com.coolftc.prompt.source.InviteResponse;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.KTime;
 import com.coolftc.prompt.source.MessageDB;
-import com.coolftc.prompt.source.WebServices;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.coolftc.prompt.source.WebServiceModels.*;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  This service is used to update various local data with any changed server data.
@@ -54,7 +63,7 @@ public class Refresh extends IntentService {
     // The contact permission is stored to reduce management overhead.
     int mContactPermissionCheck;
     // The friendAge is a debounce value for the friend query.
-    private static String friendAge = THE_PAST;
+    private static LocalDateTime friendAge = LocalDateTime.MIN.MIN;
 
     public Refresh() {
         super(SRV_NAME);
@@ -63,7 +72,6 @@ public class Refresh extends IntentService {
     @Override
     protected void onHandleIntent(Intent hint) {
         Actor ghost = new Actor(this);
-        String timeNow = KTime.ParseNow(KT_fmtDate3339fk).toString();
 
         /*
          *  Check the notification token. The signup process needs the push notification
@@ -77,27 +85,43 @@ public class Refresh extends IntentService {
         try {
             // This mostly is for first spin up of app when device is empty.
             if (ghost.device.length() == 0) {
-                ghost.token = "";
-                ghost.device = FirebaseInstanceId.getInstance().getId();
+                ghost.device = ghost.identifier();
+                ghost.SyncPrime(false, this);
             }
 
-            // This is to make sure we stay in sync with the server.  At one point Azure had a 90 day
-            // life for token storage, so the date based cycle was to be a keep-alive, but that is no
-            // longer the case. Now do this if the server data needs updating.
-            if (ghost.token.length() == 0 || ghost.force) {
-                // Get the latest token and save it locally (probably has not changed).
-                String holdToken = FirebaseInstanceId.getInstance().getToken();
-                if (holdToken != null) {
-                    ghost.token = holdToken;
-                    // Commit the changes and try to tell the server.
-                    ghost.force = false;
-                    ghost.SyncPrime(true, this);
+            // Check for domain updates once a day (at most).
+            WebServices ws = new WebServices(new Gson());
+            if(LocalDate.now().isAfter(ws.baseUrlAge(getApplicationContext()))) {
+                try {
+                    DomainThread domainThread = new DomainThread(getApplicationContext(), null);
+                    domainThread.start();
+                } catch (Exception ex) {
+                    ExpClass.Companion.logEX(ex, "API Error cannot find domain target.");
                 }
+            }
+
+            // Generally the token should not be blank, as NotificationX has a listener to get it.
+            if (ghost.token.length() == 0) {
+                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        ghost.token = task.getResult();
+                        ghost.SyncPrime(true, getApplicationContext());
+                    }
+                });
+            }
+
+            // Somewhere in the App, someone decided the local data changed and now needs
+            // to be synchronized with the server.
+            if (ghost.force) {
+                ghost.force = false;
+                ghost.SyncPrime(true, this);
             }
 
             // If possible, we want to copy the default notification sound.  While we cannot ask
             // for the permission here, we do ask if the user goes to settings.  Until then the
-            // default sound will be the local version of the Prompt Notification sound.
+            // default sound will be used for Notification sounds.
+            // ** This sound is only of concern to Apps running below Android v8. **
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             if(!Settings.isSoundCopied(getApplicationContext())
                 && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     Settings.setSoundCopied(
@@ -107,7 +131,7 @@ public class Refresh extends IntentService {
             }
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentA");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntentA");
         }
 
         // Check if the user is signed up yet.
@@ -118,14 +142,15 @@ public class Refresh extends IntentService {
          *  the local database with any Deletes, Changes, Adds.  In that order.  For Adds,
          *  check if there is local contact information that can supplement the data.
          */
-        try {
+        try (Connection net = new Connection(getApplicationContext())){
             mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
-            if (ghost.ticket.length() > 0 || KTime.CalcDateDifference(friendAge, timeNow, KT_fmtDate3339fk, KTime.KT_MINUTES) > 10) {
-                WebServices ws = new WebServices();
-                if (ws.IsNetwork(this)) {
-                    Invitations invites = ws.GetFriends(ghost.ticket, ghost.acctIdStr());
-                    if (invites.friends == null || invites.friends.size() == 0)
+            if (ghost.ticket.length() > 0 || LocalDateTime.now().isAfter(friendAge)) {
+                WebServices ws = new WebServices(new Gson());
+                if (net.isOnline()) {
+                    String realPath = ws.baseUrl(getApplicationContext()) + FTI_Friends.replace(SUB_ZZZ, ghost.acctIdStr());
+                    Invitations invites = ws.callGetApi(realPath, Invitations.class, ghost.ticket);
+                    if (invites != null && (invites.getFriends() == null || invites.getFriends().size() == 0))
                         return; // There is always 1 friend (yourself), if not something is wrong.
                     mContactPermissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS);
                     Account[] inviteStore = queryFriends();
@@ -134,13 +159,13 @@ public class Refresh extends IntentService {
                     CheckForAdditions(invites, inviteStore);
                     UpdateContactInfo(inviteStore);
                     CheckForUserDate(ghost, inviteStore);
-                    friendAge = timeNow;
+                    friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
                 }
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentB");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntentB");
             // If there is a date problem, update and see if it works next time.
-            friendAge = timeNow;
+            friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
         } finally {
             mSocial.close();
         }
@@ -160,9 +185,9 @@ public class Refresh extends IntentService {
                 }
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".onHandleIntentC");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntentC");
             // If there is a date problem, update and see if it works next time.
-            friendAge = timeNow;
+            friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
         } finally {
             mMessage.close();
         }
@@ -176,23 +201,23 @@ public class Refresh extends IntentService {
     private void CheckForAdditions(Invitations server, Account[] local){
         List<Account> toAdd = new ArrayList<>();
 
-        localLoop: for(InviteResponse invite : server.friends){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, true, false));
         }
-        localLoop: for(InviteResponse invite : server.rsvps){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, false, true));
         }
-        localLoop: for(InviteResponse invite : server.invites){
+        localLoop: for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
             for(Account acct : local){
-                if(invite.friendId == acct.acctId)
+                if(invite.getFriendId() == acct.acctId)
                     continue localLoop;
             }
             toAdd.add(CopyInviteAcct(invite, false, false));
@@ -203,12 +228,12 @@ public class Refresh extends IntentService {
     // Copy server invite to build an account.
     private Account CopyInviteAcct(InviteResponse invite, boolean confirm, boolean sent){
         Account hold = new Account();
-        hold.acctId = invite.friendId;
-        hold.timezone = invite.timezone;
-        hold.sleepcycle = invite.scycle;
-        hold.unique = invite.fname;
-        hold.display = invite.fdisplay;
-        hold.mirror = invite.mirror;
+        hold.acctId = invite.getFriendId();
+        hold.timezone = invite.getTimezone();
+        hold.sleepcycle = invite.getScycle();
+        hold.unique = invite.getFname();
+        hold.display = invite.getFdisplay();
+        hold.mirror = invite.getMirror();
         hold.pending = sent;
         hold.confirmed = confirm;
         hold.isFriend = true;
@@ -226,60 +251,60 @@ public class Refresh extends IntentService {
 
         // The localLoop will cut short the iterations by moving on when found
         localLoop: for(Account acct : local){
-            for(InviteResponse invite : server.friends){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = true;
                     acct.pending = false;
                     acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
-            for(InviteResponse invite : server.rsvps){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && !acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && !acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = false;
                     acct.pending = true;
                     acct.isFriend = true;
                     toChg.add(acct);
                 }
             }
-            for(InviteResponse invite : server.invites){
-                if(acct.acctId == invite.friendId) {
-                    if (invite.fname.equalsIgnoreCase(acct.unique) &&
-                        invite.timezone.equalsIgnoreCase(acct.timezone) &&
-                        invite.scycle == acct.sleepcycle &&
-                        invite.fdisplay.equalsIgnoreCase(acct.display) &&
-                        invite.mirror == acct.mirror && !acct.confirmed) {
+            for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
+                if(acct.acctId == invite.getFriendId()) {
+                    if (Objects.requireNonNull(invite.getFname()).equalsIgnoreCase(acct.unique) &&
+                        Objects.requireNonNull(invite.getTimezone()).equalsIgnoreCase(acct.timezone) &&
+                        invite.getScycle() == acct.sleepcycle &&
+                        Objects.requireNonNull(invite.getFdisplay()).equalsIgnoreCase(acct.display) &&
+                        invite.getMirror() == acct.mirror && !acct.confirmed) {
                         continue localLoop;
                     }
-                    acct.unique = invite.fname;
-                    acct.timezone = invite.timezone;
-                    acct.sleepcycle = invite.scycle;
-                    acct.display = invite.fdisplay;
-                    acct.mirror = invite.mirror;
+                    acct.unique = invite.getFname();
+                    acct.timezone = invite.getTimezone();
+                    acct.sleepcycle = invite.getScycle();
+                    acct.display = invite.getFdisplay();
+                    acct.mirror = invite.getMirror();
                     acct.confirmed = false;
                     acct.pending = false;
                     acct.isFriend = true;
@@ -319,16 +344,16 @@ public class Refresh extends IntentService {
 
         // The localLoop will cut short the iterations by moving on when found
         localLoop: for(Account acct : local){
-            for(InviteResponse invite : server.friends){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getFriends())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
-            for(InviteResponse invite : server.rsvps){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getRsvps())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
-            for(InviteResponse invite : server.invites){
-                if(acct.acctId == invite.friendId)
+            for(InviteResponse invite : Objects.requireNonNull(server.getInvites())){
+                if(acct.acctId == invite.getFriendId())
                     continue localLoop;
             }
             toDel.add(acct.localId);
@@ -344,7 +369,7 @@ public class Refresh extends IntentService {
      *  a different place.
      *  Returns true if anything was updated.
      */
-    private boolean UpdateContactInfo(Account[] local){
+    private void UpdateContactInfo(Account[] local){
         List<Account> toChg = new ArrayList<>();
         if(mContactPermissionCheck == PackageManager.PERMISSION_GRANTED) {
             for (Account acct : local) {
@@ -365,8 +390,6 @@ public class Refresh extends IntentService {
             }
             chgFriends(toChg);
         }
-
-        return (toChg.size()>0);
     }
 
     // Find the contact information for the phone number.  This seems to work well enough,
@@ -381,14 +404,14 @@ public class Refresh extends IntentService {
             contact = getContentResolver().query(uri, selection, null, null, null);
             if (contact == null || contact.getCount() == 0) return holdContact;
             while (contact.moveToNext()) {
-                Long id = contact.getLong(contact.getColumnIndex(ContactsContract.PhoneLookup._ID));
-                holdContact.contactId = id.toString();
+                long id = contact.getLong(contact.getColumnIndex(ContactsContract.PhoneLookup._ID));
+                holdContact.contactId = Long.toString(id);
                 holdContact.contactName = contact.getString(contact.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                 holdContact.contactPic = contact.getString(contact.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI));
             }
             contact.close();
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".getContactByPhone");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".getContactByPhone");
             if (contact != null) contact.close();
         }
         return holdContact;
@@ -405,14 +428,14 @@ public class Refresh extends IntentService {
             contact = getContentResolver().query(uri, selection, null, null, null);
             if (contact == null || contact.getCount() == 0) return holdContact;
             while (contact.moveToNext()) {
-                Long id = contact.getLong(contact.getColumnIndex(ContactsContract.Data.CONTACT_ID));
-                holdContact.contactId = id.toString();
+                long id = contact.getLong(contact.getColumnIndex(ContactsContract.Data.CONTACT_ID));
+                holdContact.contactId = Long.toString(id);
                 holdContact.contactName = contact.getString(contact.getColumnIndex(ContactsContract.Data.DISPLAY_NAME_PRIMARY));
                 holdContact.contactPic = contact.getString(contact.getColumnIndex(ContactsContract.Data.PHOTO_THUMBNAIL_URI));
             }
             contact.close();
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".getContactByEmail");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".getContactByEmail");
             if (contact != null) contact.close();
         }
         return holdContact;
@@ -445,7 +468,7 @@ public class Refresh extends IntentService {
             }
             cursor.close();
             return dataPoints;
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".queryFriends"); return new Account[0]; }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".queryFriends"); return new Account[0]; }
     }
 
     // Add any new friends and invitations.
@@ -548,7 +571,7 @@ public class Refresh extends IntentService {
             return true;
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".InstallNotificationSound");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".InstallNotificationSound");
             return false;
         }
     }
@@ -557,21 +580,15 @@ public class Refresh extends IntentService {
      *  File copy for android.  Once min version 19 reached, can use  automatic resource management.
      */
     public void copyResource(int resourceId, File dst) throws IOException {
-        InputStream in = getResources().openRawResource(resourceId);
-        try {
-            OutputStream out = new FileOutputStream(dst);
-            try {
+        try (InputStream in = getResources().openRawResource(resourceId)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
-            } finally {
-                out.close();
             }
-        } finally {
-            in.close();
         }
     }
 }

@@ -5,14 +5,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
-import com.google.firebase.iid.FirebaseInstanceId;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.coolftc.prompt.source.RegisterRequest;
+import com.coolftc.prompt.source.RegisterResponse;
+import com.coolftc.prompt.source.VerifyRequest;
+import com.coolftc.prompt.source.VerifyResponse;
+import com.coolftc.prompt.utility.Connection;
+import com.coolftc.prompt.utility.ExpClass;
+import com.coolftc.prompt.utility.WebServices;
+import com.google.gson.Gson;
+
 import java.util.TimeZone;
 import static com.coolftc.prompt.utility.Constants.*;
 
@@ -55,9 +63,9 @@ public class SignupSolo extends AppCompatActivity {
         if (user.device.length() > 0)
             mEmailAddr = user.device + FTI_SOLO_DOMAIN;
         else
-            mEmailAddr = FirebaseInstanceId.getInstance().getId() + FTI_SOLO_DOMAIN;
+            mEmailAddr = user.identifier() + FTI_SOLO_DOMAIN;
 
-        if(mEmailAddr.length() == 0 || mEmailAddr.equalsIgnoreCase(FTI_SOLO_DOMAIN)){
+        if(mEmailAddr.equalsIgnoreCase(FTI_SOLO_DOMAIN)){
             DisplayProblem();
             return;
         }
@@ -76,7 +84,7 @@ public class SignupSolo extends AppCompatActivity {
         The error copy.
      */
     private void DisplayProblem(){
-        TextView holdView = (TextView) findViewById(R.id.lblError_SO);
+        TextView holdView = findViewById(R.id.lblError_SO);
         if (holdView != null) holdView.setVisibility(View.VISIBLE);
     }
 
@@ -117,8 +125,8 @@ public class SignupSolo extends AppCompatActivity {
      */
     private class AcctCreateVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
-        private Context context;
-        private String title;
+        private final Context context;
+        private final String title;
 
         public AcctCreateVerifyTask(AppCompatActivity activity, String name) {
             context = activity;
@@ -166,46 +174,51 @@ public class SignupSolo extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
-            if (ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
-                regData.uname = criteria[0];
-                acct.unique = regData.uname;
-                regData.dname = criteria[1];
-                acct.display = regData.dname.length() > 0 ? regData.dname : getString(R.string.mysteryme);
-                regData.scycle = Integer.parseInt(criteria[2]);
-                acct.sleepcycle = regData.scycle;
-                regData.cname = criteria[3];
-                acct.custom = regData.cname;
-                regData.timezone = TimeZone.getDefault().getID();
-                acct.timezone = regData.timezone;
-                regData.device = acct.device;
-                regData.target = acct.token;
-                regData.type = FTI_TYPE_ANDROID;
-                regData.verify = false; // Don't send out a verification code
+            try (Connection net = new Connection(context)) {
+                if (net.isOnline()) {
+                    WebServices ws = new WebServices(new Gson());
+                    acct.unique = criteria[0];
+                    acct.timezone = TimeZone.getDefault().getID();
+                    acct.display = criteria[1].length() > 0 ? criteria[1] : acct.unique;
+                    acct.sleepcycle = Integer.parseInt(criteria[2]);
+                    acct.custom = criteria[3];
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
-                if (user.response >= 200 && user.response < 300) {
-                    acct.ticket = user.ticket;
-                    acct.acctId = user.id;
-                    if (!regData.verify) {
-                        WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
-                        confirm.code = Long.parseLong(criteria[4]);
-                        confirm.provider = criteria[5];
-                        confirm.credential = criteria[6];
-                        int rtn = ws.Verify(acct.ticket, acct.acctIdStr(), confirm);
-                        if (rtn >= 200 && rtn < 300) {
-                            acct.confirmed = true;
-                            acct.solo = true;
+                    RegisterRequest data = new RegisterRequest(
+                            acct.unique,
+                            false,  // This is different than Email
+                            acct.timezone,
+                            acct.display,
+                            acct.sleepcycle,
+                            acct.custom,
+                            acct.device,
+                            acct.token,
+                            FTI_TYPE_ANDROID);
+                    String realPath = ws.baseUrl(context) + FTI_Register;
+                    RegisterResponse user = ws.callPostApi(realPath, data, RegisterResponse.class, acct.ticket);
+                    if (user != null) {
+                        acct.ticket = user.getTicket();
+                        acct.acctId = user.getId();
+                        acct.confirmed = false;
+                        if (!data.getVerify()) {    // Seems to always execute here (i.e. verify always false).
+                            VerifyRequest confirm = new VerifyRequest(
+                                    Long.parseLong(criteria[4]),
+                                    criteria[5],
+                                    criteria[6]);
+                            realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acct.acctIdStr());
+                            VerifyResponse rtn = ws.callPutApi(realPath, confirm, VerifyResponse.class, acct.ticket);
+                            if (rtn != null) {
+                                acct.confirmed = rtn.getVerified();
+                                acct.solo = true;
+                            }
                         }
+                        acct.SyncPrime(false, context);
                     }
-                    acct.SyncPrime(false, context);
                 } else {
-                    acct.tag = Integer.toString(user.response);
+                    publishProgress(false);
+                    acct.tag = Integer.toString(NETWORK_DOWN);
                 }
-            } else {
-                publishProgress(false);
-                acct.tag = Integer.toString(NETWORK_DOWN);
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
             }
             return acct;
         }

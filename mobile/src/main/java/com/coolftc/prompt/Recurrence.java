@@ -3,9 +3,6 @@ package com.coolftc.prompt;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -15,6 +12,10 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
@@ -429,13 +430,14 @@ public class Recurrence extends AppCompatActivity {
      *  call back.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case KY_DATETIME:     // Returning from the datetime picker.
                 TextView holdText;
                 if (resultCode == RESULT_OK) {
                     mRecurEnd = data.getExtras().getString(IN_TIMESTAMP);
                     holdText = (TextView) findViewById(R.id.reptEndDate);
-                    if(holdText != null) holdText.setText(GetRecurringTime(mRecurEnd));
+                    if (holdText != null) holdText.setText(GetRecurringTime(mRecurEnd));
                 }
                 break;
         }

@@ -1,16 +1,49 @@
 package com.coolftc.prompt;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.coolftc.prompt.service.PingServerThread;
+import java.lang.ref.WeakReference;
+import static com.coolftc.prompt.utility.Constants.*;
 
 public class About extends AppCompatActivity {
+    /*
+        This handler is used to as a callback mechanism, such that the Service
+         can alert the Activity when the cache has been updated.  This is how
+         the "loading" animation, which is shown when the cache is empty, can
+         be replaced with a real animation when the cache has data.
+     */
+    private static class MsgHandler extends Handler {
+        private final WeakReference<About> mActivity;
+
+        MsgHandler(About activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            About activity = mActivity.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case WHAT_OK_PING:
+                        activity.CheckPingOk((String)msg.obj, msg.arg1);
+                        break;
+                    case WHAT_ERR_PING:
+                        activity.CheckPingError(msg.arg1);
+                        break;
+                }
+            }
+        }
+    }
+    private final MsgHandler mHandler = new MsgHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,147 +54,74 @@ public class About extends AppCompatActivity {
         TextView holdData;
 
         // Initialize the about data
-        holdData = (TextView) findViewById(R.id.abtVersion);
+        holdData = findViewById(R.id.abtVersion);
         if(holdData != null) holdData.setText(R.string.ver_nbr);
-        holdData = (TextView) findViewById(R.id.abtBuildDate);
+        holdData = findViewById(R.id.abtBuildDate);
         if(holdData != null) holdData.setText(R.string.ver_build);
-        holdData = (TextView) findViewById(R.id.abtBroadcast);
+        holdData = findViewById(R.id.abtBroadcast);
         if(holdData != null) holdData.setText(acct.isBroadcast(getApplicationContext()));
-        holdData = (TextView) findViewById(R.id.abtAds);
+        holdData = findViewById(R.id.abtAds);
         if(holdData != null) holdData.setText(getResources().getText(R.string.unknown));
-        holdData = (TextView) findViewById(R.id.abtWhoAmI);
+        holdData = findViewById(R.id.abtWhoAmI);
         if(holdData != null) holdData.setText(acct.unique);
-        holdData = (TextView) findViewById(R.id.abtAccount);
-        if(holdData != null) holdData.setText("(" + acct.acctIdStr() + ")");
+        holdData = findViewById(R.id.abtAccount);
+        if(holdData != null) holdData.setText(String.format("(%s)", acct.acctIdStr()));
 
-        new CheckSystemTask(getApplicationContext()).execute(acct.ticket);
-        new CheckAdsTask(getApplicationContext()).execute(acct.ticket);
+        PingServerThread ping = new PingServerThread(getApplicationContext(), new Messenger(mHandler));
+        ping.start();
     }
 
     @Override
     protected void onStart() {
-        /**
+        /*
          * To get the hyperlinks to work, we have to apply this setting to the
          * textview after it has been created.  That is why it is here.
+         * If you need to read the string from the resource and then set the
+         * TextView, (e.g. to provide a dynamic link), you need to escape the
+         * HTML in the resource (mostly &lt; and &gt;) and then use:
+         *  textView.setText(Html.fromHtml(getResources().getText(R.string.SOMETHING).toString()));
+         * Could also apply style="@style/ContentText.Link" in the xml, too.
          */
         TextView holdView;
-        holdView = (TextView) findViewById(R.id.abtPrivacyLink);
-        holdView.setMovementMethod(LinkMovementMethod.getInstance());
+        holdView = findViewById(R.id.abtPrivacyLink);
+        if(holdView!=null) {holdView.setMovementMethod(LinkMovementMethod.getInstance());}
         super.onStart();
     }
 
-    /*
-     *  This displays the result of a system status call.
-     */
-    private void SystemCheck(WebServiceModels.PingResponse ver) {
-        TextView holdView;
-        String holdResult;
+    private void CheckPingOk(String reply, int ads){
 
-        // Success
-        if(ver.response >= 200 && ver.response <300){
-            holdResult = String.format(getResources().getText(R.string.abt_sysup).toString(), ver.version);
-        }else{
-            switch (ver.response){
-                case 0:
-                    holdResult = getResources().getText(R.string.err_cannot_connect).toString();
-                    break;
-                case 400:
-                    holdResult = String.format(getResources().getText(R.string.err_bad_request).toString(), ver.response);
-                    break;
-                case 401:
-                    holdResult = String.format(getResources().getText(R.string.err_bad_auth).toString(), ver.response);
-                    break;
-                case 404:
-                    holdResult = String.format(getResources().getText(R.string.err_bad_request).toString(), ver.response);
-                    break;
-                default:
-                    holdResult = String.format(getResources().getText(R.string.err_bad_server).toString(), ver.response);
-                    break;
-            }
-        }
-
-        holdView = (TextView) this.findViewById(R.id.abtSystemVer);
+        String holdResult = String.format(getResources().getText(R.string.abt_sysup).toString(), reply);
+        TextView holdView = this.findViewById(R.id.abtSystemVer);
         if (holdView != null) { holdView.setText(holdResult); }
+
+        holdView = findViewById(R.id.abtAds);
+        holdView.setText(ads==1?getResources().getText(R.string.yes):getResources().getText(R.string.no));
     }
 
-    private void AdsCheck(boolean ads) {
-        TextView holdData;
-        holdData = (TextView) findViewById(R.id.abtAds);
-        if(holdData != null) holdData.setText(ads?getResources().getText(R.string.yes):getResources().getText(R.string.no));
+    private void CheckPingError(int status){
+        String holdResult;
+        switch (status){
+            case 99:
+                holdResult = getResources().getText(R.string.err_cannot_connect).toString();
+                break;
+            case 400:
+                holdResult = String.format(getResources().getText(R.string.err_bad_request).toString(), status);
+                break;
+            case 401:
+                holdResult = String.format(getResources().getText(R.string.err_bad_auth).toString(), status);
+                break;
+            case 404:
+                holdResult = String.format(getResources().getText(R.string.err_bad_resource).toString(), status);
+                break;
+            default:
+                holdResult = String.format(getResources().getText(R.string.err_bad_server).toString(), status);
+                break;
+        }
+
+        TextView holdView = this.findViewById(R.id.abtSystemVer);
+        if (holdView != null) { holdView.setText(holdResult); }
+
+        holdView = findViewById(R.id.abtAds);
+        holdView.setText(getResources().getText(R.string.no));
     }
-
-    /**
-     * The nested AsyncTask class is used to off-load the network call to a separate
-     * thread but allow quick feedback to the user.
-     * Considerations:  Memory can leak as an inner class holds a reference to outer.
-     * 1) Create as an explicit inner class, not an antonymous one.
-     * 2) Pass in the Application context, not an Activity context.
-     * 3) Make the work in the background single pass and likely to complete (quickly).
-     * 4) If possible prevent the most common Activity killer by locking into portrait.
-     * 5) Avoid use in parts of the App that get used a lot, e.g. lazy data refresh design.
-     */
-    private class CheckSystemTask extends AsyncTask<String, Void, WebServiceModels.PingResponse> {
-        private Context context;
-
-        public CheckSystemTask(Context startup) {
-            context = startup;
-        }
-
-        /*
-        *  This is a quick check to see that there is network, our server is reachable
-        *  and the ticket they are using is viable. Returns the server version, too.
-        */
-        @Override
-        protected WebServiceModels.PingResponse doInBackground(String... criteria) {
-            try {
-                WebServices stat = new WebServices();
-                String ticket = criteria[0];
-
-                if(stat.IsNetwork(context)) {
-                    return stat.GetVersion(ticket);
-                }else {
-                    return new WebServiceModels.PingResponse();
-                }
-
-            } catch (Exception ex) {
-                return new WebServiceModels.PingResponse();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(WebServiceModels.PingResponse result) {
-            SystemCheck(result);
-        }
-    }
-
-    private class CheckAdsTask extends AsyncTask<String, Void, Boolean> {
-        private Context context;
-
-        public CheckAdsTask(Context startup) {
-            context = startup;
-        }
-
-        /*
-        *  This is a quick check to see that there is network, our server is reachable
-        *  and the ticket they are using is viable. Returns the server version, too.
-        */
-        @Override
-        protected Boolean doInBackground(String... criteria) {
-            try {
-                WebServices stat = new WebServices();
-                String ticket = criteria[0];
-                Actor user = new Actor();
-                user.LoadPrime(true, context);
-                return user.ads;
-            } catch (Exception ex) {
-                return true;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            AdsCheck(result);
-        }
-    }
-
 }

@@ -25,19 +25,20 @@ public class IgnoreNotification extends IntentService {
     protected void onHandleIntent(Intent hint) {
 
         Account mAccount;
-        Bundle extras = hint.getExtras();
-        if (extras != null) {
-            mAccount = (Account) extras.getSerializable(IN_DSPL_TGT);
-        } else {
-            return; // If there is no friend, nothing to do.
-        }
+        if (hint != null) {
+            Bundle extras = hint.getExtras();
+            if (extras != null) {
+                mAccount = (Account) extras.getSerializable(IN_DSPL_TGT);
+            } else {
+                return; // If there is no friend, nothing to do.
+            }
 
-        // Just in case.
-        if(mAccount == null) return;
+            // Just in case.
+            if (mAccount == null) return;
 
             // Clear the notification.
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel((int) mAccount.acctId);
-
+        }
     }
 }

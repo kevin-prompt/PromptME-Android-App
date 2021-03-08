@@ -12,10 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -33,9 +28,14 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.coolftc.prompt.service.SendInviteThread;
 import com.coolftc.prompt.source.FriendDB;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -60,16 +60,16 @@ import java.util.TreeMap;
 public class ContactPicker extends AppCompatActivity implements FragmentTalkBack {
 
     // The contact list.
-    ListView mListView;
+    private ListView mListView;
     // The search box.
-    EditText mContactSearch;
+    private EditText mContactSearch;
     // The contact permission is stored to reduce management overhead.
-    int contactPermissionCheck;
+    private int contactPermissionCheck;
     // The "mAccounts" collect all the possible people to display.
-    List<Account> mAccounts = new ArrayList< >();
+    private List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE, CP_BUTTON};
-    int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
+    private String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE, CP_BUTTON};
+    private int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     // Handler used as a timer to trigger updates.
     private Handler hRefresh = new Handler();
@@ -265,7 +265,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             startActivity(intent);
 
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -323,11 +323,12 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                             String [] labels = GetContactLabels(holdAcct.bestName());
                             if (addresses.length > 0) {
                                 // This will require the network, so check it
-                                WebServices ws = new WebServices();
-                                if(!ws.IsNetwork(this)) {
-                                    Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
-                                    break;
-                                }
+                                try (Connection net = new Connection(getApplicationContext())) {
+                                    if (!net.isOnline()) {
+                                        Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+                                        break;
+                                    }
+                                } catch (Exception ex) { /* Just exit */ break; }
 
                                 // Create a dialog to allow selection of address.
                                 FragmentManager mgr = getFragmentManager();
@@ -346,7 +347,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                     break;
             }
         } catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".pickOnClick");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".pickOnClick");
         }
     }
 
@@ -416,7 +417,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
             }
 
             cursor.close();
-        } catch(Exception ex){ cursor.close(); ExpClass.LogEX(ex, this.getClass().getName() + ".LoadFriends"); }
+        } catch(Exception ex){ cursor.close(); ExpClass.Companion.logEX(ex, this.getClass().getName() + ".LoadFriends"); }
         finally { social.close(); }
     }
 
@@ -474,7 +475,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 mAccounts.add(ali);
             }
         }catch (Exception ex) {
-            ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+            ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
             if(contact != null) contact.close();
         }
     }
@@ -573,7 +574,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                         return TYPE_ITEM;
                 }
             } catch (Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return TYPE_SEPARATOR; // safest option
             }
         }
@@ -637,7 +638,7 @@ public class ContactPicker extends AppCompatActivity implements FragmentTalkBack
                 }
                 return convertView;
             }catch(Exception ex) {
-                ExpClass.LogEX(ex, this.getClass().getName() + ".GetContactList");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".GetContactList");
                 return null;
             }
         }

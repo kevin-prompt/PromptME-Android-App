@@ -14,14 +14,12 @@
         android:layout_height="40dp"
         android:contentDescription="@string/img_contactpic"
         android:src="@drawable/contactdoe_26"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     </ImageView>
     <TextView android:id="@+id/sendContactName"
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        android:layout_toRightOf="@+id/sendFacePic"
         android:layout_toEndOf="@+id/sendFacePic"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
@@ -32,7 +30,6 @@
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
         android:layout_below="@+id/sendContactName"
-        android:layout_toRightOf="@+id/sendFacePic"
         android:layout_toEndOf="@+id/sendFacePic"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -65,7 +62,6 @@
         android:layout_height="wrap_content"
         android:text="@string/entry_help"
         android:layout_alignTop="@+id/sendTimeName"
-        android:layout_toLeftOf="@+id/sendTimeName"
         android:layout_toStartOf="@+id/sendTimeName"
         android:paddingRight="16dp"
         android:paddingLeft="16dp"
@@ -76,7 +72,6 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblDisplayBar"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
@@ -102,7 +97,6 @@
         android:layout_height="wrap_content"
         android:text="@string/lblEarly"
         android:layout_below="@id/sendTimeAdj"
-        android:layout_alignLeft="@id/sendTimeAdj"
         android:layout_alignStart="@id/sendTimeAdj"/>
 
     <TextView android:id="@+id/lblSendLate"
@@ -110,7 +104,6 @@
         android:layout_height="wrap_content"
         android:text="@string/lblLate"
         android:layout_below="@id/sendTimeAdj"
-        android:layout_alignRight="@id/sendTimeAdj"
         android:layout_alignEnd="@id/sendTimeAdj"/>
 
     <EditText android:id="@+id/sendMessage"
@@ -119,10 +112,10 @@
         android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
         android:hint="@string/message"
         android:textSize="@dimen/txt_edit_size"
-        android:layout_marginRight="80dp"
         android:layout_marginEnd="80dp"
         android:layout_below="@+id/sendTimeAdj"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:autofillHints="">
     </EditText>
 
     <Button android:id="@+id/sendSendBtn" android:text="@string/send"
@@ -130,7 +123,6 @@
         android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:onClick="SendMessage"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignBaseline="@+id/sendMessage">
     </Button>
@@ -141,7 +133,6 @@
         android:text="@string/repeat_propmpt"
         android:onClick="ShowRecurring"
         android:layout_below="@+id/sendMessage"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:paddingTop="10dp">
     </CheckBox>
@@ -152,7 +143,6 @@
         android:text="@string/exact_prompt"
         android:onClick="ShowExactTime"
         android:layout_below="@+id/sendMessage"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:paddingTop="10dp">
     </CheckBox>

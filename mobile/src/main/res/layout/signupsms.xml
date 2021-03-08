@@ -27,7 +27,8 @@
         android:textSize="@dimen/txt_edit_size"
         android:inputType="phone"
         android:maxLines="1"
-        android:hint="@string/sms_edit_hint">
+        android:hint="@string/sms_edit_hint"
+        android:autofillHints="">
         <requestFocus />
     </EditText>
 

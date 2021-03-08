@@ -4,13 +4,17 @@
  * The jcenter() is required for finding google stuff.
  */
 buildscript {
+    ext.kotlin_version = "1.4.31"
     repositories {
-        maven { url 'https://maven.google.com' }
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.google.gms:google-services:3.1.0'
+        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.google.gms:google-services:4.3.5'
+        // Add the Firebase Crashlytics Gradle plugin.
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -19,10 +23,13 @@ buildscript {
 
 /**
  * The allprojects area can hold repos and dependencies that all projects will use.  The
- * jcenter() here, for example, could be placed in the module gradle files.
+ * jcenter() and google() here could be placed in the module gradle files.
+ * The google() became a requirement with gradle v3 due to google moving its dependencies
+ * to a private maven repo (pointed to by google()).
  */
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 }

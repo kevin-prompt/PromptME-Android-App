@@ -5,18 +5,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.coolftc.prompt.source.WebServiceModels;
-import com.coolftc.prompt.source.WebServices;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.coolftc.prompt.source.RegisterRequest;
+import com.coolftc.prompt.source.RegisterResponse;
+import com.coolftc.prompt.source.VerifyRequest;
+import com.coolftc.prompt.source.VerifyResponse;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
-import com.crashlytics.android.Crashlytics;
+import com.coolftc.prompt.utility.WebServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -25,7 +30,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.gson.Gson;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -78,7 +85,7 @@ public class SignupSMS extends AppCompatActivity {
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
                 // This callback will be invoked in two situations:
                 // 1 - Instant verification. In some cases the phone number can be instantly
                 //     verified without needing to send or enter a verification code.
@@ -91,20 +98,19 @@ public class SignupSMS extends AppCompatActivity {
             }
 
             @Override
-            public void onVerificationFailed(FirebaseException ex) {
+            public void onVerificationFailed(@NonNull FirebaseException ex) {
                 // This callback is invoked in an invalid request for verification is made,
                 // for instance if the the phone number format is not valid.
-                Crashlytics.logException(ex);
-                ExpClass.LogEX(ex, this.getClass().getName() + ".onVerificationFailed");
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onVerificationFailed");
 
                 // Problem creating account.
-                TextView holdView = (TextView) findViewById(R.id.lblError_SE);
+                TextView holdView = findViewById(R.id.lblError_SE);
                 if (holdView != null)
                     holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptwhite));
             }
 
             @Override
-            public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
+            public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
                 // The SMS verification code has been sent to the provided phone number, we
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
@@ -132,7 +138,7 @@ public class SignupSMS extends AppCompatActivity {
         Ready to go, trigger the verification and try and create the account.
      */
     public void PhoneCreateAcct(View view) {
-        TextView holdView = (TextView) findViewById(R.id.txtPhoneAddr_SE);
+        TextView holdView = findViewById(R.id.txtPhoneAddr_SE);
         if (holdView != null) mPhoneNbr = holdView.getText().toString();
         PhoneNumberUtil phoneHelper = PhoneNumberUtil.getInstance();
         try {
@@ -141,18 +147,24 @@ public class SignupSMS extends AppCompatActivity {
             mPhoneNbr = holdnbr.replace("+", "");
         } catch (NumberParseException e) {
             mPhoneNbr = "";
-            Crashlytics.logException(e);
+            ExpClass.Companion.logEX(e, this.getClass().getName() + "phoneNumberFormatter");
         }
         if (mPhoneNbr.length() == 0) return;
-
+/*
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 mPhoneNbr,          // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
+*/
+        PhoneAuthProvider.verifyPhoneNumber(
+                new PhoneAuthOptions.Builder(FirebaseAuth.getInstance())
+                .setPhoneNumber(mPhoneNbr)                  // Phone number to verify
+                .setTimeout(60L, TimeUnit.SECONDS)   // Timeout duration & Unit of timeout
+                .setCallbacks(mCallbacks)                   // OnVerificationStateChangedCallbacks
+                .build());
     }
-
 
     /*
         Once created, the SMS with the verification code should be on
@@ -181,11 +193,11 @@ public class SignupSMS extends AppCompatActivity {
         }
         else {
             // Problem creating account.
-            TextView holdView = (TextView) findViewById(R.id.lblError_SE);
+            TextView holdView = findViewById(R.id.lblError_SE);
             if (holdView != null)
                 holdView.setTextColor(ContextCompat.getColor(this, R.color.promptwhite));
             if (acct.tag.length() > 0){
-                holdView = (TextView) findViewById(R.id.lblSmsStatus);
+                holdView = findViewById(R.id.lblSmsStatus);
                 if (holdView != null) {
                     holdView.setVisibility(View.VISIBLE);
                     String holdStat = getString(R.string.status) + ":" + acct.tag;
@@ -200,7 +212,7 @@ public class SignupSMS extends AppCompatActivity {
         To make sure the button stays visible, hide the input device.
      */
     private void DisplayProblem(){
-        TextView holdView = (TextView) findViewById(R.id.lblError_SE);
+        TextView holdView = findViewById(R.id.lblError_SE);
         if (holdView != null)
             holdView.setTextColor(ContextCompat.getColor(SignupSMS.this, R.color.promptwhite));
     }
@@ -217,8 +229,7 @@ public class SignupSMS extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     PerformFirebaseVerify(task.getResult().getUser());
                 } else {
-                    ExpClass.LogEX(task.getException(), this.getClass().getName() + ".SignInCreateVerify");
-                    Crashlytics.logException(task.getException());
+                    ExpClass.Companion.logEX(task.getException(), this.getClass().getName() + ".SignInCreateVerify");
                     // Problem creating account.
                     DisplayProblem();
                 }
@@ -248,8 +259,7 @@ public class SignupSMS extends AppCompatActivity {
                             device.getUid(),
                             task.getResult().getToken());
                 }else {
-                    ExpClass.LogEX(task.getException(), this.getClass().getName() + ".PerformFirebaseVerify");
-                    Crashlytics.logException(task.getException());
+                    ExpClass.Companion.logEX(task.getException(), this.getClass().getName() + ".PerformFirebaseVerify");
                     DisplayProblem();
                 }
             }
@@ -269,8 +279,8 @@ public class SignupSMS extends AppCompatActivity {
      */
     private class AcctCreateTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
-        private Context context;
-        private String title;
+        private final Context context;
+        private final String title;
 
         public AcctCreateTask(AppCompatActivity activity, String name){
             context = activity;
@@ -308,37 +318,41 @@ public class SignupSMS extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
-            if(ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
-                regData.uname = criteria[0];
-                acct.unique = regData.uname;
-                regData.dname = criteria[1];
-                acct.display = regData.dname.length() > 0 ? regData.dname : regData.uname;
-                regData.scycle = Integer.parseInt(criteria[2]);
-                acct.sleepcycle = regData.scycle;
-                regData.cname = criteria[3];
-                acct.custom = regData.cname;
-                regData.timezone = TimeZone.getDefault().getID();
-                acct.timezone = regData.timezone;
-                regData.device = acct.device;
-                regData.target = acct.token;
-                regData.type = FTI_TYPE_ANDROID;
-                regData.verify = false; // Don't send out a verification code
+            try (Connection net = new Connection(context)) {
+                if (net.isOnline()) {
+                    WebServices ws = new WebServices(new Gson());
+                    acct.unique = criteria[0];
+                    acct.timezone = TimeZone.getDefault().getID();
+                    acct.display = criteria[1].length() > 0 ? criteria[1] : acct.unique;
+                    acct.sleepcycle = Integer.parseInt(criteria[2]);
+                    acct.custom = criteria[3];
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
-                if(user.response >= 200 && user.response < 300) {
-                    acct.ticket = user.ticket;
-                    acct.acctId = user.id;
-                    acct.solo = false;
-                    acct.confirmed = false;
-                    acct.SyncPrime(false, context);
+                    RegisterRequest data = new RegisterRequest(
+                            acct.unique,
+                            false,  // This is different than Email
+                            acct.timezone,
+                            acct.display,
+                            acct.sleepcycle,
+                            acct.custom,
+                            acct.device,
+                            acct.token,
+                            FTI_TYPE_ANDROID);
+                    String realPath = ws.baseUrl(context) + FTI_Register;
+                    RegisterResponse user = ws.callPostApi(realPath, data, RegisterResponse.class, acct.ticket);
+                    if (user != null) {
+                        acct.ticket = user.getTicket();
+                        acct.acctId = user.getId();
+                        acct.solo = false;
+                        acct.confirmed = false;
+                        acct.SyncPrime(false, context);
+                    }
+
                 } else {
-                    acct.tag = Integer.toString(user.response);
+                    publishProgress(false);
+                    acct.tag = Integer.toString(NETWORK_DOWN);
                 }
-            } else {
-                publishProgress(false);
-                acct.tag = Integer.toString(NETWORK_DOWN);
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
             }
             return acct;
         }
@@ -357,8 +371,8 @@ public class SignupSMS extends AppCompatActivity {
      */
     private class AcctCreateVerifyTask extends AsyncTask<String, Boolean, Actor> {
         private ProgressDialog progressDialog;
-        private Context context;
-        private String title;
+        private final Context context;
+        private final String title;
 
         public AcctCreateVerifyTask(AppCompatActivity activity, String name) {
             context = activity;
@@ -406,50 +420,53 @@ public class SignupSMS extends AppCompatActivity {
         protected Actor doInBackground(String... criteria) {
 
             Actor acct = new Actor(context);
-            WebServices ws = new WebServices();
-            if (ws.IsNetwork(context)) {
-                WebServiceModels.RegisterRequest regData = new WebServiceModels.RegisterRequest();
-                regData.uname = criteria[0];
-                acct.unique = regData.uname;
-                regData.dname = criteria[1];
-                acct.display = regData.dname.length() > 0 ? regData.dname : regData.uname;
-                regData.scycle = Integer.parseInt(criteria[2]);
-                acct.sleepcycle = regData.scycle;
-                regData.cname = criteria[3];
-                acct.custom = regData.cname;
-                regData.timezone = TimeZone.getDefault().getID();
-                acct.timezone = regData.timezone;
-                regData.device = acct.device;
-                regData.target = acct.token;
-                regData.type = FTI_TYPE_ANDROID;
-                regData.verify = false; // Don't send out a verification code
+            try (Connection net = new Connection(context)) {
+                if (net.isOnline()) {
+                    WebServices ws = new WebServices(new Gson());
+                    acct.unique = criteria[0];
+                    acct.timezone = TimeZone.getDefault().getID();
+                    acct.display = criteria[1].length() > 0 ? criteria[1] : acct.unique;
+                    acct.sleepcycle = Integer.parseInt(criteria[2]);
+                    acct.custom = criteria[3];
 
-                WebServiceModels.RegisterResponse user = ws.Registration(regData);
-                if (user.response >= 200 && user.response < 300) {
-                    acct.ticket = user.ticket;
-                    acct.acctId = user.id;
-                    acct.solo = false;
-                    acct.confirmed = false;
-                    if (!regData.verify) {
-                        WebServiceModels.VerifyRequest confirm = new WebServiceModels.VerifyRequest();
-                        confirm.code = Long.parseLong(criteria[4]);
-                        confirm.provider = criteria[5];
-                        confirm.credential = criteria[6];
-                        int rtn = ws.Verify(acct.ticket, acct.acctIdStr(), confirm);
-                        if (rtn >= 200 && rtn < 300) {
-                            acct.confirmed = true;
+                    RegisterRequest data = new RegisterRequest(
+                            acct.unique,
+                            false,  // This is different than Email
+                            acct.timezone,
+                            acct.display,
+                            acct.sleepcycle,
+                            acct.custom,
+                            acct.device,
+                            acct.token,
+                            FTI_TYPE_ANDROID);
+                    String realPath = ws.baseUrl(context) + FTI_Register;
+                    RegisterResponse user = ws.callPostApi(realPath, data, RegisterResponse.class, acct.ticket);
+                    if (user != null) {
+                        acct.ticket = user.getTicket();
+                        acct.acctId = user.getId();
+                        acct.solo = false;
+                        acct.confirmed = false;
+                        if (!data.getVerify()) {    // Seems to always execute here (i.e. verify always false).
+                            VerifyRequest confirm = new VerifyRequest(
+                                    Long.parseLong(criteria[4]),
+                                    criteria[5],
+                                    criteria[6]);
+                            realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acct.acctIdStr());
+                            VerifyResponse rtn = ws.callPutApi(realPath, confirm, VerifyResponse.class, acct.ticket);
+                            if (rtn != null) {
+                                acct.confirmed = rtn.getVerified();
+                            }
                         }
+                        acct.SyncPrime(false, context);
                     }
-                    acct.SyncPrime(false, context);
                 } else {
-                    acct.tag = Integer.toString(user.response);
+                    publishProgress(false);
+                    acct.tag = Integer.toString(NETWORK_DOWN);
                 }
-            } else {
-                publishProgress(false);
-                acct.tag = Integer.toString(NETWORK_DOWN);
+            } catch (Exception ex) {
+                ExpClass.Companion.logEX(ex, this.getClass().getName() + ".run");
             }
             return acct;
         }
     }
-
 }

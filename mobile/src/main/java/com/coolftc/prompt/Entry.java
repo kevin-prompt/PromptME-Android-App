@@ -3,9 +3,7 @@ package com.coolftc.prompt;
 import static com.coolftc.prompt.utility.Constants.*;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -15,14 +13,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.coolftc.prompt.service.SendMessageThread;
-import com.coolftc.prompt.source.WebServices;
+import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  The Entry screen lets a person compose a message, as well as specify
@@ -55,6 +57,7 @@ public class Entry extends AppCompatActivity {
     private int mDefaultTimeAdj = 47;           // Mid point between early and late
     private String mDefaultMessage = "";
     private static final int SEEK_MARK = 16;    // The seek bar has a range of 0 - 95, includes 5 marks
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,20 +101,20 @@ public class Entry extends AppCompatActivity {
 
         // Configure the Spinners, set defaults, add listeners.
         if(firstRun) {
-            TextView holdText = (TextView) findViewById(R.id.sendMessage);
+            TextView holdText = findViewById(R.id.sendMessage);
             if (holdText != null && mDefaultMessage.length() > 0) {
                 holdText.setText(mDefaultMessage);
             }
-            CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
+            CheckBox holdChkBox = findViewById(R.id.sendRecure);
             if (holdChkBox != null && mPrompt.recurUnit != RECUR_INVALID) {
                 holdChkBox.setChecked(true);
             }
         }
 
-        mTimename = (Spinner) findViewById(R.id.sendTimeName);
+        mTimename = findViewById(R.id.sendTimeName);
         mTimename.setSelection(mDefaultTimeName);
 
-        mTimeadj = (SeekBar) findViewById(R.id.sendTimeAdj);
+        mTimeadj = findViewById(R.id.sendTimeAdj);
         mTimeadj.setProgress(mDefaultTimeAdj);
         mTimeadjData = Arrays.asList(getResources().getStringArray(R.array.time_adj));
 
@@ -137,6 +140,9 @@ public class Entry extends AppCompatActivity {
             }
         });
 
+        // Set up analytics.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         ShowDetails();
     }
 
@@ -157,7 +163,7 @@ public class Entry extends AppCompatActivity {
      *  restore data in the OnCreate().
      */
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -170,19 +176,19 @@ public class Entry extends AppCompatActivity {
         CheckBox holdChkBox;
 
         // Who is getting the message (does not really change).
-        holdImage = (ImageView) findViewById(R.id.sendFacePic);
+        holdImage = findViewById(R.id.sendFacePic);
         if(holdImage != null && mTarget.contactPicUri().length() > 0) {
             holdImage.setImageURI(Uri.parse(mTarget.contactPicUri()));
         }
-        holdText = (TextView) findViewById(R.id.sendContactName);
+        holdText = findViewById(R.id.sendContactName);
         if(holdText != null) { holdText.setText(mTarget.bestName());}
-        holdText = (TextView) findViewById(R.id.sendContactExtra);
+        holdText = findViewById(R.id.sendContactExtra);
         if(holdText != null) { holdText.setText(!mTarget.primary ? mTarget.bestNameAlt() : "");}
 
         // When are they getting the message (can change).
         String holdRaw = getResources().getString(R.string.deliver) + " ";
         // Special processing if an exact time is in use
-        holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
+        holdChkBox = findViewById(R.id.sendExactTime);
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
             holdRaw += mPrompt.GetPromptTime(getApplicationContext());
             mTimename.setEnabled(false);  // Blank out the time name
@@ -196,16 +202,16 @@ public class Entry extends AppCompatActivity {
                 mTimeadj.setEnabled(false);
             }
         }
-        holdText = (TextView) findViewById(R.id.sendTargeTime);
+        holdText = findViewById(R.id.sendTargeTime);
         if(holdText != null) { holdText.setText(holdRaw);}
 
         // How often will they get the message (if once, hide)
-        holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
+        holdChkBox = findViewById(R.id.sendRecure);
         if(holdChkBox == null || !holdChkBox.isChecked()) {
-            holdText = (TextView) findViewById(R.id.sendRecurTime);
+            holdText = findViewById(R.id.sendRecurTime);
             if (holdText != null) { holdText.setVisibility(View.INVISIBLE); }
         }else{
-            holdText = (TextView) findViewById(R.id.sendRecurTime);
+            holdText = findViewById(R.id.sendRecurTime);
             if (holdText != null) {
                 holdText.setText(mPrompt.GetRecurringVerb(getApplicationContext()));
                 holdText.setVisibility(View.VISIBLE);
@@ -243,7 +249,7 @@ public class Entry extends AppCompatActivity {
                    mPrompt.recurEnd = RECUR_END_DEFAULT;
                 }
                 String displayTime = "";
-                TextView holdText = (TextView) findViewById(R.id.sendTargeTime);
+                TextView holdText = findViewById(R.id.sendTargeTime);
                 if (holdText != null) {
                     displayTime = holdText.getText().toString();
                 }
@@ -293,26 +299,31 @@ public class Entry extends AppCompatActivity {
      *  Probably want to reload the screen at that point.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case KY_DATETIME:     // Returning from the datetime picker.
                 if (resultCode == RESULT_OK) {
-                    mPrompt.targetTime = data.getExtras().getString(IN_TIMESTAMP);
+                    mPrompt.targetTime = Objects.requireNonNull(data.getExtras()).getString(IN_TIMESTAMP);
                     ShowDetails();
-                }else{
-                    CheckBox holdChkbox = (CheckBox) findViewById(R.id.sendExactTime);
-                    if(holdChkbox != null) {holdChkbox.setChecked(false);}
+                } else {
+                    CheckBox holdChkbox = findViewById(R.id.sendExactTime);
+                    if (holdChkbox != null) {
+                        holdChkbox.setChecked(false);
+                    }
                 }
                 break;
             case KY_RECURE:     // Returning from recurrence picker.
                 if (resultCode == RESULT_OK) {
-                    mPrompt.recurUnit = data.getExtras().getInt(IN_UNIT);
+                    mPrompt.recurUnit = Objects.requireNonNull(data.getExtras()).getInt(IN_UNIT);
                     mPrompt.recurPeriod = data.getExtras().getInt(IN_PERIOD);
                     mPrompt.recurNumber = data.getExtras().getInt(IN_ENDNBR);
                     mPrompt.recurEnd = data.getExtras().getString(IN_ENDTIME);
                     ShowDetails();
                 } else {        // Not OK, set check box to false and reset local data
-                    CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendRecure);
-                    if(holdChkBox!=null) { holdChkBox.setChecked(false); }
+                    CheckBox holdChkBox = findViewById(R.id.sendRecure);
+                    if (holdChkBox != null) {
+                        holdChkBox.setChecked(false);
+                    }
                     mPrompt.recurUnit = RECUR_INVALID;
                     mPrompt.recurPeriod = RECUR_INVALID;
                     mPrompt.recurNumber = RECUR_INVALID;
@@ -336,22 +347,23 @@ public class Entry extends AppCompatActivity {
         TextView holdText;
 
         Reminder ali = new Reminder();
-        WebServices ws = new WebServices();
 
-        if(!ws.IsNetwork(this)) {
-            Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
-            return;
-        }
+        try (Connection net = new Connection(getApplicationContext())) {
+            if (!net.isOnline()) {
+                Toast.makeText(this, R.string.msgNoNet, Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception ex) { /* Just exit */ return; }
 
         ali.target = mTarget;
         ali.from = new Actor(this);
-        holdText = (TextView) findViewById(R.id.sendMessage);
+        holdText = findViewById(R.id.sendMessage);
         if(holdText!=null) { ali.message = holdText.getText().toString(); }
         if(ali.message.length()==0) { ali.message = getResources().getString(R.string.ent_DefaulMsg); }
         if(ali.message.length() > MSG_MAX_LENGTH) { ali.message = ali.message.substring(0, MSG_MAX_LENGTH); }
         ali.targetTime = mPrompt.targetTime;
         // Listbox index is one less that the value we need for the time name.
-        CheckBox holdChkBox = (CheckBox) findViewById(R.id.sendExactTime);
+        CheckBox holdChkBox = findViewById(R.id.sendExactTime);
         if(holdChkBox != null && holdChkBox.isChecked()) { // Exact time.
             ali.targetTimeNameId = 0;
         } else {
@@ -370,5 +382,10 @@ public class Entry extends AppCompatActivity {
         Intent intent = new Intent(this, History.class);
         startActivity(intent);
 
+        // Let Analytics know we tried to send a prompt.
+        Bundle params = new Bundle();
+        params.putString(AV_PM_SEND_WHO, ali.from.unique);
+        params.putString(AV_PM_SEND_WHEN, KTime.ParseNow(KTime.KT_fmtDate3339fk).toString());
+        mFirebaseAnalytics.logEvent(AN_EV_SEND, params);
     }
 }

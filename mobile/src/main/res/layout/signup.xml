@@ -43,7 +43,8 @@
         android:textSize="@dimen/txt_edit_size"
         android:inputType="text"
         android:maxLines="1"
-        android:hint="@string/sup_edit_hint">
+        android:hint="@string/sup_edit_hint"
+        android:autofillHints="">
         <requestFocus />
     </EditText>
 
@@ -98,7 +99,6 @@
     <Button android:id="@+id/btnSkip" android:text="@string/btnSkip"
         style="@style/SkipButton"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="SoloVerification">
     </Button>

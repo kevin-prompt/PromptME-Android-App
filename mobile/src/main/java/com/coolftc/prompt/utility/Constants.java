@@ -57,7 +57,6 @@ public class Constants {
     public static final String DB_fmtDateTimeZone = "h:mmaa z";
     public static final String DB_fmtDayOfWeek = "EEEE";
     public static final String BAD_TIME = "99:99";
-    public static final String THE_PAST = "1964-02-06T11:50:25+00:00";      // Handy initialization
     // Date Formatting Constants
     public static final int DATE_FMT_SHORT = 0;             // Short Date Display format
     public static final int DATE_TIME_FMT_SHORT = 1;        // Short Date and Time Display format
@@ -96,16 +95,33 @@ public class Constants {
     public static final String KY_HIST_FRAG = "history.sort";
     public static final String KY_CNTC_FRAG = "contactpicker.sort";
     public static final String KY_ADDR_FRAG = "contactpicker.fragment";
+    /* Thread Constants */
+    public static final int WHAT_OK_PING = 1000;
+    public static final int WHAT_ERR_PING = 2000;
+    public static final int WHAT_WS_DOMAIN = 1001;
+    public static final int WHAT_WS_DOMAIN_ERR = 2001;
+
+    /* Constants used in dealing with web service calls. */
+    public static final int API_TIMEOUT = 30000;
+    public static final int API_TIMEOUT_SHORT = 30000;
+    public static final String API_HEADER_ACCEPT = "application/json";
+    public static final String API_HEADER_CONTENT = "application/json";
+    public static final String API_XFORM_CONTENT = "application/x-www-form-urlencoded";
+    public static final String API_ENCODING = "UTF-8";
+    public static final String API_BEARER = "bearer "; // note the trailing space
+    public static final String SUB_ZZZ = "%ZZZ!";
+    public static final String SUB_YYY = "%YYY!";     // if there are two substitutions together
+    public static final String SP_BASE_URL = "API.baseURL";
+    public static final String SP_BASE_URL_LIFE = "API.baseURL.age";
 
     /* Constants used in dealing with the FutureTell API and other web sites */
-    public static final String SUB_ZZZ = "ZZZ";
-    public static final String FTI_BaseURL = "https://promptapi.zalicon.com";
+    public static final String FTI_BASE_CAMP_URL ="https://www.coolftc.org/Prompt/link/promptme.json";
     public static final String FTI_Status = "/v1/status";
     public static final String FTI_Ping = "/v1/status/ping";
     public static final String FTI_Register = "/v1/user";
     public static final String FTI_RegisterExtra = "/v1/user/"+SUB_ZZZ;
-    public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/note";
-    public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/note/";
+    public static final String FTI_Message = "/v1/user/"+SUB_ZZZ+"/prompt";
+    public static final String FTI_Message_Del = "/v1/user/"+SUB_ZZZ+"/prompt/";
     public static final String FTI_Invite = "/v1/user/"+SUB_ZZZ+"/friend";
     public static final String FTI_Invite_Del = "/v1/user/"+SUB_ZZZ+"/friend/";
     public static final String FTI_Friends = "/v1/user/"+SUB_ZZZ+"/friend";
@@ -118,8 +134,11 @@ public class Constants {
     public static final String FTI_SOLO_VERIFY = "4";       // 4 = Solo
     public static final int NETWORK_DOWN = 99;          // Sometimes it is nice to know the issue was a bad network.
 
-    /* The Google GCM account (called Project number in console) */
-    public static final String SENDER_ID = "800396557293";
+    /* Constants used for Analytics */
+    public static final String AN_UP_TICKET = "ticket";
+    public static final String AN_EV_SEND = "prompt_send";
+    public static final String AV_PM_SEND_WHO = "send_who";
+    public static final String AV_PM_SEND_WHEN = "send_when";
 
     /* Mapping constants. */
     /* Contact list. */
@@ -170,7 +189,7 @@ public class Constants {
     public static final String IN_NOTE_RECUR = "recurUnit";
     public static final String IN_NOTE_MSG = "message";
     public static final String IN_NOTE_MIRROR = "mirror";
-    public static final String IN_TYPE_NOTE = "NOTE";
+    public static final String IN_TYPE_PROMPT = "NOTE";
     public static final String IN_TYPE_INVITE = "INVITE";
     public static final String IN_TYPE_FRIEND = "FRIEND";
     public static final String IN_NOTE_RAW = "line2-notify";
