@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@+id/lblVersion"/>
 
     <TextView android:id="@+id/abtBuildDate"
-        tools:text="Jun 18, 2017"
+        tools:text="Jun 18, 2021"
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

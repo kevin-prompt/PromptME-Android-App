@@ -19,7 +19,6 @@ import com.coolftc.prompt.source.VerifyResponse;
 import com.coolftc.prompt.utility.Connection;
 import com.coolftc.prompt.utility.ExpClass;
 import com.coolftc.prompt.utility.WebServices;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 
 import java.util.TimeZone;
@@ -64,7 +63,7 @@ public class SignupSolo extends AppCompatActivity {
         if (user.device.length() > 0)
             mEmailAddr = user.device + FTI_SOLO_DOMAIN;
         else
-            mEmailAddr = FirebaseInstanceId.getInstance().getId() + FTI_SOLO_DOMAIN;
+            mEmailAddr = user.identifier() + FTI_SOLO_DOMAIN;
 
         if(mEmailAddr.equalsIgnoreCase(FTI_SOLO_DOMAIN)){
             DisplayProblem();
@@ -206,7 +205,7 @@ public class SignupSolo extends AppCompatActivity {
                                     criteria[5],
                                     criteria[6]);
                             realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acct.acctIdStr());
-                            VerifyResponse rtn = ws.callPostApi(realPath, confirm, VerifyResponse.class, acct.ticket);
+                            VerifyResponse rtn = ws.callPutApi(realPath, confirm, VerifyResponse.class, acct.ticket);
                             if (rtn != null) {
                                 acct.confirmed = rtn.getVerified();
                                 acct.solo = true;

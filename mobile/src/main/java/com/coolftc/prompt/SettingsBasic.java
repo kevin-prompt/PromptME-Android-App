@@ -51,8 +51,6 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-        super.onCreate(savedInstanceState);
-
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
 
@@ -133,7 +131,7 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
      */
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        if (preference.getKey().equals(PREF_SOUND)) {
+        if (preference.getKey() != null && preference.getKey().equals(PREF_SOUND)) {
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);

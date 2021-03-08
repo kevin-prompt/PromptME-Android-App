@@ -12,7 +12,7 @@
     tools:context="com.coolftc.prompt.Detail">
 
     <TextView android:id="@+id/dtlNoteTime"
-        tools:text="Arrived 06/29/2017 @ 4:43pm"
+        tools:text="Arrived 06/29/2021 @ 4:43pm"
         android:textSize="@dimen/lbl_med_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
         android:layout_marginTop="16dp"/>
 
     <TextView android:id="@+id/dtlCreated"
-        tools:text="Created 06/25/2017 @ 7:30pm"
+        tools:text="Created 06/25/2021 @ 7:30pm"
         android:textSize="@dimen/lbl_medsml_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

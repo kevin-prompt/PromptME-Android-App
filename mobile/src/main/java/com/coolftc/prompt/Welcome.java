@@ -69,7 +69,7 @@ public class Welcome extends AppCompatActivity {
 
         /* The Refresh service is important as it is the primary way
          * most of the data (SQL and Web Service) is refreshed. For
-         * now is only triggered in Welcome, but we do trigger it
+         * now mostly triggered only in Welcome, but we do trigger it
          * every time this screen shows up.
          */
         Intent sIntent = new Intent(this, Refresh.class);

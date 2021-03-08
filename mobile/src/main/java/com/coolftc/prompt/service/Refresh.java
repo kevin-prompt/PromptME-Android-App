@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class Refresh extends IntentService {
     // The contact permission is stored to reduce management overhead.
     int mContactPermissionCheck;
     // The friendAge is a debounce value for the friend query.
-    private static LocalDate friendAge = LocalDate.MIN;
+    private static LocalDateTime friendAge = LocalDateTime.MIN.MIN;
 
     public Refresh() {
         super(SRV_NAME);
@@ -87,6 +89,17 @@ public class Refresh extends IntentService {
                 ghost.SyncPrime(false, this);
             }
 
+            // Check for domain updates once a day (at most).
+            WebServices ws = new WebServices(new Gson());
+            if(LocalDate.now().isAfter(ws.baseUrlAge(getApplicationContext()))) {
+                try {
+                    DomainThread domainThread = new DomainThread(getApplicationContext(), null);
+                    domainThread.start();
+                } catch (Exception ex) {
+                    ExpClass.Companion.logEX(ex, "API Error cannot find domain target.");
+                }
+            }
+
             // Generally the token should not be blank, as NotificationX has a listener to get it.
             if (ghost.token.length() == 0) {
                 FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
@@ -108,6 +121,7 @@ public class Refresh extends IntentService {
             // for the permission here, we do ask if the user goes to settings.  Until then the
             // default sound will be used for Notification sounds.
             // ** This sound is only of concern to Apps running below Android v8. **
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             if(!Settings.isSoundCopied(getApplicationContext())
                 && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     Settings.setSoundCopied(
@@ -131,7 +145,7 @@ public class Refresh extends IntentService {
         try (Connection net = new Connection(getApplicationContext())){
             mSocial = new FriendDB(getApplicationContext());  // Be sure to close this before leaving the thread.
             // Check that valid account and not updating too often.
-            if (ghost.ticket.length() > 0 || LocalDate.now().isAfter(friendAge)) {
+            if (ghost.ticket.length() > 0 || LocalDateTime.now().isAfter(friendAge)) {
                 WebServices ws = new WebServices(new Gson());
                 if (net.isOnline()) {
                     String realPath = ws.baseUrl(getApplicationContext()) + FTI_Friends.replace(SUB_ZZZ, ghost.acctIdStr());
@@ -145,13 +159,13 @@ public class Refresh extends IntentService {
                     CheckForAdditions(invites, inviteStore);
                     UpdateContactInfo(inviteStore);
                     CheckForUserDate(ghost, inviteStore);
-                    friendAge = LocalDate.now().plus(15, ChronoUnit.MINUTES);
+                    friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
                 }
             }
         } catch (Exception ex) {
             ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntentB");
             // If there is a date problem, update and see if it works next time.
-            friendAge = LocalDate.now().plus(15, ChronoUnit.MINUTES);
+            friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
         } finally {
             mSocial.close();
         }
@@ -173,7 +187,7 @@ public class Refresh extends IntentService {
         } catch (Exception ex) {
             ExpClass.Companion.logEX(ex, this.getClass().getName() + ".onHandleIntentC");
             // If there is a date problem, update and see if it works next time.
-            friendAge = LocalDate.now().plus(15, ChronoUnit.MINUTES);
+            friendAge = LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
         } finally {
             mMessage.close();
         }

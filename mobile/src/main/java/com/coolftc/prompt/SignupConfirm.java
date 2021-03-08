@@ -337,7 +337,7 @@ public class SignupConfirm extends AppCompatActivity {
                             criteria[1],
                             criteria[2]);
                     String realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acct.acctIdStr());
-                    VerifyResponse rtn = ws.callPostApi(realPath, confirm, VerifyResponse.class, acct.ticket);
+                    VerifyResponse rtn = ws.callPutApi(realPath, confirm, VerifyResponse.class, acct.ticket);
                     if (rtn != null) {
                         acct.confirmed = rtn.getVerified();
                         acct.SyncPrime(false, context);

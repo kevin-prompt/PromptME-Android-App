@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.gson.Gson;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -149,15 +150,21 @@ public class SignupSMS extends AppCompatActivity {
             ExpClass.Companion.logEX(e, this.getClass().getName() + "phoneNumberFormatter");
         }
         if (mPhoneNbr.length() == 0) return;
-
+/*
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 mPhoneNbr,          // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
+*/
+        PhoneAuthProvider.verifyPhoneNumber(
+                new PhoneAuthOptions.Builder(FirebaseAuth.getInstance())
+                .setPhoneNumber(mPhoneNbr)                  // Phone number to verify
+                .setTimeout(60L, TimeUnit.SECONDS)   // Timeout duration & Unit of timeout
+                .setCallbacks(mCallbacks)                   // OnVerificationStateChangedCallbacks
+                .build());
     }
-
 
     /*
         Once created, the SMS with the verification code should be on
@@ -445,7 +452,7 @@ public class SignupSMS extends AppCompatActivity {
                                     criteria[5],
                                     criteria[6]);
                             realPath = ws.baseUrl(context) + FTI_RegisterExtra.replace(SUB_ZZZ, acct.acctIdStr());
-                            VerifyResponse rtn = ws.callPostApi(realPath, confirm, VerifyResponse.class, acct.ticket);
+                            VerifyResponse rtn = ws.callPutApi(realPath, confirm, VerifyResponse.class, acct.ticket);
                             if (rtn != null) {
                                 acct.confirmed = rtn.getVerified();
                             }

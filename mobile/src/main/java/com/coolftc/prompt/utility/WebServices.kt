@@ -39,7 +39,8 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         const val API_TIMEOUT = 90000       // Wait for a response to complete, in msec.
         const val API_TIMEOUT_SHORT = 30000 // When waiting seems pointless.
         const val API_ENCODING = "UTF-8"    // Helps with the JSON parsing.
-        const val API_BEARER = "bearer "    // Common in Auth. Note the trailing space.
+        //const val API_BEARER = "bearer "    // Common in Auth. Note the trailing space.
+        const val API_BEARER = ""           // No bearer in this API
 
         // Typical headers to define API formats.
         const val API_HEADER_ACCEPT = "application/json"

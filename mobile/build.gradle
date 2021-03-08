@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -47,7 +48,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     /* DeSugar - Helps give access to Java v8. See https://developer.android.com/studio/write/java8-support#library-desugaring */
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    /* Firebase - various service provided by Google. */
+    /* Firebase - various service provided by Google. Check out Firebase BoM if using lots of services. */
     implementation 'com.google.firebase:firebase-core:18.0.2'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'      // Push Notifications
     implementation 'com.google.firebase:firebase-auth:20.0.3'           // SMS Registration

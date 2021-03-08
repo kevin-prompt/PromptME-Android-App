@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:textSize="@dimen/lbl_med_size"
-        tools:text="06/26/2017 @ 2:05PM"
+        tools:text="06/26/2021 @ 2:05PM"
         android:layout_alignParentStart="true">
     </TextView>
     <ImageView android:id="@+id/rowhRecur"

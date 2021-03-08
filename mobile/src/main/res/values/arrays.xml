@@ -28,9 +28,9 @@
         <item>Next</item>
     </string-array>
     <string-array name="dateorder">
-        <item>(MM/DD/YYYY) \n02/21/2017</item>
-        <item>(DD/MM/YYYY) \n21/02/2017</item>
-        <item>(YYYY/MM/DD) \n2017/21/02</item>
+        <item>(MM/DD/YYYY) \n02/21/2021</item>
+        <item>(DD/MM/YYYY) \n21/02/2021</item>
+        <item>(YYYY/MM/DD) \n2021/21/02</item>
     </string-array>
     <string-array name="dateorder_values">
         <item>mid</item>

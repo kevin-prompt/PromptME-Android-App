@@ -78,13 +78,13 @@ open class ExpClass(
         fun logEXP(ex: ExpClass, key: String?) {
             FirebaseCrashlytics.getInstance().log(ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.message + " -extra- " + ex.Extra)
             FirebaseCrashlytics.getInstance().recordException(ex)
-            // Log.e(ERR_TAG, ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.Desc + " -extra- " + ex.Extra)
+            Log.e(ERR_TAG, ex.Number.toString() + " Exception Name: " + ex.Name + "() :: (status=" + httpStatusName(ex.Status) + ") key=" + key + " :: " + ex.Desc + " -extra- " + ex.Extra)
         }
 
         fun logEX(ex: Exception, key: String?) {
             FirebaseCrashlytics.getInstance().log(ERR_TAG + ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message)
             FirebaseCrashlytics.getInstance().recordException(ex)
-            // Log.e(ERR_TAG, ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message, ex)
+            Log.e(ERR_TAG, ex.stackTrace[0].className + "." + ex.stackTrace[0].methodName + "() :: (key=" + key + ") " + ex.message, ex)
         }
 
         fun logINFO(tag: String?, message: String) {
