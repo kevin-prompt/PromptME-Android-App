@@ -11,7 +11,7 @@ android {
         applicationId "com.coolftc.prompt"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 20
+        versionCode 200
         versionName "2.00"
         // Required (multiDexEnabled) to support Java v8 desugaring when minSdkVersion <= 20
         multiDexEnabled true
