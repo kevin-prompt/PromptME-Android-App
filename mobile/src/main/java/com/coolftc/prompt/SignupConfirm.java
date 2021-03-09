@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.gson.Gson;
 
@@ -158,13 +159,16 @@ public class SignupConfirm extends AppCompatActivity {
                 break;
             case SMS_SIGNUP :
                 Actor user = new Actor(this);
-                PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                        user.unique,        // Phone number to verify
-                        60,                 // Timeout duration
-                        TimeUnit.SECONDS,   // Unit of timeout
-                        this,               // Activity (for callback binding)
-                        mCallbacks,         // OnVerificationStateChangedCallbacks
-                        mResendToken);      // ForceResendingToken from callbacks
+                String holdResendNbr = "+" + user.unique;   // Seems to want the plus.
+                PhoneAuthOptions options =
+                        PhoneAuthOptions.newBuilder(mAuth)
+                                .setPhoneNumber(holdResendNbr)            // Phone number to verify
+                                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                                .setActivity(this)                      // Activity (for callback binding)
+                                .setCallbacks(mCallbacks)               // OnVerificationStateChangedCallbacks
+                                .setForceResendingToken(mResendToken)   // ForceResendingToken from callbacks
+                                .build();
+                PhoneAuthProvider.verifyPhoneNumber(options);
                 break;
         }
     }

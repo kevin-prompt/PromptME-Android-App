@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "800396557293-c28j7msea30n39j3rb67me2i45vq0mjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coolftc.prompt",
+            "certificate_hash": "6e41d6a97a4a1be2ae57784091c9ef047cb85105"
+          }
+        },
+        {
           "client_id": "800396557293-siedjjd4h8babs96uc7kuu7gjveca6bh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.coolftc.prompt",
             "certificate_hash": "838a3c5bfd93a85d59578471b99bc63ba416a10b"
-          }
-        },
-        {
-          "client_id": "800396557293-b9hjih75ojgcsvif8k14mdkmbbuhasni.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.coolftc.prompt",
-            "certificate_hash": "2dc4e649626f083f8c1cb670361bd04f880362ca"
           }
         },
         {
@@ -41,20 +41,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "800396557293-1vjsm20kfod7qu46rq6dbf6oabneumka.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

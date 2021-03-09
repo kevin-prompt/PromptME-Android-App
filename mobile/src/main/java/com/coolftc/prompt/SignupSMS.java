@@ -57,6 +57,11 @@ import static com.coolftc.prompt.utility.Constants.*;
     switch should help avoid problems with the AsynchTask used in the
     account creation/verification. Other context changes are much less
     common.
+
+    The firebase auth services require the signing key of the App to be
+    registered in the firebase console under Project Settings.
+    see https://developers.google.com/android/guides/client-auth
+    After adding them, download the google-services.json to help firebase.
  */
 public class SignupSMS extends AppCompatActivity {
 
@@ -143,27 +148,25 @@ public class SignupSMS extends AppCompatActivity {
         PhoneNumberUtil phoneHelper = PhoneNumberUtil.getInstance();
         try {
             Phonenumber.PhoneNumber fullNbr = phoneHelper.parse(mPhoneNbr, "US");
-            String holdnbr = phoneHelper.format(fullNbr, PhoneNumberUtil.PhoneNumberFormat.E164);
-            mPhoneNbr = holdnbr.replace("+", "");
+            mPhoneNbr = phoneHelper.format(fullNbr, PhoneNumberUtil.PhoneNumberFormat.E164);
+            //mPhoneNbr = holdnbr.replace("+", "");
         } catch (NumberParseException e) {
             mPhoneNbr = "";
             ExpClass.Companion.logEX(e, this.getClass().getName() + "phoneNumberFormatter");
         }
         if (mPhoneNbr.length() == 0) return;
-/*
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                mPhoneNbr,          // Phone number to verify
-                60,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks);        // OnVerificationStateChangedCallbacks
-*/
-        PhoneAuthProvider.verifyPhoneNumber(
-                new PhoneAuthOptions.Builder(FirebaseAuth.getInstance())
-                .setPhoneNumber(mPhoneNbr)                  // Phone number to verify
-                .setTimeout(60L, TimeUnit.SECONDS)   // Timeout duration & Unit of timeout
-                .setCallbacks(mCallbacks)                   // OnVerificationStateChangedCallbacks
-                .build());
+
+        // To get this to work may require "SafetyNet" be enabled.
+        // see https://console.cloud.google.com/apis/api/androidcheck.googleapis.com/overview?project=future-note
+        // General docs see https://firebase.google.com/docs/auth/android/phone-auth
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber(mPhoneNbr)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(this)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
     /*
