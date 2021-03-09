@@ -88,7 +88,7 @@ public class Snooze extends IntentService {
                         msg.message
                 );
                 String realPath = ws.baseUrl(getApplicationContext()) + FTI_Message.replace(SUB_ZZZ, from.acctIdStr());
-                return ws.callPostApi(realPath, message, PromptResponse.class, from.ticket);
+                return ws.callPutApi(realPath, message, PromptResponse.class, from.ticket);
             } else {
                 throw new ExpClass(99, this.getClass().getName() + ".sendSnooze", "offline");
             }

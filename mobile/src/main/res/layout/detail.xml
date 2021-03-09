@@ -38,10 +38,9 @@
     <TextView android:id="@+id/dtlMessage"
         tools:text="I had given up, I did not know who to trust.  So I designed a chair, coming from heaven and hell.  I was in prison, but now I am broken to pieces."
         android:textSize="@dimen/lbl_med_size"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/lblDisplayBar"
-        app:layout_constraintLeft_toRightOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"/>
 
