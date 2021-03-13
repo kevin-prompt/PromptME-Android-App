@@ -1,6 +1,6 @@
 <resources>
-    <string name="ver_nbr">1.15.0.0</string>
-    <string name="ver_build">2021 - Mar 1</string>
+    <string name="ver_nbr">2.1.0</string>
+    <string name="ver_build">2021 - Mar 13</string>
     <string name="app_name">PromptME</string>
     <string name="srv_name">Refresh</string>
     <string name="set_name">Settings</string>
@@ -121,6 +121,8 @@
     <string name="deliver">Deliver</string>
     <string name="version">Version</string>
     <string name="build_date">Build Date</string>
+    <string name="os_version">Android Version</string>
+    <string name="os_version_dtl">v%s (API = %d)</string>
     <string name="broadcast">Broadcast</string>
     <string name="ads">Ads</string>
     <string name="arrived">Prompt Arrived at</string>
@@ -228,6 +230,7 @@
     <string name="invite_friend">Invite a friend.</string>
     <string name="new_prompt">Create a new Prompt.</string>
     <string name="repeat_period">Repeat period.</string>
+    <string name="none">None</string>
 </resources>
 
 

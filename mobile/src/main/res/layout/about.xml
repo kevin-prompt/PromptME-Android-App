@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.50"/>
+        app:layout_constraintGuide_percent="0.45"/>
 
     <TextView android:id="@+id/lblVersion"
         android:text="@string/version"
@@ -79,6 +79,25 @@
         app:layout_constraintTop_toTopOf="@+id/lblBuildDate"
         app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
 
+    <TextView android:id="@+id/lblOsVersion"
+        android:text="@string/os_version"
+        android:textSize="@dimen/lbl_med_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/abt_center_margin"
+        android:layout_marginTop="@dimen/abt_ver_spacer"
+        app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
+        app:layout_constraintTop_toBottomOf="@+id/lblBuildDate"/>
+
+    <TextView android:id="@+id/abtOsVersion"
+        tools:text="v8 (API = 26)"
+        android:textSize="@dimen/lbl_med_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/abt_center_margin"
+        app:layout_constraintTop_toTopOf="@+id/lblOsVersion"
+        app:layout_constraintLeft_toLeftOf="@+id/abtCenterline" />
+
     <TextView android:id="@+id/lblBroadcast"
         android:text="@string/broadcast"
         android:textSize="@dimen/lbl_med_size"
@@ -87,7 +106,7 @@
         android:layout_marginEnd="@dimen/abt_center_margin"
         android:layout_marginTop="@dimen/abt_ver_spacer"
         app:layout_constraintRight_toLeftOf="@+id/abtCenterline"
-        app:layout_constraintTop_toBottomOf="@+id/lblBuildDate"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblOsVersion"/>
 
     <TextView android:id="@+id/abtBroadcast"
         tools:text="No"

@@ -104,14 +104,10 @@ public class Settings extends AppCompatActivity {
         ali.apply();
     }
 
-    // The ringtone to be used for notifications.  There are times when we want to use the
-    // sound included with the app, that is the defaultRingtone value.
+    // The ringtone to be used for notifications, but only matters below Android v8.
     public static Uri getRingtone(Context context){
         String defaultRingtone = String.format(Locale.getDefault(), "android.resource://%s/%d",context.getPackageName(),R.raw.promptbeep);
         String holdAnswer = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SOUND, defaultRingtone);
-        if (holdAnswer != null && holdAnswer.equalsIgnoreCase(context.getResources().getString(R.string.prf_NotificationTone))) {
-            holdAnswer = defaultRingtone;
-        }
         return Uri.parse(holdAnswer);
     }
 
