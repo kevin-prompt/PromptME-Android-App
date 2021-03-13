@@ -5,16 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.Ringtone;
+import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.OpenableColumns;
 import android.text.InputType;
-import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.EditTextPreference;
@@ -25,6 +24,7 @@ import androidx.preference.PreferenceManager;
 
 import com.coolftc.prompt.service.Refresh;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.coolftc.prompt.utility.Constants.*;
@@ -39,8 +39,6 @@ import static com.coolftc.prompt.Settings.*;
  *  See https://stackoverflow.com/questions/32070670/preferencefragmentcompat-requires-preferencetheme-to-be-set/44236460#44236460
  *
  *  Help with preferences : https://guides.codepath.com/android/settings-with-preferencefragment
- *
- *  Here is an option for ringtone picker https://issuetracker.google.com/issues/37057453#comment2
  *
  */
 public class SettingsBasic extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, PreferenceManager.OnPreferenceTreeClickListener{
@@ -95,11 +93,19 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
             Preference verify = findPreference(PREF_VERIFICATION);
             Objects.requireNonNull(cat).removePreference(verify);
         }
+        // Only show ringtone picker when they are on a version that will let it work.
+        // Otherwise, they must change the sound under notification settings.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PreferenceCategory cat = findPreference(PREF_SYSTEM);
+            Preference verify = findPreference(PREF_SOUND);
+            Objects.requireNonNull(cat).removePreference(verify);
+        }
 
         // Apply any initialization (mostly summaries)
         mActorName.setSummary(mPrefDB.getString(PREF_DISPNAME, ""));
         mSleepCycle.setSummary(getSleepCycleSummary());
-        mSound.setSummary(getRingtoneSummary());
+        String defaultRingtone = String.format(Locale.getDefault(), "android.resource://%s/%d", requireContext().getPackageName(), R.raw.promptbeep);
+        mSound.setSummary(displayName(Uri.parse(mPrefDB.getString(PREF_SOUND, defaultRingtone))));
         mShortDate.setSummary(getShortDate());
         mSnooze.setSummary(getSnoozeSummary());
         mSnooze.setOnBindEditTextListener(editText -> editText.setInputType(InputType.TYPE_CLASS_NUMBER));
@@ -158,22 +164,37 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
             return super.onPreferenceTreeClick(preference);
         }
     }
-
+    // This is the callback from the onPreferenceTreeClick() for the notification sound.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == KY_SOUND_PICKER && data != null) {
             Uri ringtone = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            if (ringtone != null) {  // if null, leave it as is
-                mSound.setSummary(getRingtoneSummary());
-                // Sometimes the sound thinks it is copied but is not, this gives it another try.
-                if (!mSound.getSummary().toString().equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone)))
-                    mPrefDB.edit().putBoolean(PREF_SOUND_AVAILABLE, false).apply();
-            }
+            String ringtoneStr = ringtone != null ? ringtone.toString() : "";
+            SharedPreferences.Editor ali = mPrefDB.edit();
+            ali.putString(PREF_SOUND, ringtoneStr);
+            ali.apply();
+            mSound.setSummary(displayName(ringtone));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
+    // Get a display name for the sound.
+    private String displayName(Uri uri) {
+        if (uri == null || uri.toString().length() == 0) { return getResources().getString(R.string.none); }
+        try (Cursor cursor = requireContext().getContentResolver().query(uri, null, null, null, null, null)) {
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    if (name.equalsIgnoreCase("promptbeep.mp3")) {
+                        name = getResources().getString(R.string.prf_NotificationTone);
+                    }
+                    return name;
+                }
+            }
+            return getResources().getString(R.string.prf_NotificationTone);
+        } catch (Exception ex) { return ""; }
+    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences shared, String key) {
@@ -233,18 +254,4 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
 
         return String.format(summary, dtypes[sdNdx].substring(0, 12));
     }
-
-    private String getRingtoneSummary() {
-        final String path = mPrefDB.getString(PREF_SOUND, getResources().getString(R.string.prf_NotificationTone));
-
-        if (path != null && !path.isEmpty() && !path.equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone))) {
-            final Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse(path));
-            return ringtone.getTitle(requireActivity().getApplicationContext());
-        }
-        if (path == null || path.isEmpty()) {
-            return getResources().getString(R.string.silent);
-        }
-        return getResources().getString(R.string.prf_NotificationTone);
-    }
-
 }
