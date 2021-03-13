@@ -1,5 +1,6 @@
 package com.coolftc.prompt;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,6 +59,8 @@ public class About extends AppCompatActivity {
         if(holdData != null) holdData.setText(R.string.ver_nbr);
         holdData = findViewById(R.id.abtBuildDate);
         if(holdData != null) holdData.setText(R.string.ver_build);
+        holdData = findViewById(R.id.abtOsVersion);
+        if(holdData != null) holdData.setText(String.format(getResources().getString(R.string.os_version_dtl), Build.VERSION.RELEASE, Build.VERSION.SDK_INT));
         holdData = findViewById(R.id.abtBroadcast);
         if(holdData != null) holdData.setText(acct.isBroadcast(getApplicationContext()));
         holdData = findViewById(R.id.abtAds);

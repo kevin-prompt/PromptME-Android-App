@@ -50,7 +50,7 @@ public class Actor extends Account {
         final String DEVICE_LAYOUT = "%s::%s::%s::%s::%d";
         return String.format(Locale.US, DEVICE_LAYOUT,
                 max50(Build.MANUFACTURER), max50(Build.MODEL), max50(Build.DEVICE), max50(Build.ID), someNbr())
-                .replaceAll("\\s", "_");
+                .replaceAll("[^a-zA-Z0-9.:-]", "_");
     }
     private String max50(String in) { return in.length() > 50 ? in.substring(0, 50) : in.trim(); }
     private int someNbr() { return new Random().nextInt(1000000000 - 100000000) + 100000000; }

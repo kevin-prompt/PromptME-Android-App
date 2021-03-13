@@ -26,6 +26,9 @@ import com.coolftc.prompt.source.FriendDB;
 import com.coolftc.prompt.utility.ExpClass;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
@@ -49,8 +52,8 @@ public class Welcome extends AppCompatActivity {
     // The "mAccounts" collect all the possible people to display.
     private List<Account> mAccounts = new ArrayList< >();
     // This is the mapping of the detail map to each specific person.
-    private String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
-    private int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
+    private final String[] StatusMapFROM = {CP_PER_ID, CP_TYPE, CP_NAME, CP_EXTRA, CP_UNIQUE, CP_LINKED, CP_FACE};
+    private final int[] StatusMapTO = {R.id.rowp_Id, R.id.rowpType, R.id.rowpContactName, R.id.rowpContactExtra, R.id.rowpUnique, R.id.rowpUninvite, R.id.rowpFacePic};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +61,15 @@ public class Welcome extends AppCompatActivity {
 
         // Set up main view and menu.
         setContentView(R.layout.welcome);
-        mListView = (ListView) findViewById(R.id.welConnections);
+        mListView = findViewById(R.id.welConnections);
 
         // Lets see if what we know about this person.
         Actor acct = new Actor(this);
 
-
         // Google Play?  They will need it.
         isGooglePlayServicesAvailable(this);
+        // Socket Security? SSL is no longer good, need TLS.
+        isLatestAndroidSecurityProvider(this);
 
         /* The Refresh service is important as it is the primary way
          * most of the data (SQL and Web Service) is refreshed. For
@@ -85,7 +89,7 @@ public class Welcome extends AppCompatActivity {
 
         /*  User properties are attached to all analytics records and persist.
             The idea is to use them for categorization, but could also use it
-            to drill down into individuals.  Google recommends again using any
+            to drill down into individuals.  Google recommends against using any
             PII here, like email, so would need some dumb identifier to be safe.
          */
         // This is just an example of how it would work.
@@ -196,7 +200,7 @@ public class Welcome extends AppCompatActivity {
 
         // Just having this check should be good enough, as Refresh is called
         // upon incoming notifications as well as entry into this screen.
-        TextView holdView = (TextView)findViewById(R.id.welPending);
+        TextView holdView = findViewById(R.id.welPending);
         if(holdView != null) { holdView.setText(String.format(getResources().getString(R.string.wel_Pending), actor.notesWaiting)); }
     }
 
@@ -221,16 +225,30 @@ public class Welcome extends AppCompatActivity {
         on some implementations of Android might might not be present, just letting
         the person know.
      */
-    private boolean isGooglePlayServicesAvailable(AppCompatActivity main) {
+    private void isGooglePlayServicesAvailable(AppCompatActivity main) {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int status = googleApiAvailability.isGooglePlayServicesAvailable(main);
         if(status != ConnectionResult.SUCCESS) {
             if(googleApiAvailability.isUserResolvableError(status)) {
                 googleApiAvailability.getErrorDialog(main, status, KY_PLAYSTORE).show();
             }
-            return false;
         }
-        return true;
+    }
+
+    /*
+        Versions of Android before API 21(?) can fallback to SSLv3 on API calls.
+        Many sites no longer support that protocol and require +TLS1.1.  This is
+        a simple way to make sure this app is using the latest protocols, etc.
+     */
+    private void isLatestAndroidSecurityProvider(AppCompatActivity main) {
+        try {
+            ProviderInstaller.installIfNeeded(main);
+        } catch (GooglePlayServicesRepairableException ex) {
+            // This should already be taken care of, but just in case.
+            isGooglePlayServicesAvailable(main);
+        } catch (GooglePlayServicesNotAvailableException ex) {
+            ExpClass.Companion.logEX(ex,"SecurityException: Google Play Services not available.");
+        }
     }
 
     /*

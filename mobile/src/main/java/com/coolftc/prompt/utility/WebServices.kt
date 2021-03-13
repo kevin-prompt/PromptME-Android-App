@@ -1,7 +1,7 @@
 package com.coolftc.prompt.utility
 
-import android.app.IntentService
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -89,7 +89,7 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
         Somewhere check periodically to refresh this value, debounce with the baseUrlAge().
      */
     override fun saveBaseURL(context: Context, url: String) {
-        val registered: SharedPreferences = context.getSharedPreferences(SP_BASE_URL_STORE, Context.MODE_PRIVATE)
+        val registered: SharedPreferences = context.getSharedPreferences(SP_BASE_URL_STORE, MODE_PRIVATE)
         val editor = registered.edit()
         editor.putString(SP_BASE_URL, url)
         editor.putString(SP_BASE_URL_LIFE, LocalDate.now().plusDays(1).toString())
@@ -97,12 +97,12 @@ class WebServices(private val Parser: Gson, private val Timeout: Int = API_TIMEO
     }
 
     override fun baseUrl(context: Context): String? {
-        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, IntentService.MODE_PRIVATE)
+        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, MODE_PRIVATE)
         return preference.getString(SP_BASE_URL, "")
     }
 
     override fun baseUrlAge(context: Context): LocalDate? { // LocalDate is only a date and not a time.
-        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, IntentService.MODE_PRIVATE)
+        val preference = context.getSharedPreferences(SP_BASE_URL_STORE, MODE_PRIVATE)
         return LocalDate.parse(preference.getString(SP_BASE_URL_LIFE, "1964-02-06"))
     }
 

@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -65,12 +66,15 @@ public class NotificationX extends FirebaseMessagingService {
     private static final int TYPE_FRIEND = 3;
     private static final String CHANNEL_FRIEND_ID = "channel.friend";
     private static final String CHANNEL_GROUP_ID = "channel.groupid";
+    private static final String NOTIFY_BASE_STORE = "channel.storage";
+    private static final String NOTIFY_BASE_CHANNEL = "channel.setup";
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage prompt) {
         try {
 
             Reminder note = parseNotification(prompt.getData());
+            if(!getChannelComplete()) { setupNotificationChannels(); }
 
             switch (note.type) {
                 case TYPE_PROMPT:
@@ -210,13 +214,16 @@ public class NotificationX extends FirebaseMessagingService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg.message))
                 .setWhen(msg.GetPromptMSec());
 
-        if (vibrateon && toneUri != null) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
-        } else if (vibrateon) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-        } else if (toneUri != null) {
-            mBuilder.setSound(toneUri);
+        // Notification Sound/Vibration is managed in the channel for v8.0+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (vibrateon && toneUri != null) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
+                        .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
+            } else if (vibrateon) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            } else if (toneUri != null) {
+                mBuilder.setSound(toneUri);
+            }
         }
 
         // User the serverId to so it is easy to dismiss later.
@@ -293,13 +300,16 @@ public class NotificationX extends FirebaseMessagingService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg.message))
                 .setWhen(msg.GetPromptMSec());
 
-        if (vibrateon && toneUri != null) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
-        } else if (vibrateon) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-        } else if (toneUri != null) {
-            mBuilder.setSound(toneUri);
+        // Notification Sound/Vibration is managed in the channel for v8.0+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (vibrateon && toneUri != null) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
+                        .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
+            } else if (vibrateon) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            } else if (toneUri != null) {
+                mBuilder.setSound(toneUri);
+            }
         }
 
         // The accept button has slightly different behavior based on if it is a mirror request.
@@ -366,13 +376,16 @@ public class NotificationX extends FirebaseMessagingService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg.message))
                 .setWhen(msg.GetPromptMSec());
 
-        if (vibrateon && toneUri != null) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
-        } else if (vibrateon) {
-            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-        } else if (toneUri != null) {
-            mBuilder.setSound(toneUri);
+        // Notification Sound/Vibration is managed in the channel for v8.0+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (vibrateon && toneUri != null) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
+                        .setSound(toneUri, AudioManager.STREAM_NOTIFICATION);
+            } else if (vibrateon) {
+                mBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            } else if (toneUri != null) {
+                mBuilder.setSound(toneUri);
+            }
         }
 
         // User the serverId to so it is easy to dismiss later.
@@ -390,17 +403,33 @@ public class NotificationX extends FirebaseMessagingService {
      *  in the action bar. Android v8 requires each notification type to have a set of user
      *  customizable settings. This is required before a notification can be posted, otherwise
      *  the system will just eat anything you try and post (on systems at or above v8).
-     *  Creating an notification channel with its original values performs a no-op, so its
+     *  Creating a notification channel with its original values performs a no-op, so its
      *  safe to call multiple times. Once data is added to a channel, it cannot be changed
-     *  programmatically, ever. :(
+     *  programmatically, ever!! :(
      * See overview: https://itnext.io/android-notification-channel-as-deep-as-possible-1a5b08538c87
+     * A note on DND.  The default for notifications is to not allow them while the device is DND.
+     * One could change that here with NotificationChannel.setBypassDnd(true), but it requires the
+     * user to approve policy access to the app (and for that to be done before this is set up).
+     * This requires the below system activity, but really you would want to explain it before
+     * calling the activity. Might be worth it for this App, but probably not since it has to happen
+     * prior to the channel getting setup.  Best to maybe direct the user to allow prompts while in
+     * DND manually via settings.
+     * Add to Manifest: <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+     *      if(!mgr.isNotificationPolicyAccessGranted()) {
+     *          Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+     *          intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+     *          startActivity(intent); }
+     * If the user was to adjust the setting above, it would generate a system broadcast that could
+     * be caught with: android.app.action.NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED
      */
     public void setupNotificationChannels(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager mgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // Set up the Grouping of notifications.
             NotificationChannelGroup group = new NotificationChannelGroup(CHANNEL_GROUP_ID, getString(R.string.ntf_channel_group_name));
-            group.setDescription(getString(R.string.ntf_channel_group_desc));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                group.setDescription(getString(R.string.ntf_channel_group_desc));
+            }
             mgr.createNotificationChannelGroup(group);
             // Set up the Channels for notifications.
             List<NotificationChannel> allNc = new ArrayList<>();
@@ -436,7 +465,19 @@ public class NotificationX extends FirebaseMessagingService {
                     Notification.VISIBILITY_SECRET));
 
             mgr.createNotificationChannels(allNc);
+            setChannelComplete();
         }
+    }
+
+    private boolean getChannelComplete() {
+        SharedPreferences preference = getSharedPreferences(NOTIFY_BASE_STORE, MODE_PRIVATE);
+        return preference.getBoolean(NOTIFY_BASE_CHANNEL, false);
+    }
+    private void setChannelComplete() {
+        SharedPreferences registered = getSharedPreferences(NOTIFY_BASE_STORE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = registered.edit();
+        editor.putBoolean(NOTIFY_BASE_CHANNEL, true);
+        editor.apply();
     }
 
     /*
