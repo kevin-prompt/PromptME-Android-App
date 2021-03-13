@@ -120,7 +120,7 @@ public class Refresh extends IntentService {
             // If possible, we want to copy the default notification sound.  While we cannot ask
             // for the permission here, we do ask if the user goes to settings.  Until then the
             // default sound will be used for Notification sounds.
-            // ** This sound is only of concern to Apps running below Android v8. **
+            // ** This sound is only of concern to Apps running below Android v8 (API 26). **
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             if(!Settings.isSoundCopied(getApplicationContext())
                 && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -567,7 +567,7 @@ public class Refresh extends IntentService {
 
             // Not sure needed, but this should let the system know there is a new file.
             String mimeType = "audio/mpeg";
-            MediaScannerConnection.scanFile(this, new String[]{outFile.getPath()}, new String[]{mimeType}, null);
+            MediaScannerConnection.scanFile(getApplicationContext(), new String[]{outFile.getPath()}, new String[]{mimeType}, null);
             return true;
 
         } catch (Exception ex) {
