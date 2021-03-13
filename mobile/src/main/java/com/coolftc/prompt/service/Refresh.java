@@ -63,7 +63,7 @@ public class Refresh extends IntentService {
     // The contact permission is stored to reduce management overhead.
     int mContactPermissionCheck;
     // The friendAge is a debounce value for the friend query.
-    private static LocalDateTime friendAge = LocalDateTime.MIN.MIN;
+    private static LocalDateTime friendAge = LocalDateTime.MIN;
 
     public Refresh() {
         super(SRV_NAME);

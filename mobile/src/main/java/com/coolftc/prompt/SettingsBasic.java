@@ -8,11 +8,16 @@ import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.InputType;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
@@ -45,8 +50,7 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
     private Preference mSleepCycle;
     private Preference mSound;
     private Preference mShortDate;
-    private Preference mSnooze;
-
+    private EditTextPreference mSnooze;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -71,8 +75,9 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
         // or it is no longer meaningful.
         // Note: To modify the structure of the page, need to use the category.
         // No vibration choice if device does not vibrate.
+        // Notification vibration is managed in the channel for v8.0+.
         final Vibrator v = (Vibrator) requireActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        if (!v.hasVibrator()) {
+        if (!v.hasVibrator() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)) {
             PreferenceCategory cat = findPreference(PREF_SYSTEM);
             Preference vibrate = findPreference(PREF_VIBRATEON);
             Objects.requireNonNull(cat).removePreference(vibrate);
@@ -94,9 +99,10 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
         // Apply any initialization (mostly summaries)
         mActorName.setSummary(mPrefDB.getString(PREF_DISPNAME, ""));
         mSleepCycle.setSummary(getSleepCycleSummary());
-//        mSound.setSummary(getRingtoneSummary());
+        mSound.setSummary(getRingtoneSummary());
         mShortDate.setSummary(getShortDate());
         mSnooze.setSummary(getSnoozeSummary());
+        mSnooze.setOnBindEditTextListener(editText -> editText.setInputType(InputType.TYPE_CLASS_NUMBER));
 
         // Check if the user will let us write (the ringtone) to external storage. We will trigger a Refresh
         // to do the write in either case, no harm and less work than implementing a callback in the Activity.
@@ -187,14 +193,6 @@ public class SettingsBasic extends PreferenceFragmentCompat implements SharedPre
             ali.force = true;
             ali.SyncPrime(false, requireActivity());
         }
-/*
-        if (key.equals(PREF_SOUND)) {
-            mSound.setSummary(getRingtoneSummary());
-            // Sometimes the sound thinks it is copied but is not, this gives it another try.
-            if (!mSound.getSummary().toString().equalsIgnoreCase(getResources().getString(R.string.prf_NotificationTone)))
-                mPrefDB.edit().putBoolean(PREF_SOUND_AVAILABLE, false).apply();
-        }
-*/
         if (key.equals(PREF_PICKSHORTDATEFMT)){
             mShortDate.setSummary(getShortDate());
         }
