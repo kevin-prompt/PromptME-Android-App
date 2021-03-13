@@ -5,14 +5,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.coolftc.prompt"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 200
-        versionName "2.00"
+        targetSdkVersion 30
+        versionCode 201
+        versionName "2.01"
         // Required (multiDexEnabled) to support Java v8 desugaring when minSdkVersion <= 20
         multiDexEnabled true
     }
@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:18.0.2'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'      // Push Notifications
     implementation 'com.google.firebase:firebase-auth:20.0.3'           // SMS Registration
-    implementation 'com.google.firebase:firebase-crashlytics:17.3.1'    // Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics:17.4.0'    // Crashlytics
 
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.1.0' // phone number formatting
     implementation 'com.mikhaellopez:circularimageview:3.0.2'           // put a circle around it
