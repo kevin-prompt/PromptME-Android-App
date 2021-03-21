@@ -14,12 +14,13 @@ import static com.coolftc.prompt.utility.Constants.*;
 
 /**
  *  The Settings provide a UI to allow for the maintenance of certain locally
-    stored data in a system defined Preference table. This is not the only
-    data stored in Preferences, see the Actor class.
-    In Settings are mostly stored general App data, e.g. how to format the
-    date. Initially, 2 personal items, Display Name and Sleep Cycle, are also
-    editable directly in Settings. This class provides a simple wrapper to
-    read them from the Preferences. It also alleviates any worries about
+    stored data in a system defined Preference table.
+    Settings usually store general App configuration data, e.g. how to format the
+    date, but also can give some access to personalization (if there is not
+    a dedicated screen for that). Here 2 personal items, Display Name and Sleep
+    Cycle, are editable directly in Settings.
+    This class provides a simple wrapper to read data from the Preferences and
+    optionally format it in some desired way. It also alleviates worries about
     initialization.
 
  *  This activity uses a fragment to do all the screen work, including the
@@ -31,9 +32,14 @@ import static com.coolftc.prompt.utility.Constants.*;
  *  To Add New Settings:
     1) Create a node in the settings.xml layout to define the UI.
         Use prf_Title/prf_TitleSum/prf_TitleDefault for resource string names.
-    2) Create an id (PREF_*) constant below that matches the settings.xml.
+    2) Create an id (PREF_*) constant below that matches the key in settings.xml.
     3) Create a "get" access method.  Add any special formatting as necessary.
     4) Add any code to dynamically adjust the summary (in SettingsBasic) if necessary.
+
+ * Dependencies
+    Requires an res/xml/settings.xml file with correct PreferenceScreen layout.
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+
  */
 public class Settings extends AppCompatActivity {
 
