@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TimePicker;
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
-import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
@@ -41,7 +38,7 @@ public class ExactTimeTime extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof FragmentTalkBack) {
             mActivity = (FragmentTalkBack) context;
@@ -70,21 +67,19 @@ public class ExactTimeTime extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.exacttime_time, container, false);
+        TimePicker timePicker = view.findViewById(R.id.exactTimePicker);
+        ZonedDateTime zdt;  // using this to validate the input
 
-        TimePicker timePicker = (TimePicker) view.findViewById(R.id.exactTimePicker);
-
-        timePicker.setIs24HourView(Settings.getUse24Clock(getActivity().getApplicationContext()));
-        Calendar timeset;
         try {
-            timeset = KTime.ParseToCalendar(mTimeStamp, KTime.KT_fmtDate3339fk);
-        } catch (ExpParseToCalendar expParseToCalendar) {
-            timeset = Calendar.getInstance();
+            DateTimeFormatter zdtFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            zdt = ZonedDateTime.parse(mTimeStamp, zdtFormat);
+        } catch (Exception ex) {
+            zdt = ZonedDateTime.now();
         }
         // Note: Using deprecated timePicker methods while min SDK is lower than the new methods.
-        int holdTm = timeset.get(Calendar.HOUR_OF_DAY);
-        timePicker.setCurrentHour(holdTm);
-        holdTm = timeset.get(Calendar.MINUTE);
-        timePicker.setCurrentMinute(holdTm);
+        timePicker.setIs24HourView(Settings.getUse24Clock(requireActivity().getApplicationContext()));
+        timePicker.setCurrentHour(zdt.toLocalTime().getHour());
+        timePicker.setCurrentMinute(zdt.toLocalTime().getMinute());
         timePicker.setOnTimeChangedListener(timeListener);
 
         return view;
@@ -95,13 +90,11 @@ public class ExactTimeTime extends Fragment {
      *  The formatting is a bit odd, but the picker is just picking two integers,
      *  so to fill out the rest of the time we just steal from the input timestamp.
      */
-    private TimePicker.OnTimeChangedListener timeListener = new TimePicker.OnTimeChangedListener() {
+    private final TimePicker.OnTimeChangedListener timeListener = new TimePicker.OnTimeChangedListener() {
         @Override
         public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
             if (view.isShown()) {
-                Integer hour = hourOfDay;
-                Integer min = minute;
-                String holdTime = (hour < 10 ? "0" + hour.toString() : hour.toString()) + ":" + (min < 10 ? "0" + min.toString() : min.toString()) + mTimeStamp.substring(16);
+                String holdTime = (hourOfDay < 10 ? "0" + Integer.toString(hourOfDay) : Integer.toString(hourOfDay)) + ":" + (minute < 10 ? "0" + minute : Integer.toString(minute)) + mTimeStamp.substring(16);
                 if (mActivity != null) {
                     mActivity.setTime(holdTime);
                 }

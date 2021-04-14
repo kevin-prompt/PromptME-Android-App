@@ -1,19 +1,17 @@
 package com.coolftc.prompt;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
-import com.coolftc.prompt.utility.ExpParseToCalendar;
 import com.coolftc.prompt.utility.KTime;
-
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  *  This fragment is used to select the date.  It can also
@@ -40,7 +38,7 @@ public class ExactTimeDate extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof FragmentTalkBack) {
             mActivity = (FragmentTalkBack) context;
@@ -69,38 +67,35 @@ public class ExactTimeDate extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.exacttime_date, container, false);
+        CalendarView datePicker = view.findViewById(R.id.exactCalendar);
+        ZonedDateTime zdt;  // using this to validate the input
 
-        CalendarView datePicker = (CalendarView) view.findViewById(R.id.exactCalendar);
-        Calendar timeset;
         try {
-            timeset = KTime.ParseToCalendar(mTimeStamp, KTime.KT_fmtDate3339fk);
-        } catch (ExpParseToCalendar expParseToCalendar) {
-            timeset = Calendar.getInstance();
+            DateTimeFormatter zdtFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            zdt = ZonedDateTime.parse(mTimeStamp, zdtFormat);
+        } catch (Exception ex) {
+            zdt = ZonedDateTime.now();
         }
-        // Grab today's day as the minimum to avoid times in the past. Problematic on early versions.
-        if(Build.VERSION.SDK_INT > 18) {
-            datePicker.setMinDate(timeset.getTimeInMillis());
-        }
-        datePicker.setDate(timeset.getTimeInMillis());
+
+        // Grab today's date as the minimum to avoid times in the past. (Does not work below API 19)
+        datePicker.setMinDate(zdt.toInstant().toEpochMilli());
+        datePicker.setDate(zdt.toInstant().toEpochMilli());
         datePicker.setOnDateChangeListener(dateListener);
 
         return view;
     }
 
-    ///listener that receives the selected date
-    private CalendarView.OnDateChangeListener dateListener = new CalendarView.OnDateChangeListener() {
+    // Listener that receives the selected date.
+    private final CalendarView.OnDateChangeListener dateListener = new CalendarView.OnDateChangeListener() {
         @Override
         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
             if (view.isShown()) {
-                Integer day = dayOfMonth;
-                Integer mon = month + 1;
-                String holdDate = year + "-" + (mon < 10 ? "0" + mon.toString() : mon.toString()) + "-" + (day < 10 ? "0" + day.toString() : day.toString());
+                int mon = month + 1;
+                String holdDate = year + "-" + (mon < 10 ? "0" + Integer.toString(mon) : Integer.toString(mon)) + "-" + (dayOfMonth < 10 ? "0" + Integer.toString(dayOfMonth) : Integer.toString(dayOfMonth));
                 if (mActivity != null) {
                     mActivity.setDate(holdDate);
                 }
             }
         }
     };
-
-
 }

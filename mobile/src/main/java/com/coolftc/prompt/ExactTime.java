@@ -5,23 +5,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import static com.coolftc.prompt.utility.Constants.*;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import com.coolftc.prompt.utility.ExpParseToCalendar;
-import com.coolftc.prompt.utility.KTime;
-
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  *  The top level container screen for picking the exact time and date. Upon
@@ -49,19 +45,22 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
 
         // Initialize default values.
         Bundle extras = getIntent().getExtras();
-        if(extras != null){
+        DateTimeFormatter zdtFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+        ZonedDateTime zdt;  // using this to validate the input
+
+        if(extras != null) {
             mTimeStamp = extras.getString(IN_TIMESTAMP);
-            if(KTime.ParseOffset(mTimeStamp, KTime.KT_fmtDate3339fk, KTime.KT_SECONDS) == 0) {
-                // It is UTC so lets convert to local
-                try {
-                    mTimeStamp = DateFormat.format(KTime.KT_fmtDate3339fk_xS, KTime.ConvertTimezone(KTime.ParseToCalendar(mTimeStamp, KTime.KT_fmtDate3339fk, KTime.UTC_TIMEZONE), TimeZone.getDefault().getID())).toString();
-                } catch (ExpParseToCalendar expParseToCalendar) {
-                    mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
-                }
+            try {
+                zdt = ZonedDateTime.parse(mTimeStamp, zdtFormat);
+            } catch (Exception ex) {
+                zdt = ZonedDateTime.now();
+                mTimeStamp = zdt.format(zdtFormat);
             }
-        }else{
-            mTimeStamp = KTime.ParseNow(KTime.KT_fmtDate3339fk).toString();
+        } else {
+            zdt = ZonedDateTime.now();
+            mTimeStamp = zdt.format(zdtFormat);
         }
+
         if(mTimeStamp != null) {
             mDatePicked = mTimeStamp.substring(0, 10);
             mTimePicked = mTimeStamp.substring(11);
@@ -71,7 +70,7 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
 
         // Set up the ViewPager with the sections adapter.
         // At some point consider ViewPager2 see https://developer.android.com/training/animation/vp2-migration
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         if(mViewPager != null){ mViewPager.setAdapter(mPageFragmentMgr); }
     }
 
@@ -82,12 +81,12 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
         if(view == null) return;
         RelativeLayout holdParent = (RelativeLayout) view.getParent();
         if(holdParent == null) return;
-        TimePicker timePicker = (TimePicker) holdParent.findViewById(R.id.exactTimePicker);
-        Integer hour; Integer min;
+        TimePicker timePicker = holdParent.findViewById(R.id.exactTimePicker);
+        int hour; int min;
         if(timePicker != null) {
             hour = timePicker.getCurrentHour();
             min = timePicker.getCurrentMinute();
-            setTime((hour < 10 ? "0" + hour.toString() : hour.toString()) + ":" + (min < 10 ? "0" + min.toString() : min.toString()) + mTimeStamp.substring(16));
+            setTime((hour < 10 ? "0" + hour : Integer.toString(hour)) + ":" + (min < 10 ? "0" + min : Integer.toString(min)) + mTimeStamp.substring(16));
         }
     }
 
@@ -125,13 +124,13 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
     public void PickFinish(View view){
         boolean past = false;
         setTimeAgain(view);  // Double check on the date.
-        String holdpick = mDatePicked + "T" + mTimePicked;
+        String holdPick = mDatePicked + "T" + mTimePicked;
 
         try {
-            Calendar present = Calendar.getInstance();
-            Calendar picked = KTime.ParseToCalendar(holdpick, KTime.KT_fmtDate3339fk);
-            past = present.getTimeInMillis() > picked.getTimeInMillis();
-        } catch (ExpParseToCalendar expParseToCalendar) { /* just ignore. */ }
+            DateTimeFormatter zdtFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+            ZonedDateTime zdt = ZonedDateTime.parse(holdPick, zdtFormat);
+            past = zdt.isBefore(ZonedDateTime.now());
+        } catch (Exception ex) { /* just ignore. */ }
 
         if (past) {
             Dialog problemBox = new AlertDialog.Builder(this)
@@ -145,12 +144,10 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
                     .create();
             problemBox.show();
         } else {
-            if (holdpick.length() > 0) {
-                Intent rtn = new Intent(IN_EXACTPICK);
-                rtn.putExtra(IN_TIMESTAMP, holdpick);
-                setResult(RESULT_OK, rtn);
-                finish();
-            }
+            Intent rtn = new Intent(IN_EXACTPICK);
+            rtn.putExtra(IN_TIMESTAMP, holdPick);
+            setResult(RESULT_OK, rtn);
+            finish();
         }
     }
 
@@ -162,15 +159,15 @@ public class ExactTime extends AppCompatActivity implements FragmentTalkBack {
 
         private static final int FRAGMENT_COUNT = 2;
 
-        public PageFragmentMgr(FragmentManager fm) { super(fm); }
+        public PageFragmentMgr(FragmentManager fm) { super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT ); }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             switch (position){
                 case FR_POS_EXDATE:
                     return ExactTimeDate.newInstance(mTimeStamp);
                 case FR_POS_EXTIME:
-                    return ExactTimeTime.newInstance(mTimeStamp);
                 default:
                     return ExactTimeTime.newInstance(mTimeStamp);
             }
