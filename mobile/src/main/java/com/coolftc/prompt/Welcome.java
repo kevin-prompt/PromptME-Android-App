@@ -223,7 +223,8 @@ public class Welcome extends AppCompatActivity {
     /*
         The notification functionality relies upon the Google Play Services, which
         on some implementations of Android might might not be present, just letting
-        the person know.
+        the person know. This requires the following dependency:
+        implementation 'com.google.android.gms:play-services-location:18.0.0'
      */
     private void isGooglePlayServicesAvailable(AppCompatActivity main) {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -237,7 +238,7 @@ public class Welcome extends AppCompatActivity {
 
     /*
         Versions of Android before API 21(?) can fallback to SSLv3 on API calls.
-        Many sites no longer support that protocol and require +TLS1.1.  This is
+        Many sites no longer support that protocol and require TLS1.1+.  This is
         a simple way to make sure this app is using the latest protocols, etc.
      */
     private void isLatestAndroidSecurityProvider(AppCompatActivity main) {
