@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
@@ -11,8 +12,8 @@ android {
         applicationId "com.coolftc.prompt"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 211
-        versionName "2.11"
+        versionCode 212
+        versionName "2.12"
         // Required (multiDexEnabled) to support Java v8 desugaring when minSdkVersion <= 20
         multiDexEnabled true
     }
@@ -37,9 +38,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -49,18 +50,17 @@ dependencies {
     /* DeSugar - Helps give access to Java v8. See https://developer.android.com/studio/write/java8-support#library-desugaring */
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     /* Firebase - various service provided by Google. Check out Firebase BoM if using lots of services. */
-    implementation 'com.google.firebase:firebase-core:18.0.3'
-    implementation 'com.google.firebase:firebase-messaging:21.1.0'      // Push Notifications
-    implementation 'com.google.firebase:firebase-auth:20.0.4'           // SMS Registration
+    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'      // Push Notifications
+    implementation 'com.google.firebase:firebase-auth:21.0.1'           // SMS Registration
     implementation 'androidx.browser:browser:1.3.0'                     // Needed for Phone Auth
-    implementation 'com.google.firebase:firebase-crashlytics:17.4.1'    // Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.0'    // Crashlytics
 
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.1.0' // phone number formatting
     implementation 'com.mikhaellopez:circularimageview:3.0.2'           // put a circle around it
 
     // Testing Dependencies
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
-apply plugin: 'com.google.gms.google-services'
